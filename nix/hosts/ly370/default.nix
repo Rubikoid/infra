@@ -5,6 +5,14 @@
     ./hardware-configuration.nix
   ];
 
+  networking.wireless = {
+    networks = {
+      "@home_uuid@" = { psk = "@home_psk@"; };
+      "@bk252_uuid@" = { psk = "@bk252_psk@"; };
+      "@iphone_uuid@" = { psk = "@iphone_psk@"; };
+      "@pt_uuid@" = { psk = "@pt_psk@"; };
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

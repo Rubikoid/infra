@@ -1,0 +1,9 @@
+env:
+  TERM: xterm-256color
+
+window:
+  # add some transparency
+  opacity: 0.85
+
+key_bindings:
+  - { key: K, mods: Control, mode: ~Vi, action: ClearHistory }

@@ -1,0 +1,15 @@
+keys:
+  - &rubikoid_wsl age1mw00fzy3tkap89dfn6y2znfllunqj63cn6yxjzepn5a09yv0gqas4uj6vf
+  - &vpn age1tmgzpzap852hze5wyvk5fvg9d6jejpq7rx99aav2apjyuh9c9vrsexkl39
+creation_rules:
+  - path_regex: nix/secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *rubikoid_wsl
+          - *vpn
+
+  - path_regex: nix/secrets/vpn/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *rubikoid_wsl
+          - *vpn

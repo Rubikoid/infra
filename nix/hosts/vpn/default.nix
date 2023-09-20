@@ -1,17 +1,27 @@
 { inputs, lib, ... }:
 
 {
-  imports = with inputs.self.nixosModules; with inputs.self.nixosProfiles; [
+  imports = with inputs.self.systemModules; [
     ./hardware-configuration.nix
+    yggdrasil
   ];
 
-  boot.cleanTmpDir = true;
+  boot.tmp.cleanOnBoot = true;
   zramSwap.enable = false;
 
   services.openssh.enable = true;
   users.users.root.openssh.authorizedKeys.keys = [
     ''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOXNeouqZX2g3lYGgI+R9kGOBGPhV+cOvXOHPxKRygKl rubikoid@rubikoid.ru''
   ];
+
+  services.yggdrasil = {
+    settings = {
+      Listen = [
+        "tls://0.0.0.0:51342"
+      ];
+      MulticastInterfaces = lib.mkForce [ ];
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

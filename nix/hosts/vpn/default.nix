@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ./wg.nix
     yggdrasil
+    compact
   ];
 
   boot.tmp.cleanOnBoot = true;

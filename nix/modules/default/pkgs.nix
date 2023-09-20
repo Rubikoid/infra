@@ -3,7 +3,7 @@
 {
   # must have packages
   environment.systemPackages = with pkgs; [
-    vim-full
+    vim
     git
     curl
     tmux

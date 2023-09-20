@@ -1,6 +1,6 @@
 HOST ?= $(shell hostname)
 
-.PHONY: system
+.PHONY: system deploy clean
 .DEFAULT: system
 
 system:
@@ -14,3 +14,10 @@ deploy:
 		--exclude 'flake.lock' \
 		. \
 		$(target):~/infra
+
+clean:
+	sudo nix-collect-garbage -d
+	sudo nix-env --delete-generations +1
+	sudo nix-store --gc
+	sudo rm /nix/var/nix/gcroots/auto/*
+	sudo nix-collect-garbage -d

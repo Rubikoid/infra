@@ -1,9 +1,9 @@
 { config, ... }:
 
 {
-  sops.secrets."yggdrasil.json" = {
-    sopsFile = ../../secrets + "/${config.device}/yggdrasil.json";
-    format = "json";
+  sops.secrets."yggdrasil.hjson" = {
+    sopsFile = ../../secrets + "/${config.device}/yggdrasil.hjson";
+    format = "binary";
   };
 
   services.yggdrasil = {
@@ -11,6 +11,8 @@
     openMulticastPort = true;
     group = "wheel";
     denyDhcpcdInterfaces = [ "ygg" ];
+
+    configFile = config.sops.secrets."yggdrasil.hjson".path;
     settings = {
       IfName = "ygg";
 

@@ -3,27 +3,27 @@ keys:
   - &rubikoid_ly370 age15009xgu7ecm7nqsyesaftwlk4k9ct0pt3ah42nh2p3q3drp8j5ksakz07l
   - &vpn age1tmgzpzap852hze5wyvk5fvg9d6jejpq7rx99aav2apjyuh9c9vrsexkl39
 creation_rules:
-  - path_regex: nix/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: nix/secrets/[^/]+\.(yaml|json|env|ini|hjson|bin)$
     key_groups:
       - age:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *vpn
 
-  - path_regex: nix/secrets/vpn/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: nix/secrets/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin)$
     key_groups:
       - age:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *vpn
 
-  - path_regex: nix/secrets/ly370/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: nix/secrets/ly370/[^/]+\.(yaml|json|env|ini|hjson|bin)$
     key_groups:
       - age:
           - *rubikoid_ly370
           - *rubikoid_wsl
 
-  - path_regex: nix/secrets/rpi4/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: nix/secrets/rpi4/[^/]+\.(yaml|json|env|ini|hjson|bin)$
     key_groups:
       - age:
           - *rubikoid_ly370

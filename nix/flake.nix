@@ -37,24 +37,47 @@
     };
   };
 
-
-
   outputs = { self, nixpkgs, ... } @ inputs:
     let
       # idk magic from @balsoft flake.nix...
+      # some function for <dir: path>
       findModules = dir:
-        builtins.concatLists (builtins.attrValues (builtins.mapAttrs
-          (name: type:
-            if type == "regular" then [{
-              name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
-              value = dir + "/${name}";
-            }] else if (builtins.readDir (dir + "/${name}"))
-              ? "default.nix" then [{
-              inherit name;
-              value = dir + "/${name}";
-            }] else
-              findModules (dir + "/${name}"))
-          (builtins.readDir dir)));
+        # magic
+        builtins.concatLists (
+          # magic
+          builtins.attrValues (
+            # apply first function to every elem of readdir
+            builtins.mapAttrs
+              (
+                name: # filename
+                type: # filetype: regular, directory, symlink, unknown
+
+                # if just a simple file - remove .nix and add it to path
+                if type == "regular" then
+                  if (builtins.match "(.*)\\.nix" name) != null then [{
+                    # but check, is it really .nix file...
+                    name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
+                    value = dir + "/${name}";
+                  }]
+                  else [ ] # ~~i don't knew why it red...~~ because it is todo tree parsed
+
+                # if it directory
+                else if type == "directory" then
+                  if (builtins.readDir (dir + "/${name}")) ? "default.nix" then [{
+                    # if contains default.nix - load it
+                    inherit name;
+                    value = dir + "/${name}";
+                  }]
+                  else
+                  # else just recursive load
+                    findModules (dir + "/${name}")
+                else [ ] # ~~i don't knew why it red...~~ because it is todo tree parsed
+              )
+              (builtins.readDir dir)
+          )
+        );
+
+      # another idk magic from @balsoft flake.nix...
       pkgsFor = system:
         import inputs.nixpkgs {
           overlays = [ self.overlay ];
@@ -67,8 +90,8 @@
     in
     {
       defaultModules = builtins.listToAttrs (findModules ./modules/default);
-      nixosModules = builtins.listToAttrs (findModules ./modules/system);
-      homeModules = builtins.listToAttrs (findModules ./modules/user);
+      systemModules = builtins.listToAttrs (findModules ./modules/system);
+      userModules = builtins.listToAttrs (findModules ./modules/user);
       overlay = import ./overlay.nix inputs;
 
       # idk another magic from @balsoft flake.nix... (but somethere explained)

@@ -5,12 +5,25 @@
     ./hardware-configuration.nix
   ];
 
-  networking.wireless = {
-    networks = {
-      "@home_uuid@" = { psk = "@home_psk@"; };
-      "@bk252_uuid@" = { psk = "@bk252_psk@"; };
-      "@iphone_uuid@" = { psk = "@iphone_psk@"; };
-      "@pt_uuid@" = { psk = "@pt_psk@"; };
+  networking = {
+    firewall = {
+      allowedTCPPorts = [
+        22000
+      ];
+      # allowedUDPPortRanges = [
+      #   { from = 4000; to = 4007; }
+      #   { from = 8000; to = 8010; }
+      # ];
+    };
+    wireless = {
+      enable = true; # Enables wireless support via wpa_supplicant.
+      userControlled.enable = true;
+      networks = {
+        "@home_uuid@" = { psk = "@home_psk@"; };
+        "@bk252_uuid@" = { psk = "@bk252_psk@"; };
+        "@iphone_uuid@" = { psk = "@iphone_psk@"; };
+        "@pt_uuid@" = { psk = "@pt_psk@"; };
+      };
     };
   };
 

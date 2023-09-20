@@ -7,5 +7,6 @@
     git
     curl
     tmux
+    gnumake
   ];
 }

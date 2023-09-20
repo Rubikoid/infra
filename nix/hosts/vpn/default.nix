@@ -1,8 +1,9 @@
-{ inputs, lib, ... }:
+{ pkgs, config, inputs, lib, ... }:
 
 {
   imports = with inputs.self.systemModules; [
     ./hardware-configuration.nix
+    ./wg.nix
     yggdrasil
   ];
 
@@ -21,6 +22,47 @@
       ];
       MulticastInterfaces = lib.mkForce [ ];
     };
+  };
+
+  sops.secrets.rubi_pw = {
+    sopsFile = ../../secrets + "/${config.device}/secrets.yaml";
+    neededForUsers = true;
+  };
+
+  users.users.rubi = {
+    isNormalUser = true;
+    createHome = false;
+    useDefaultShell = false;
+    expires = "2000-01-01"; # disable...
+    group = "nogroup";
+
+    hashedPasswordFile = config.sops.secrets.rubi_pw.path;
+  };
+
+  networking.firewall.interfaces = {
+    home.allowedTCPPorts = [ 1337 ];
+    ygg.allowedTCPPorts = [ 1337 ];
+  };
+
+  services.dante = {
+    enable = true;
+    config = ''
+      internal: ygg port=1337
+      internal: home port=1337
+      external: ens1
+
+      socksmethod: username
+      
+      client pass {
+        from: 0/0 to: 0/0
+        log: error
+      }
+
+      socks pass {
+        from: 0/0 to: 0/0
+        log: error
+      }
+    '';
   };
 
   # This value determines the NixOS release from which the default

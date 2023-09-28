@@ -11,7 +11,7 @@ deploy:
 		-rlptD \
 		--delete \
 		-vzhP \
-		--exclude 'flake.lock' \
+		--exclude 'flake.lock' $(args) \
 		. \
 		$(target):~/infra
 

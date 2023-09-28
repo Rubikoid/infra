@@ -17,10 +17,13 @@
   ];
 
   services.yggdrasil = {
+    openMulticastPort = false;
+
     settings = {
       Listen = [
         "tls://0.0.0.0:51342"
       ];
+
       MulticastInterfaces = lib.mkForce [ ];
     };
   };
@@ -65,6 +68,8 @@
       }
     '';
   };
+
+  systemd.services.dante.after = [ "yggdrasil.service" ]
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

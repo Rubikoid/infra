@@ -5,7 +5,7 @@ let
 in
 {
   sops.secrets."firewall_setup.sh" = {
-    sopsFile = ../../secrets + "/${config.device}/firewall_setup.sh";
+    sopsFile =config.deviceSecrets + "/firewall_setup.sh";
     format = "binary";
   };
 
@@ -25,12 +25,12 @@ in
   };
 
   sops.secrets."wg_head.conf" = {
-    sopsFile = ../../secrets + "/${config.device}/wg_head.conf";
+    sopsFile = config.deviceSecrets + "/wg_head.conf";
     format = "binary";
   };
 
   sops.secrets."wg_peers.conf" = {
-    sopsFile = ../../secrets + "/${config.device}/wg_peers.conf";
+    sopsFile = config.deviceSecrets + "/wg_peers.conf";
     format = "binary";
   };
 

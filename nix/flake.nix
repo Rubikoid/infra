@@ -122,6 +122,7 @@
                 (import (./hosts + "/${name}"))
                 { nixpkgs.pkgs = pkgs; }
                 { device = name; }
+                { deviceSecrets = ./secrets + "/${name}/"; }
               ];
               specialArgs = { inherit inputs; };
             };

@@ -1,14 +1,14 @@
-{ config, ... }:
+{ config, lib, ... }:
 
 {
   sops.secrets."yggdrasil.hjson" = {
-    sopsFile = ../../secrets + "/${config.device}/yggdrasil.hjson";
+    sopsFile = config.deviceSecrets + "/yggdrasil.hjson";
     format = "binary";
   };
 
   services.yggdrasil = {
     enable = true;
-    openMulticastPort = true;
+    openMulticastPort = lib.mkDefault true;
     group = "wheel";
     denyDhcpcdInterfaces = [ "ygg" ];
 

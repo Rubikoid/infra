@@ -4,6 +4,7 @@ with lib;
 with types; {
   options = {
     device = mkOption { type = str; };
+    deviceSecrets = mkOption { type = path; };
     deviceSpecific = {
       # most of it i don't need...
       # isLaptop = mkOption {

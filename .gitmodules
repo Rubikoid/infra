@@ -1,0 +1,3 @@
+[submodule "nix/secrets"]
+	path = nix/secrets
+	url = git@github.com:Rubikoid/infra-secrets.git

@@ -1,10 +1,10 @@
 HOST ?= $(shell hostname)
 
-.PHONY: system deploy clean
+.PHONY: system deploy short-clean clean
 .DEFAULT: system
 
 system:
-	sudo nixos-rebuild switch --flake ~/infra/nix#$(HOST) -v $(args)
+	sudo nixos-rebuild switch --flake ~/infra/nix?submodules=1#$(HOST) -v $(args)
 
 deploy:
 	rsync \
@@ -14,6 +14,9 @@ deploy:
 		--exclude 'flake.lock' $(args) \
 		. \
 		$(target):~/infra
+
+short-clean:
+	sudo nix-collect-garbage -d
 
 clean:
 	sudo nix-collect-garbage -d

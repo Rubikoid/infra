@@ -15,7 +15,7 @@ rec {
         hash = "sha256-7MXdgp053kjuFPjgRClj0NIjiRl4HXnzMqAaqh3x2hU=";
       };
     in
-    final.syncthing.override rec {
+    prev.syncthing.override rec {
       buildGoModule = args: final.buildGo118Module (args // {
         inherit src version;
         vendorHash = "sha256-q63iaRxJRvPY0Np20O6JmdMEjSg/kxRneBfs8fRTwXk=";

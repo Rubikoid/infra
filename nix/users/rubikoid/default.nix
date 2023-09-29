@@ -75,9 +75,9 @@ in
       # extraConfig = "display :0";
     };
 
-    # syncthing = {
-    #   enable = true;
-    #   extraOptions = [ ];
-    # };
+    syncthing = {
+      enable = true;
+      extraOptions = [ ];
+    };
   };
 }

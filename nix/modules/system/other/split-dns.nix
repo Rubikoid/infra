@@ -15,6 +15,12 @@
       ];
       server = {
         interface = [ "127.0.0.1" ];
+        module-config = "iterator";
+        # trust-anchor-file = "";
+        # auto-trust-anchor-file = "";
+        # trust-anchor = "";
+        # trusted-keys-file = "";
+      };
 
       remote-control.control-enable = true;
     };

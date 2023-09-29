@@ -1,6 +1,8 @@
-{ pkgs, lib, config, ... }:
+{ inputs, pkgs, lib, config, ... }:
 
 {
+  imports = [ inputs.sops-nix.homeManagerModule ];
+
   home = {
     username = config.user;
     homeDirectory = "/home/${config.user}";

@@ -1,6 +1,14 @@
-{ pkgs, config, ... }:
+{ inputs, pkgs, config, ... }:
 
 {
+  imports = [ inputs.sops-nix.nixosModules.default ];
+
+  nix = {
+    # idk wtf is it, but sounds good;
+    optimise.automatic = true;
+
+  };
+
   # must have packages
   environment.systemPackages = with pkgs; [
     vim

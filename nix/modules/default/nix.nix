@@ -1,7 +1,8 @@
+{ pkgs, ... }:
+
 {
   nix = {
-    # idk wtf is it, but sounds good;
-    optimise.automatic = true;
+    package = pkgs.nix;
 
     # nix command, flakes
     settings.experimental-features = [ "nix-command" "flakes" ];

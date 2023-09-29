@@ -15,12 +15,12 @@
       ];
       server = {
         interface = [ "127.0.0.1" ];
-        module-config = "iterator";
-        # trust-anchor-file = "";
-        # auto-trust-anchor-file = "";
-        # trust-anchor = "";
-        # trusted-keys-file = "";
-      };
+      forward-zone = [
+        {
+          name = ".";
+          forward-addr = "1.1.1.1";
+        }
+      ];
 
       remote-control.control-enable = true;
     };

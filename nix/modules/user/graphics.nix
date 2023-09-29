@@ -70,8 +70,8 @@
 
     extraConfig = builtins.readFile ./graphics/hyprland.conf;
 
-    plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
-    ];
+    # plugins = [
+    #   inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
+    # ];
   };
 }

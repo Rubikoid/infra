@@ -1,8 +1,59 @@
-{ inputs, lib, ... }:
+{ inputs, pkgs, lib, ... }:
 
 {
-  imports = with inputs.self.nixosModules; with inputs.self.nixosProfiles; [
+  imports = with inputs.self.systemModules; [
     ./hardware-configuration.nix
+
+    graphics
+    locale
+    wireless
+    zsh
+
+    # ca
+    bk252
+    rubi
+
+    # security
+    openssh
+    ssh-agent
+    tpm
+
+    # users
+    rubikoid
+
+    # other
+    ios
+    split-dns
+    thinkfan
+  ];
+
+  # extra boot
+  boot = {
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = false;
+
+    initrd.kernelModules = [ ];
+    binfmt.emulatedSystems = [ "aarch64-linux" ]; # need to add this to build images for rpi
+
+    # kernelPackages = pkgs.linuxPackages_latest;
+    # loader.efi.efiSysMountPoint = "/boot/efi";
+
+    supportedFilesystems = [ "ntfs" ];
+  };
+
+  # TODO: you knew
+  environment.systemPackages = with pkgs; [
+    vim-full
+    wget
+    git
+    curl
+    tmux
+    gcc
+    zsh
+    htop
+    ncdu
+    neofetch
+    fzf
   ];
 
   networking = {
@@ -10,20 +61,10 @@
       allowedTCPPorts = [
         22000
       ];
-      # allowedUDPPortRanges = [
-      #   { from = 4000; to = 4007; }
-      #   { from = 8000; to = 8010; }
-      # ];
     };
     wireless = {
       enable = true; # Enables wireless support via wpa_supplicant.
       userControlled.enable = true;
-      networks = {
-        "@home_uuid@" = { psk = "@home_psk@"; };
-        "@bk252_uuid@" = { psk = "@bk252_psk@"; };
-        "@iphone_uuid@" = { psk = "@iphone_psk@"; };
-        "@pt_uuid@" = { psk = "@pt_psk@"; };
-      };
     };
   };
 

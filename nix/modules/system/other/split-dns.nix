@@ -15,6 +15,8 @@
       ];
       server = {
         interface = [ "127.0.0.1" ];
+      };
+
       forward-zone = [
         {
           name = ".";

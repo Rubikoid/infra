@@ -15,7 +15,7 @@
 
     # home-manager upstream
     home-manager = {
-      # url = github:nix-community/home-manager/release-22.11;
+      # url = github:nix-community/home-manager/release-23.05;
       url = github:nix-community/home-manager;
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -148,9 +148,13 @@
               modules = __attrValues self.defaultModules ++ [
                 (import ./modules/base-user.nix)
                 (import (./users + "/${name}"))
+                # {
+                #   nixpkgs.overlays = [ self.overlay ];
+                # }
                 { user = name; }
                 { userSecrets = ./secrets + "/${name}/"; }
               ];
+              extraSpecialArgs = { inherit inputs; };
             };
         in
         genAttrs users mkUser;

@@ -2,15 +2,20 @@
 
 {
   imports = [
-    hyprland.nixosModules.default
     inputs.hyprland.homeManagerModules.default
   ];
 
-  home.packages = with pkgs; [
-    anyrun # runner
-    avizo # notify / light contol...
-    swaylock-effects # i don't remember
-  ];
+  home.packages = (
+    with pkgs; [
+      inputs.anyrun.packages.${pkgs.system}.anyrun
+      avizo # notify / light contol...
+      swaylock-effects # i don't remember
+    ]
+  );
+
+  # [
+  #   
+  # ] ++ (
 
   programs.waybar = {
     enable = true;
@@ -53,27 +58,20 @@
   wayland.windowManager.hyprland = {
     # Enable hyprland
     enable = true;
-    extraConfig = builtins.readFile ./graphics/hyprland.conf;
-  };
-
-  programs.hyprland = {
-    # Enable hyprland
-    enable = true;
 
     # enable xwayland, but without hidpi
-    xwayland = {
-      enable = true;
-      hidpi = false;
-    };
+    xwayland.enable = true;
 
     # patching wlroots for better Nvidia support (don't need on intel only)
-    nvidiaPatches = false;
+    enableNvidiaPatches = false;
 
     # systemd, hyprland, nuff said
     systemdIntegration = true;
 
+    extraConfig = builtins.readFile ./graphics/hyprland.conf;
+
     plugins = [
-      inputs.hyprland-plugins.packages.${system}.hyprbars
+      inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
     ];
   };
 }

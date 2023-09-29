@@ -15,3 +15,8 @@
       ];
       server = {
         interface = [ "127.0.0.1" ];
+
+      remote-control.control-enable = true;
+    };
+  };
+}

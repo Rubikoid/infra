@@ -7,9 +7,11 @@ FLAKE_PATH = ~/infra/nix?submodules=1
 .DEFAULT: system
 
 system:
+	echo "[+] Building system"
 	sudo nixos-rebuild switch --flake $(FLAKE_PATH)#$(HOST) -v $(args)
 
 user:
+	echo "[+] Building user"
 	home-manager switch --flake $(FLAKE_PATH)#$(USER) -L $(args)
 
 deploy:

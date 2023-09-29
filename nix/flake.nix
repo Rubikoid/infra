@@ -37,7 +37,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, ... } @ inputs:
     let
       # idk magic from @balsoft flake.nix...
       # some function for <dir: path>
@@ -84,7 +84,11 @@
           localSystem = { inherit system; };
           config = {
             permittedInsecurePackages = [ ];
-            allowUnfreePredicate = (pkg: builtins.elem pkg.pname [ ]);
+            # TODO: make it better
+            allowUnfreePredicate = (pkg: builtins.elem pkg.pname [
+              "code"
+              "obsidian"
+            ]);
           };
         };
     in
@@ -118,7 +122,7 @@
             nixosSystem {
               inherit system;
               modules = __attrValues self.defaultModules ++ [
-                # inputs.home-manager.nixosModules.home-manager
+                (import ./modules/base-system.nix)
                 (import (./hosts + "/${name}"))
                 { nixpkgs.pkgs = pkgs; }
                 { device = name; }
@@ -128,5 +132,27 @@
             };
         in
         genAttrs hosts mkHost;
+
+      homeConfigurations = with nixpkgs.lib;
+        let
+          # get hosts list from ./hosts directory
+          users = builtins.attrNames (builtins.readDir ./users);
+
+          mkUser = name:
+            let
+              system = "x86_64-linux"; # TODO: make this properly
+              pkgs = pkgsFor system;
+            in
+            home-manager.lib.homeManagerConfiguration {
+              pkgs = pkgs;
+              modules = __attrValues self.defaultModules ++ [
+                (import ./modules/base-user.nix)
+                (import (./users + "/${name}"))
+                { user = name; }
+                { userSecrets = ./secrets + "/${name}/"; }
+              ];
+            };
+        in
+        genAttrs users mkUser;
     };
 }

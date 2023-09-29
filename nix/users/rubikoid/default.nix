@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ inputs, pkgs, lib, config, ... }:
 
 let
   toolPkgs = with pkgs; [
@@ -42,12 +42,12 @@ let
 
   otherPkgs = with pkgs; [
     lm_sensors # sensors....
-    syncthing # more synchronization for the sync god
+    # syncthing # more synchronization for the sync god
     helix # strange editor
   ];
 in
 {
-  imports = with inputs.self.homeProfiles; [
+  imports = with inputs.self.userModules; [
     alacritty
     graphics
   ];
@@ -56,7 +56,11 @@ in
     home-manager.enable = true;
   };
 
-  home.packages = toolPkgs ++ devPkgs ++ graphicsPkgs ++ otherPkgs;
+  home.packages = toolPkgs ++ devPkgs ++ graphicsPkgs ++ otherPkgs ++
+    (with pkgs;
+    [
+
+    ]);
 
   services = {
     gpg-agent = {
@@ -71,11 +75,9 @@ in
       # extraConfig = "display :0";
     };
 
-    syncthing = {
-      enable = true;
-      extraOptions = [ ];
-    };
+    # syncthing = {
+    #   enable = true;
+    #   extraOptions = [ ];
+    # };
   };
-
-
 }

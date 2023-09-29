@@ -1,10 +1,16 @@
 HOST ?= $(shell hostname)
+USER ?= $(shell whoami)
 
-.PHONY: system deploy short-clean clean
+FLAKE_PATH = ~/infra/nix?submodules=1
+
+.PHONY: system user deploy short-clean clean
 .DEFAULT: system
 
 system:
-	sudo nixos-rebuild switch --flake ~/infra/nix?submodules=1#$(HOST) -v $(args)
+	sudo nixos-rebuild switch --flake $(FLAKE_PATH)#$(HOST) -v $(args)
+
+user:
+	home-manager switch --flake $(FLAKE_PATH)#$(USER) -L $(args)
 
 deploy:
 	rsync \

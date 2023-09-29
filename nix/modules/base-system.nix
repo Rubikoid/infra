@@ -7,4 +7,11 @@
     git
     gnumake
   ];
+
+  networking = {
+    hostName = config.device;
+    firewall = {
+      enable = true;
+    };
+  };
 }

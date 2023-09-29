@@ -1,10 +1,15 @@
 # stolen from https://github.com/balsoft/nixos-config/blob/master/modules/devices.nix
 { pkgs, lib, config, ... }:
+
 with lib;
 with types; {
   options = {
     device = mkOption { type = str; };
     deviceSecrets = mkOption { type = path; };
+    
+    user = mkOption { type = str; };
+    userSecrets = mkOption { type = path; };
+    
     deviceSpecific = {
       # most of it i don't need...
       # isLaptop = mkOption {

@@ -28,8 +28,14 @@
 
 
     # GUI things. WM, plugins
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # and launcher
     anyrun = {
       url = "github:Kirottu/anyrun";
@@ -112,7 +118,7 @@
                 if
                   builtins.pathExists (./hosts + "/${name}/system")
                 then
-                  builtins.readFile (./hosts + "/${name}/system")
+                  removeSuffix builtins.readFile (./hosts + "/${name}/system")
                 else
                   "x86_64-linux";
 

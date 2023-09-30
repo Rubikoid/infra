@@ -9,4 +9,5 @@
     };
   };
 
+  sops.secrets.ssh.rubikoid.main = { };
 }

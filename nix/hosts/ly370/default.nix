@@ -10,8 +10,8 @@
     zsh
 
     # ca
-    bk252
-    rubi
+    ca_bk252
+    ca_rubikoid
 
     # security
     openssh

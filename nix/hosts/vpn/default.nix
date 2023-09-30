@@ -4,17 +4,19 @@
   imports = with inputs.self.systemModules; [
     ./hardware-configuration.nix
     ./wg.nix
-    yggdrasil
     compact
+    yggdrasil
+
+    # ca
+    ca_rubikoid
+
+    # security
+    openssh
+    openssh-root-key
   ];
 
   boot.tmp.cleanOnBoot = true;
   zramSwap.enable = false;
-
-  services.openssh.enable = true;
-  users.users.root.openssh.authorizedKeys.keys = [
-    ''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOXNeouqZX2g3lYGgI+R9kGOBGPhV+cOvXOHPxKRygKl rubikoid@rubikoid.ru''
-  ];
 
   services.yggdrasil = {
     openMulticastPort = false;

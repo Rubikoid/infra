@@ -9,5 +9,5 @@
     };
   };
 
-  sops.secrets.ssh.rubikoid.main = { };
+  sops.secrets."ssh/rubikoid/main" = { };
 }

@@ -164,5 +164,7 @@
             };
         in
         genAttrs users mkUser;
+
+      lib = import ./lib.nix nixpkgs.lib;
     };
 }

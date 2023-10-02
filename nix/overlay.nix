@@ -5,6 +5,8 @@ let
   inherit (final) system lib;
 in
 rec {
+  my-lib = import ./lib.nix final lib;
+
   syncthing =
     let
       version = "1.23.0-free";
@@ -21,6 +23,17 @@ rec {
         vendorHash = "sha256-q63iaRxJRvPY0Np20O6JmdMEjSg/kxRneBfs8fRTwXk=";
       });
     };
+
+  # step-ca =
+  #   let
+  #   in prev.step-ca.overrideAttrs (_: rec {
+  #     options.services.step-ca.settingsFile = lib.mkOption {
+  #       type = lib.types.?;
+  #       description = lib.mdDoc ''
+  #       path to config file
+  #       '';
+  #     };
+  #   });
 
   # ohMyZsh =
   #   final.ohMyZsh.override {

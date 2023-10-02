@@ -6,7 +6,7 @@ keys:
   - &dedic age1hdl2xpvs6utk288xkt59jprwh3ppxvl54kdr95lmcmdhmdx8yqfss0ssw2
 
 creation_rules:
-  - path_regex: nix/secrets/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh)$
+  - path_regex: nix/secrets/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
@@ -15,27 +15,41 @@ creation_rules:
           - *vpn
           - *dedic
 
-  - path_regex: nix/secrets/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh)$
+  - path_regex: nix/secrets/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *vpn
 
-  - path_regex: nix/secrets/ly370/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh)$
+  - path_regex: nix/secrets/ly370/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *ly370
 
-  - path_regex: nix/secrets/rpi4/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh)$
+  - path_regex: nix/secrets/rpi4/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
           - *rubikoid_wsl
 
-  - path_regex: nix/secrets/dedic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh)$
+  - path_regex: nix/secrets/dedic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *dedic
+
+  - path_regex: nix/secrets/dedic/step/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *dedic
+
+  - path_regex: nix/secrets/dedic/step/(certs|keys)/[^/]+\.(|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370

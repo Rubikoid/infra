@@ -22,7 +22,7 @@
 
     # sops
     sops-nix = {
-      url = "github:Mic92/sops-nix";
+      url = "github:Mic92/sops-nix/2f375ed8702b0d8ee2430885059d5e7975e38f78";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -118,7 +118,7 @@
                 if
                   builtins.pathExists (./hosts + "/${name}/system")
                 then
-                  removeSuffix builtins.readFile (./hosts + "/${name}/system")
+                  removeSuffix "\n" (builtins.readFile (./hosts + "/${name}/system"))
                 else
                   "x86_64-linux";
 

@@ -1,8 +1,8 @@
 { config, ... }:
 
 {
-  sops.secrets.ca.bk252 = { };
+  sops.secrets."ca/bk252" = { };
   security.pki.certificateFiles = [
-    config.sops.secrets.ca.bk252.path
+    config.sops.secrets."ca/bk252".path
   ];
 }

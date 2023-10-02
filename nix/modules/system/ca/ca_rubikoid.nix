@@ -1,8 +1,8 @@
 { config, ... }:
 
 {
-  sops.secrets.ca.rubikoid = { };
+  sops.secrets."ca/rubikoid" = { };
   security.pki.certificateFiles = [
-    config.sops.secrets.ca.rubikoid.path
+    config.sops.secrets."ca/rubikoid".path
   ];
 }

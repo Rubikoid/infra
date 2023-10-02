@@ -7,7 +7,7 @@
 
   home.packages = (
     with pkgs; [
-      inputs.anyrun.packages.${pkgs.system}.anyrun
+      inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins
       avizo # notify / light contol...
       swaylock-effects # i don't remember
     ]

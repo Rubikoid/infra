@@ -6,7 +6,9 @@
 
     compact
     locale
+    yggdrasil
     zsh
+    zsh-config
 
     # ca
     ca_rubikoid
@@ -14,9 +16,34 @@
     # security
     openssh
     openssh-root-key
+
+    # services
+    step-ca
+
+    # other
+    in-proxmox-lxc
+
+    # local
+    ./docker.nix
   ];
 
+  proxmoxLXC = {
+    manageNetwork = false;
+    privileged = false;
+    manageHostName = true;
+  };
 
+  services.yggdrasil = {
+    openMulticastPort = false;
+
+    settings = {
+      MulticastInterfaces = lib.mkForce [ ];
+    };
+  };
+
+  environment.systemPackages = with pkgs; [
+    htop
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

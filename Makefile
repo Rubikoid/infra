@@ -3,12 +3,19 @@ USER ?= $(shell whoami)
 
 FLAKE_PATH = ~/infra/nix?submodules=1
 
-.PHONY: system user deploy short-clean clean
+.PHONY: system system-inspect system-inspect-deriv user deploy short-clean clean
 .DEFAULT: system
 
 system:
 	echo "[+] Building system"
 	sudo nixos-rebuild switch --flake $(FLAKE_PATH)#$(HOST) -v $(args)
+
+system-inspect:
+	nix run github:utdemir/nix-tree -- '/var/run/current-system'
+
+system-inspect-deriv:
+	nix run github:utdemir/nix-tree -- --derivation '/var/run/current-system'
+
 
 user:
 	echo "[+] Building user"
@@ -19,7 +26,7 @@ deploy:
 		-rlptD \
 		--delete \
 		-vzhP \
-		--exclude 'flake.lock' $(args) \
+		$(args) \
 		. \
 		$(target):~/infra
 

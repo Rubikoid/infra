@@ -9,6 +9,7 @@ let
     nix-index # nix-lookup for binary
     ldns # dns help
     tcpdump # oh yes sniff everything
+    sops # security things
   ];
 
   pythonPackages = ps: with ps; [
@@ -80,4 +81,6 @@ in
       extraOptions = [ ];
     };
   };
+
+  sops.age.keyFile = "/home/rubikoid/.config/sops/age/keys.txt";
 }

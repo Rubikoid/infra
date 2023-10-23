@@ -7,6 +7,7 @@
     graphics
     locale
     wireless
+    yggdrasil
     zsh
 
     # ca

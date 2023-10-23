@@ -4,6 +4,7 @@ keys:
   - &ly370 age1mdq3cljs95r77lxsm8kafup38cd40wvgvgjwpls25w8plynmyaaqdznv5m
   - &vpn age1tmgzpzap852hze5wyvk5fvg9d6jejpq7rx99aav2apjyuh9c9vrsexkl39
   - &dedic age1hdl2xpvs6utk288xkt59jprwh3ppxvl54kdr95lmcmdhmdx8yqfss0ssw2
+  - &kubic age1klfs6z8qk3pqhjv02mnu3pzx993u8cpj4c2r4lsqtfu6l56a6essjuuv4z
 
 creation_rules:
   - path_regex: nix/secrets/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -41,6 +42,13 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *dedic
+
+  - path_regex: nix/secrets/kubic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *kubic
 
   - path_regex: nix/secrets/dedic/step/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:

@@ -15,6 +15,7 @@ creation_rules:
           - *ly370
           - *vpn
           - *dedic
+          - *kubic
 
   - path_regex: nix/secrets/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:

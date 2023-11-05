@@ -34,6 +34,20 @@ rec {
         vendorHash = null;
       });
     };
+
+  linuxPackages = prev.linuxPackages // {
+    it87 = prev.linuxPackages.it87.overrideAttrs (old: {
+      version = "unstable-2023-07-22";
+
+      src = prev.fetchFromGitHub {
+        owner = "frankcrawford";
+        repo = "it87";
+        rev = "52ff3605f45abb0ebb226f271f9c4262e22daf92";
+        sha256 = "sha256-0VIa0Of+clACX/148bFdzmrbgYmGoZQj0DuWBcj2JvE=";
+      };
+    });
+  };
+
   # step-ca =
   #   let
   #   in prev.step-ca.overrideAttrs (_: rec {

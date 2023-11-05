@@ -24,6 +24,16 @@ rec {
       });
     };
 
+  grafana-loki =
+    let
+      version = "2.8.4";
+    in
+    prev.grafana-loki.override rec {
+      buildGoModule = args: final.buildGoModule (args // {
+        inherit version;
+        vendorHash = null;
+      });
+    };
   # step-ca =
   #   let
   #   in prev.step-ca.overrideAttrs (_: rec {

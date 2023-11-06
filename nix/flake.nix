@@ -12,6 +12,8 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs-old.url = "nixpkgs/23.05";
+    nixpkgs-pdns-admin.url = "github:Flakebi/nixpkgs/powerdns-admin";
 
     # home-manager upstream
     home-manager = {
@@ -24,6 +26,7 @@
     sops-nix = {
       url = "github:Mic92/sops-nix/2f375ed8702b0d8ee2430885059d5e7975e38f78";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs"; # this is a hack in some way, but...
     };
 
 
@@ -34,7 +37,7 @@
     };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.hyprland.follows = "hyprland";
     };
     # and launcher
     anyrun = {

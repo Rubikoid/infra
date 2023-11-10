@@ -2,10 +2,14 @@ inputs: final: prev:
 let
   old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
   pdns-admin-src = import inputs.nixpkgs-pdns-admin ({ localSystem = { inherit (final) system; }; });
+  fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
+
   inherit (final) system lib;
 in
 rec {
   my-lib = import ./lib.nix final lib;
+
+  fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
 
   syncthing =
     let
@@ -47,6 +51,28 @@ rec {
       };
     });
   };
+
+  mastodon-glitch =
+    let
+      version = "59893a4eabb7edc836a6fe87e0fcad62e56d66ed";
+    in
+    prev.mastodon.override {
+      pname = "mastodon-glitch";
+      fetchYarnDeps = fixedFetchYarnDeps;
+      gemset = ./fixes + "/gemset.nix";
+
+      srcOverride = final.applyPatches {
+        inherit version;
+        src = final.fetchFromGitHub {
+          owner = "glitch-soc";
+          repo = "mastodon";
+          rev = version;
+          hash = "sha256-sP+iBTHak06mtORpukg8u9GUsGjOZTqoimCFWqzslWc=";
+        };
+        patches = [ ];
+        yarnHash = "sha256-P7KswzsCusyiS4MxUFnC1HYMTQ6fLpIwd97AglCukIk=";
+      };
+    };
 
   # yggdrasil =
   #   let

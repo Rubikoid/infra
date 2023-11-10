@@ -74,6 +74,24 @@ rec {
       };
     };
 
+  yggdrasil =
+    let
+      version = "0.5.2";
+      src = final.fetchFromGitHub {
+        owner = "yggdrasil-network";
+        repo = "yggdrasil-go";
+        rev = "v${version}";
+        hash = "sha256-+E8CJs6m6iyMQNIqBbKLg8ghZR0FIuY5D1iDoUlaDyo=";
+      };
+    in
+    prev.yggdrasil.override rec {
+      buildGoModule = args: final.buildGoModule (args // {
+        inherit src version;
+        vendorHash = "sha256-FXlIrsl3fbWpEpwrY5moaJI0H0yXtrTQhHFu+ktWRVM=";
+      });
+    };
+
+  powerdns-admin = pdns-admin-src.powerdns-admin;
   # yggdrasil =
   #   let
   #     version = "0.4.7";
@@ -92,8 +110,7 @@ rec {
   #   };
 
   # mastodon = old.mastodon;
-  yggdrasil = old.yggdrasil;
-  powerdns-admin = pdns-admin-src.powerdns-admin;
+  # yggdrasil = old.yggdrasil;
 
   # powerdns-admin = prev.powerdns-admin.override {
   #   # override python

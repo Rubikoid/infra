@@ -115,7 +115,7 @@
             "lab.rubikoid.ru" = "127.0.0.1:${toString cfg.dns-server.port}";
             "${secrets.dns.private}" = "127.0.0.1:${toString cfg.dns-server.port}";
 
-            "bk252" = "[${secrets.yggdrasil.nodes.omega}]:5300;[${secrets.yggdrasil.nodes.delta}]:5300";
+            "bk252" = "[${secrets.yggdrasil.nodes.kks.omega}]:5300;[${secrets.yggdrasil.nodes.kks.delta}]:5300";
           };
 
           # api = {

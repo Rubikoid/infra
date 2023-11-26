@@ -29,7 +29,6 @@
       inputs.nixpkgs-stable.follows = "nixpkgs"; # this is a hack in some way, but...
     };
 
-
     # GUI things. WM, plugins
     hyprland = {
       url = "github:hyprwm/Hyprland";
@@ -44,9 +43,20 @@
       url = "github:Kirottu/anyrun";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    ygg-map = {
+      url = "github:rubikoid/yggdrasil-map-ng/380b5446fb79ab3a1e06b1b798712915ecf0af6b";
+      # url = "git+file:///root/ygg-map";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    secrets = {
+      url = "./secrets";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, secrets, ... } @ inputs:
     let
       # idk magic from @balsoft flake.nix...
       # some function for <dir: path>
@@ -114,14 +124,14 @@
           hosts = builtins.attrNames (builtins.readDir ./hosts);
 
           # define function for defining each host
-          mkHost = name:
+          mkHost = hostname:
             let
-              # system arch readen from <host_name>/system OR x86_64
+              # system arch readen from <hostname>/system OR x86_64
               system =
                 if
-                  builtins.pathExists (./hosts + "/${name}/system")
+                  builtins.pathExists (./hosts + "/${hostname}/system")
                 then
-                  removeSuffix "\n" (builtins.readFile (./hosts + "/${name}/system"))
+                  removeSuffix "\n" (builtins.readFile (./hosts + "/${hostname}/system"))
                 else
                   "x86_64-linux";
 
@@ -132,12 +142,15 @@
               inherit system;
               modules = __attrValues self.defaultModules ++ [
                 (import ./modules/base-system.nix)
-                (import (./hosts + "/${name}"))
+                (import (./hosts + "/${hostname}"))
                 { nixpkgs.pkgs = pkgs; }
-                { device = name; }
-                { deviceSecrets = ./secrets + "/${name}/"; }
+                { device = hostname; }
+                { deviceSecrets = ./secrets + "/${hostname}/"; }
               ];
-              specialArgs = { inherit inputs; };
+              specialArgs = {
+                inherit inputs;
+                secrets = secrets.secrets hostname;
+              };
             };
         in
         genAttrs hosts mkHost;

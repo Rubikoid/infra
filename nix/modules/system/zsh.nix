@@ -7,6 +7,7 @@
   programs.zsh = {
     enable = true;
 
+    # TODO: make this properly
     # inject omz path
     interactiveShellInit = ''
       # zsh.nix appending

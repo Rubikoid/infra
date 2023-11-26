@@ -1,8 +1,8 @@
-{ config, ... }:
+{ secrets, ... }:
 
 {
-  sops.secrets."ca/rubikoid" = { };
-  security.pki.certificateFiles = [
-    config.sops.secrets."ca/rubikoid".path
-  ];
+  sops.secrets."ca/rubikoid" = {
+    mode = "444";
+  };
+  security.pki.certificates = [ secrets.ca.rubikoid ];
 }

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, secrets, pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -14,9 +14,7 @@
       # sudo, docker...
       extraGroups = [ "wheel" "docker" "tss" ];
 
-      openssh.authorizedKeys.keyFiles = [
-        config.sops.secrets.ssh.rubikoid.main.path
-      ];
+      openssh.authorizedKeys.keys = [ secrets.ssh.rubikoid.main ];
     };
   };
 }

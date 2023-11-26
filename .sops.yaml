@@ -2,6 +2,7 @@ keys:
   - &rubikoid_wsl age1mw00fzy3tkap89dfn6y2znfllunqj63cn6yxjzepn5a09yv0gqas4uj6vf
   - &rubikoid_ly370 age15009xgu7ecm7nqsyesaftwlk4k9ct0pt3ah42nh2p3q3drp8j5ksakz07l
   - &rubikoid_mbp14 age13exgcpuz3payg26n6hpn4etnaxg3eeht4maeggdppt6yu2lwxcys5rewgr
+  - &wsl age1lvekna9v84cr0vtyrpnfluaf59mra656nr8kwmqragdzszr6ea2sszcn2t
   - &ly370 age1mdq3cljs95r77lxsm8kafup38cd40wvgvgjwpls25w8plynmyaaqdznv5m
   - &vpn age1tmgzpzap852hze5wyvk5fvg9d6jejpq7rx99aav2apjyuh9c9vrsexkl39
   - &dedic age1hdl2xpvs6utk288xkt59jprwh3ppxvl54kdr95lmcmdhmdx8yqfss0ssw2
@@ -14,6 +15,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *wsl
           - *ly370
           - *vpn
           - *dedic

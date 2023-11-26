@@ -1,8 +1,4 @@
 { config, secrets, lib, ... }:
-
-let
-  scr = secrets.yggdrasil;
-in
 {
   options.rubikoid.services.yggdrasil =
     let
@@ -12,6 +8,11 @@ in
       startMulticast = lib.mkOption {
         type = types.bool;
         default = true;
+      };
+
+      openPublic = lib.mkOption {
+        type = types.bool;
+        default = false;
       };
     };
 
@@ -25,6 +26,8 @@ in
         format = "binary";
       };
 
+      networking.firewall.allowedTCPPorts = lib.mkIf cfg.openPublic [ secrets.yggdrasil.publicPort ];
+
       services.yggdrasil = {
         enable = true;
         openMulticastPort = cfg.startMulticast;
@@ -35,6 +38,11 @@ in
         settings = lib.recursiveUpdate
           {
             IfName = "ygg";
+
+            Listen =
+              if cfg.openPublic
+              then [ "tls://0.0.0.0:${secrets.yggdrasil.publicPort}?password=${secrets.yggdrasil.mainPassword}" ]
+              else [ ];
 
             MulticastInterfaces =
               if cfg.startMulticast
@@ -48,10 +56,10 @@ in
                     Priority = 0;
                     Password = pw;
                   })
-                  scr.passwords
+                  secrets.yggdrasil.passwords
               else [ ];
           }
-          scr.settings;
+          secrets.yggdrasil.settings;
       };
     };
 }

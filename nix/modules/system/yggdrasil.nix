@@ -1,5 +1,8 @@
-{ config, lib, ... }:
+{ config, secrets, lib, ... }:
 
+let
+  scr = secrets.yggdrasil;
+in
 {
   sops.secrets."yggdrasil.hjson" = {
     sopsFile = config.deviceSecrets + "/yggdrasil.hjson";
@@ -16,15 +19,16 @@
     settings = {
       IfName = "ygg";
 
-      MulticastInterfaces = [
-        {
+      MulticastInterfaces = map
+        (pw: {
           Regex = ".*";
           Beacon = true;
           Listen = true;
           Port = 0;
           Priority = 0;
-        }
-      ];
+          Password = pw;
+        })
+        scr.passwords;
     };
   };
 }

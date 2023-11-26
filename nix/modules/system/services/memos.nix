@@ -1,22 +1,60 @@
+{ lib, config, secrets, pkgs, ... }:
 {
-  virtualisation.oci-containers.containers =
+  options.rubikoid.services.memos =
     let
-      memos_version = "0.16.1";
-      memos_data_folder = "/backup-drive/data/memos";
-      memos_port = "5230";
-      memos_host = "127.0.0.1";
+      types = lib.types;
     in
     {
-      memos = {
-        image = "ghcr.io/usememos/memos:${memos_version}";
+      version = lib.mkOption {
+        type = types.str;
+        default = "0.17.1";
+      };
 
-        ports = [
-          "${memos_host}:${memos_port}:5230"
-        ];
+      host = lib.mkOption {
+        type = types.str;
+        default = "127.0.0.1";
+      };
 
-        volumes = [
-          "${memos_data_folder}:/var/opt/memos"
-        ];
+      port = lib.mkOption {
+        type = types.port;
+        default = 5230;
+      };
+
+      dataFolder = lib.mkOption {
+        type = types.str;
+        default = "/backup-drive/data/memos";
+      };
+
+      caddyName = lib.mkOption {
+        type = types.str;
+        default = "memos";
+      };
+    };
+
+  config =
+    let
+      cfg = config.rubikoid.services.memos;
+    in
+    {
+      virtualisation.oci-containers.containers = {
+        memos = {
+          image = "ghcr.io/usememos/memos:${cfg.version}";
+
+          ports = [
+            "${cfg.host}:${toString cfg.port}:5230"
+          ];
+
+          volumes = [
+            "${cfg.dataFolder}:/var/opt/memos"
+          ];
+        };
+      };
+
+      services.caddy.virtualHosts."${cfg.caddyName}.${secrets.dns.private}" = {
+        extraConfig = ''
+          reverse_proxy http://127.0.0.1:${toString cfg.port}
+          import stepssl_acme
+        '';
       };
     };
 }

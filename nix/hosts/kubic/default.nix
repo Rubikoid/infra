@@ -1,4 +1,4 @@
-{ pkgs, config, inputs, lib, ... }:
+{ pkgs, config, secrets, inputs, lib, ... }:
 
 {
   imports = with inputs.self.systemModules; [
@@ -16,6 +16,24 @@
     openssh
     openssh-root-key
 
+    # fs
+    ntfs
+    zfs
+
+    # hardware
+    gigabyte-fans
+
+    # services
+    caddy
+    memos
+    powerdns
+    minio
+    grafana
+    grafana-agent
+    akkoma
+    mastodon
+    ygg-map
+    actual
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -26,21 +44,31 @@
     };
 
     initrd.kernelModules = [ ];
-    # binfmt.emulatedSystems = [ "aarch64-linux" ]; # need to add this to build images for rpi
-
-    supportedFilesystems = [ "ntfs" ];
   };
 
+  boot.zfs.extraPools = [
+    "backup-drive"
+  ];
+
+  networking.hostId = secrets.zfsHostId; # need by zfs
+
   environment.systemPackages = with pkgs; [
+    nix-output-monitor
+    vim-full
     tmux
     iotop
     htop
-    tcpdump
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
-    git
-    gnumake
     curl
+    tcpdump
+    lm_sensors
+    smartmontools
+    pciutils # lspci
+    usbutils # lsusb
+    nix-index # nix-lookup for binary
+    ldns # dns help
+    moreutils
+    jq
   ];
 
   # This value determines the NixOS release from which the default

@@ -1,9 +1,9 @@
-{ pkgs, config, inputs, lib, ... }:
+{ pkgs, config, inputs, secrets, lib, ... }:
 
 {
   imports = with inputs.self.systemModules; [
     ./hardware-configuration.nix
-    ./wg.nix
+
     compact
     yggdrasil
 
@@ -13,21 +13,26 @@
     # security
     openssh
     openssh-root-key
+
+    # local
+    ./wg.nix
   ];
 
-  boot.tmp.cleanOnBoot = true;
+  boot = {
+    tmp.cleanOnBoot = true;
+    kernel.sysctl = {
+      "net.ipv4.ip_forward" = true;
+    };
+  };
   zramSwap.enable = false;
 
-  services.yggdrasil = {
-    openMulticastPort = false;
-
-    settings = {
-      MulticastInterfaces = lib.mkForce [ ];
-    };
+  rubikoid.services.yggdrasil = {
+    startMulticast = false;
+    openPublic = true;
   };
 
   sops.secrets.rubi_pw = {
-    sopsFile = config.deviceSecrets + "/secrets.yaml";
+    sopsFile = secrets.deviceSecrets + "/secrets.yaml";
     neededForUsers = true;
   };
 
@@ -41,9 +46,11 @@
     hashedPasswordFile = config.sops.secrets.rubi_pw.path;
   };
 
-  networking.firewall.interfaces = {
-    home.allowedTCPPorts = [ 1337 ];
-    ygg.allowedTCPPorts = [ 1337 ];
+  networking.firewall = {
+    interfaces = {
+      home.allowedTCPPorts = [ 1337 ];
+      ygg.allowedTCPPorts = [ 1337 ];
+    };
   };
 
   services.dante = {

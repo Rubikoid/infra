@@ -1,9 +1,9 @@
-{ config, ... }:
+{ config, secrets, ... }:
 
 {
   # stolen from https://www.reddit.com/r/NixOS/comments/zneyil/using_sopsnix_to_amange_wireless_secrets/j0h1vie/
   sops.secrets."wireless.env" = {
-    sopsFile = config.deviceSecrets + "/wireless.env";
+    sopsFile = secrets.deviceSecrets + "/wireless.env";
     format = "dotenv";
   };
 

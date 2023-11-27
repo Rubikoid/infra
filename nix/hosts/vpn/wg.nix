@@ -1,11 +1,11 @@
-{ pkgs, config, ... }:
+{ pkgs, secrets, config, ... }:
 
 let
   ipt = "${pkgs.iptables}/bin/iptables";
 in
 {
   sops.secrets."firewall_setup.sh" = {
-    sopsFile =config.deviceSecrets + "/firewall_setup.sh";
+    sopsFile = secrets.deviceSecrets + "/firewall_setup.sh";
     format = "binary";
   };
 
@@ -25,12 +25,12 @@ in
   };
 
   sops.secrets."wg_head.conf" = {
-    sopsFile = config.deviceSecrets + "/wg_head.conf";
+    sopsFile = secrets.deviceSecrets + "/wg_head.conf";
     format = "binary";
   };
 
   sops.secrets."wg_peers.conf" = {
-    sopsFile = config.deviceSecrets + "/wg_peers.conf";
+    sopsFile = secrets.deviceSecrets + "/wg_peers.conf";
     format = "binary";
   };
 

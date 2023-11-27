@@ -76,7 +76,7 @@ rec {
 
   yggdrasil =
     let
-      version = "0.5.2";
+      version = "0.5.3";
       src = final.fetchFromGitHub {
         owner = "yggdrasil-network";
         repo = "yggdrasil-go";
@@ -88,6 +88,14 @@ rec {
       buildGoModule = args: final.buildGoModule (args // {
         inherit src version;
         vendorHash = "sha256-FXlIrsl3fbWpEpwrY5moaJI0H0yXtrTQhHFu+ktWRVM=";
+
+        ldflags = [
+          "-X github.com/yggdrasil-network/yggdrasil-go/src/version.buildVersion=${version}"
+          "-X github.com/yggdrasil-network/yggdrasil-go/src/version.buildName=yggdrasil"
+          "-X github.com/yggdrasil-network/yggdrasil-go/src/config.defaultAdminListen=unix:///var/run/yggdrasil/yggdrasil.sock"
+          "-s"
+          "-w"
+        ];
       });
     };
 

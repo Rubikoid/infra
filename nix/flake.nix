@@ -51,7 +51,8 @@
     };
 
     secrets = {
-      url = "./secrets";
+      url = "path:../secrets";
+      # url = "git+file:./?dir=secrets";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -145,7 +146,7 @@
                 (import (./hosts + "/${hostname}"))
                 { nixpkgs.pkgs = pkgs; }
                 { device = hostname; }
-                { deviceSecrets = ./secrets + "/${hostname}/"; }
+                # { deviceSecrets = ./secrets + "/${hostname}/"; }
               ];
               specialArgs = {
                 inherit inputs;
@@ -174,7 +175,7 @@
                 #   nixpkgs.overlays = [ self.overlay ];
                 # }
                 { user = name; }
-                { userSecrets = ./secrets + "/${name}/"; }
+                # { userSecrets = ./secrets + "/${name}/"; }
               ];
               extraSpecialArgs = { inherit inputs; };
             };

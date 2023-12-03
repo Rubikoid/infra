@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, lib, ... }:
+{ inputs, config, secrets, pkgs, lib, ... }:
 
 let
   mkBinarySecrets = pkgs.my-lib.mkBinarySecrets;
@@ -16,13 +16,13 @@ in
   sops.secrets = (
     {
       "step_ca_pw" = {
-        sopsFile = config.deviceSecrets + "/secrets.yaml";
+        sopsFile = secrets.deviceSecrets + "/secrets.yaml";
       };
     }
     //
-    mkBinarySecrets (config.deviceSecrets + "/step/") secretsPermData [ "step.hjson" ]
+    mkBinarySecrets (secrets.deviceSecrets + "/step/") secretsPermData [ "step.hjson" ]
     //
-    mkBinarySecrets (config.deviceSecrets + "/step/") secretsPermData [
+    mkBinarySecrets (secrets.deviceSecrets + "/step/") secretsPermData [
       # certs
       "certs/intermediate_ca.crt"
       "certs/root_ca.crt"
@@ -65,6 +65,8 @@ in
   };
 
   systemd.services."step-ca" = {
+    # environment.STEPDEBUG = "1";
+
     serviceConfig = {
       ExecStart = lib.mkForce [
         "" # override upstream ;(((

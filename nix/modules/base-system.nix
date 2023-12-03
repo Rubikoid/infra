@@ -1,7 +1,7 @@
-{ inputs, pkgs, config, ... }:
+{ inputs, pkgs, config, secretsModule, ... }:
 
 {
-  imports = [ inputs.secrets.nixosModules.default ];
+  imports = [ secretsModule ];
 
   nix = {
     # idk wtf is it, but sounds good;

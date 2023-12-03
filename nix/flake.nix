@@ -49,15 +49,9 @@
       # url = "git+file:///root/ygg-map";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    secrets = {
-      url = "path:../secrets";
-      # url = "git+file:./?dir=secrets";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, home-manager, secrets, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, ... } @ inputs:
     let
       # idk magic from @balsoft flake.nix...
       # some function for <dir: path>
@@ -111,6 +105,8 @@
             ]);
           };
         };
+
+      secrets = import ../secrets inputs;
     in
     {
       defaultModules = builtins.listToAttrs (findModules ./modules/default);
@@ -150,7 +146,9 @@
               ];
               specialArgs = {
                 inherit inputs;
-                secrets = secrets.secrets hostname;
+
+                secretsModule = secrets.nixosModules.default;
+                secrets = secrets.secretsBuilder hostname;
               };
             };
         in

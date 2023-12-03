@@ -67,11 +67,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1701433070,
-        "narHash": "sha256-Gf9JStfENaUQ7YWFz3V7x/srIwr4nlnVteqaAxtwpgM=",
+        "lastModified": 1701609479,
+        "narHash": "sha256-mcEnMz7XB3K57ZX16VXoEkswljSNGXdMuUu5+g8a8R8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "4a8545f5e737a6338814a4676dc8e18c7f43fc57",
+        "rev": "e504e8d01f950776c3a3160ba38c5957a1b89e66",
         "type": "github"
       },
       "original": {
@@ -91,11 +91,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1701528705,
-        "narHash": "sha256-SJENLaYS4hIuvQMgupKlclGZ5Mz40OvUc2Vu8vFBSow=",
+        "lastModified": 1701641047,
+        "narHash": "sha256-z/AElzl79XHH8w9v9EI1ZmAmRd99ZMHKF2l7p+rf4rA=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "80b9b21f9f24b6e8db2fc6f7705cd124f436ffba",
+        "rev": "e496b0f250139b572307d048f3189aa6dde72f18",
         "type": "github"
       },
       "original": {
@@ -251,56 +251,11 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-old": "nixpkgs-old",
         "nixpkgs-pdns-admin": "nixpkgs-pdns-admin",
-        "secrets": "secrets",
-        "sops-nix": "sops-nix_2",
+        "sops-nix": "sops-nix",
         "ygg-map": "ygg-map"
       }
     },
-    "secrets": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "sops-nix": "sops-nix"
-      },
-      "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-KmPu4QXllEI+KiYviqrisPWifjieKR4pahw+Mb/ivoU=",
-        "path": "../secrets",
-        "type": "path"
-      },
-      "original": {
-        "path": "../secrets",
-        "type": "path"
-      }
-    },
     "sops-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "secrets",
-          "nixpkgs"
-        ],
-        "nixpkgs-stable": [
-          "secrets",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1695284550,
-        "narHash": "sha256-z9fz/wz9qo9XePEvdduf+sBNeoI9QG8NJKl5ssA8Xl4=",
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "2f375ed8702b0d8ee2430885059d5e7975e38f78",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "2f375ed8702b0d8ee2430885059d5e7975e38f78",
-        "type": "github"
-      }
-    },
-    "sops-nix_2": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"

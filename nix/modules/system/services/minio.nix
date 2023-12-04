@@ -16,6 +16,7 @@
           default = secrets.minio-keys.secret;
         };
       };
+
       access = {
         host = lib.mkOption {
           type = types.str;

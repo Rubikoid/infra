@@ -47,6 +47,7 @@
   };
 
   boot.zfs.extraPools = [
+    "data"
     "backup-drive"
   ];
 

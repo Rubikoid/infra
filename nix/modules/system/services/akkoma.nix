@@ -35,47 +35,49 @@
       services.akkoma = {
         enable = true;
 
-        # ":logger".":ex_syslogger" = {
-        #   level = ":debug";
-        # };
+        config = {
+          # ":logger".":ex_syslogger" = {
+          #   level = ":debug";
+          # };
 
-        ":pleroma" = {
-          ":instance" = {
-            name = "Rubikoid's akkoma";
-            email = "akkoma+admin@rubikoid.ru";
-            description = "Just small akkoma inst";
-            registration_open = false;
-            invites_enabled = true;
+          ":pleroma" = {
+            ":instance" = {
+              name = "Rubikoid's akkoma";
+              email = "akkoma+admin@rubikoid.ru";
+              description = "Just small akkoma inst";
+              registration_open = false;
+              invites_enabled = true;
 
-            federating = true;
+              federating = true;
 
-            allow_relay = true;
-            public = true;
-          };
-
-          "Pleroma.Web.Endpoint" = {
-            http = {
-              ip = cfg.host;
-              port = cfg.port;
+              allow_relay = true;
+              public = true;
             };
-            url.host = public_url;
+
+            "Pleroma.Web.Endpoint" = {
+              http = {
+                ip = cfg.host;
+                port = cfg.port;
+              };
+              url.host = public_url;
+            };
+
+            ":mrf".policies = map mkRaw [
+              "Pleroma.Web.ActivityPub.MRF.SimplePolicy"
+            ];
+
+            ":mrf_simple" = { };
           };
-
-          ":mrf".policies = map mkRaw [
-            "Pleroma.Web.ActivityPub.MRF.SimplePolicy"
-          ];
-
-          ":mrf_simple" = { };
         };
-
       };
+      
+      # reverse_proxy unix/${cfg.http.ip}
       services.caddy.virtualHosts.${private_url} = {
         extraConfig = ''
           encode gzip
       
           @forward-from-upstream header X-Forwarded-Host "${public_url}"
 
-          # reverse_proxy unix/${cfg.http.ip}
           reverse_proxy @forward-from-upstream http://127.0.0.1:${toString cfg.port} {
             header_up Host "${public_url}"
           }

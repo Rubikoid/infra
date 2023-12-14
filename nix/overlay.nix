@@ -4,7 +4,7 @@ let
   pdns-admin-src = import inputs.nixpkgs-pdns-admin ({ localSystem = { inherit (final) system; }; });
   fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
 
-  inherit (final) system lib;
+  inherit (final) system lib stdenv;
 in
 rec {
   my-lib = import ./lib.nix final lib;
@@ -100,6 +100,22 @@ rec {
     };
 
   powerdns-admin = pdns-admin-src.powerdns-admin;
+
+  vuetorrent = stdenv.mkDerivation rec {
+    pname = "vuetorrent";
+    version = "2.3.0";
+
+    src = final.fetchzip {
+      url = "https://github.com/WDaan/VueTorrent/releases/download/v${version}/vuetorrent.zip";
+      sha256 = "sha256-v39pEtMIyzW0Ih5NnF5wwd/R/BQUduFSP4UdjHDGCK0=";
+    };
+
+    buildPhase = "";
+    installPhase = ''
+      mkdir -p $out
+      mv public $out
+    '';
+  };
   # yggdrasil =
   #   let
   #     version = "0.4.7";

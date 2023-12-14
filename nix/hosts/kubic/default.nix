@@ -33,9 +33,10 @@
     mastodon
     ygg-map
     actual
+    ## garden
+    immich
     ## media
     arr
-    immich
     jellyfin
     ## monitoring
     grafana

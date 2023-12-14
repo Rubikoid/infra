@@ -41,7 +41,7 @@
 
             Listen =
               if cfg.openPublic
-              then [ "tls://0.0.0.0:${secrets.yggdrasil.publicPort}?password=${secrets.yggdrasil.mainPassword}" ]
+              then [ "tls://0.0.0.0:${toString secrets.yggdrasil.publicPort}?password=${secrets.yggdrasil.mainPassword}" ]
               else [ ];
 
             MulticastInterfaces =

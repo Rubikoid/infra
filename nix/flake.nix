@@ -26,7 +26,7 @@
     sops-nix = {
       url = "github:Mic92/sops-nix/2f375ed8702b0d8ee2430885059d5e7975e38f78";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs"; # this is a hack in some way, but...
+      inputs.nixpkgs-stable.follows = "nixpkgs-old";
     };
 
     # GUI things. WM, plugins
@@ -99,10 +99,16 @@
           config = {
             permittedInsecurePackages = [ ];
             # TODO: make it better
-            allowUnfreePredicate = (pkg: builtins.elem pkg.pname [
-              "code"
-              "obsidian"
-            ]);
+            allowUnfreePredicate = (pkg: builtins.elem (nixpkgs.lib.getName pkg)
+              [
+                "code"
+                "obsidian"
+                "nvidia-persistenced"
+                "nvidia-settings"
+                "nvidia-x11"
+                "nvidia-x11-545.29.06-6.1.63"
+                "cudatoolkit"
+              ]);
           };
         };
 

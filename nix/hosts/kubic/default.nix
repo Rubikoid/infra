@@ -8,6 +8,7 @@
     yggdrasil
     zsh
     zsh-config
+    wg-client
 
     # ca
     ca_rubikoid
@@ -28,12 +29,17 @@
     memos
     powerdns
     minio
-    grafana
-    grafana-agent
     akkoma
     mastodon
     ygg-map
     actual
+    ## media
+    arr
+    immich
+    jellyfin
+    ## monitoring
+    grafana
+    grafana-agent
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -70,13 +76,41 @@
     ldns # dns help
     moreutils
     jq
+    # nvidia-docker
   ];
+
+  hardware = {
+    # Enable OpenGL
+    opengl = {
+      enable = true;
+      driSupport = true;
+      driSupport32Bit = true;
+    };
+    nvidia = {
+      # Modesetting is required.
+      modesetting.enable = true;
+
+      # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
+      powerManagement.enable = false;
+      # Fine-grained power management. Turns off GPU when not in use.
+      # Experimental and only works on modern Nvidia GPUs (Turing or newer).
+      powerManagement.finegrained = false;
+
+      open = false;
+
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
+    };
+  };
+
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   virtualisation = {
     oci-containers.backend = "docker";
 
     docker = {
       enable = true;
+      enableNvidia = true;
 
       storageDriver = "zfs";
       daemon.settings = {

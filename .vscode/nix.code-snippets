@@ -16,6 +16,7 @@
   // 	"description": "Log output to console"
   // }
   "base option": {
+    "scope": "nix",
     "prefix": "mkopt",
     "body": [
       "${1:name} = lib.mkOption {",
@@ -26,7 +27,18 @@
     ],
     "description": "base option"
   },
+  "hostname options": {
+    "scope": "nix",
+    "prefix": "hostname = lib.mkOpt",
+    "body": [
+      "hostname = lib.mkOption {",
+      "  type = types.str;",
+      "  default = \"${1:hostname}\";",
+      "};"
+    ]
+  },
   "generic settings": {
+    "scope": "nix",
     "prefix": "generic-settings",
     "body": [
       "{ lib, config, secrets, pkgs, ... }:",

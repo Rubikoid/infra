@@ -1,51 +1,53 @@
 { lib, config, secrets, pkgs, ... }:
 
 let
-  cfg = config.rubikoid.services.garden; in
+  cfg = config.rubikoid.services.garden;
+  types = lib.types;
+in
 {
-  options.rubikoid.services.garden =
-    let
-      types = lib.types;
+  options.rubikoid.services.garden = {
+    baseFolder = lib.mkOption {
+      type = types.path;
+      default = "/data/home/garden";
+    };
 
-    in
-    {
-      baseFolder = lib.mkOption {
-        type = types.path;
-        default = "/data/home/garden";
-      };
-
-      global = {
-        user = lib.mkOption {
-          type = types.str;
-          default = "garden";
-        };
-
-        group = lib.mkOption {
-          type = types.str;
-          default = "garden";
-        };
-
-        dataFolder = lib.mkOption {
-          type = types.path;
-          default = "/data/home/garden/public";
-        };
-      };
-
+    global = {
       user = lib.mkOption {
         type = types.str;
-        default = "rubikoid";
+        default = "garden";
       };
 
       group = lib.mkOption {
         type = types.str;
-        default = "rubikoid";
+        default = "garden";
       };
 
-      homeFolder = lib.mkOption {
+      dataFolder = lib.mkOption {
         type = types.path;
-        default = cfg.baseFolder + "/${cfg.user}";
+        default = "/data/home/garden/public";
       };
     };
+
+    user = lib.mkOption {
+      type = types.str;
+      default = "rubikoid";
+    };
+
+    group = lib.mkOption {
+      type = types.str;
+      default = "rubikoid";
+    };
+
+    usedBy = lib.mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+    };
+
+    homeFolder = lib.mkOption {
+      type = types.path;
+      default = cfg.baseFolder + "/${cfg.user}";
+    };
+  };
 
   config = {
     users = {
@@ -81,7 +83,7 @@ let
               user = cfg.global.user;
               group = cfg.global.group;
             };
-            A.argument = builtins.concatStringsSep "," [
+            A.argument = pkgs.my-lib.commaJoin [
               "default:u::rwx"
               "default:g::rwx"
               "default:o::r-x"
@@ -95,23 +97,34 @@ let
 
       "12-garden-${cfg.user}" =
         let
+          stat = {
+            mode = "0770";
+            user = cfg.user;
+            group = cfg.group;
+          };
           entry = {
-            d = {
-              mode = "0750";
-              user = cfg.user;
-              group = cfg.group;
-            };
-            A.argument = builtins.concatStringsSep "," [
-              "default:u::rwx"
-              "default:g::r-x"
-              "default:o::---"
-            ];
+            d = stat;
+            Z = stat;
+            A.argument = pkgs.my-lib.commaJoin (
+              [
+                "default:u:${cfg.user}:rwx"
+                "default:g:${cfg.user}:r-x"
+                "default:u::rwx"
+                "default:g::r-x"
+                "default:o::---"
+              ]
+              ++
+              (builtins.map (user: "user:${user}:rwx") cfg.usedBy)
+            );
           };
         in
         {
           ${cfg.homeFolder} = entry;
           "${cfg.homeFolder}/documents" = entry;
           "${cfg.homeFolder}/projects" = entry;
+          "${cfg.homeFolder}/media" = entry;
+          "${cfg.homeFolder}/vault" = entry;
+          "${cfg.homeFolder}/ctf" = entry;
         };
     };
   };

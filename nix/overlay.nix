@@ -22,7 +22,7 @@ rec {
       };
     in
     prev.syncthing.override rec {
-      buildGoModule = args: final.buildGo118Module (args // {
+      buildGoModule = args: final.buildGo119Module (args // {
         inherit src version;
         vendorHash = "sha256-q63iaRxJRvPY0Np20O6JmdMEjSg/kxRneBfs8fRTwXk=";
       });

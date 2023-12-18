@@ -1,5 +1,6 @@
 pkgs: lib:
 rec {
+  commaJoin = builtins.concatStringsSep ",";
   mkSecrets =
     basePath: extraAttrs: paths:
     builtins.listToAttrs

@@ -1,15 +1,6 @@
 {
   description = "NixOS config for entire life...";
 
-  # nixConfig = {
-  #   extra-substituters = [
-  #     "https://cache.nixos.org"
-  #   ];
-  #   trusted-public-keys = [
-  #     "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-  #   ];
-  # };
-
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-old.url = "nixpkgs/23.05";
@@ -18,7 +9,7 @@
     # home-manager upstream
     home-manager = {
       # url = github:nix-community/home-manager/release-23.05;
-      url = github:nix-community/home-manager;
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -47,6 +38,11 @@
     ygg-map = {
       url = "github:rubikoid/yggdrasil-map-ng/380b5446fb79ab3a1e06b1b798712915ecf0af6b";
       # url = "git+file:///root/ygg-map";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixos-dns = {
+      url = "github:Janik-Haag/nixos-dns";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

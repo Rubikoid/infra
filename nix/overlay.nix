@@ -52,27 +52,19 @@ rec {
     });
   };
 
-  mastodon-glitch =
-    let
-      version = "59893a4eabb7edc836a6fe87e0fcad62e56d66ed";
-    in
-    prev.mastodon.override {
-      pname = "mastodon-glitch";
-      fetchYarnDeps = fixedFetchYarnDeps;
-      gemset = ./fixes + "/gemset.nix";
-
-      srcOverride = final.applyPatches {
-        inherit version;
-        src = final.fetchFromGitHub {
-          owner = "glitch-soc";
-          repo = "mastodon";
-          rev = version;
-          hash = "sha256-sP+iBTHak06mtORpukg8u9GUsGjOZTqoimCFWqzslWc=";
-        };
-        patches = [ ];
-        yarnHash = "sha256-P7KswzsCusyiS4MxUFnC1HYMTQ6fLpIwd97AglCukIk=";
-      };
-    };
+  mastodon-glitch = final.callPackage ./pkgs/mastodon/default.nix {};
+  # glitch-base.overrideAttrs (finalAttrs: previousAttrs: {
+  #   # mastodonModules = previousAttrs.mastodonModules.overrideAttrs (finalAttrs: previousAttrs: {
+  #   #   yarnOfflineCache = previousAttrs.yarnOfflineCache.overrideAttrs (finalAttrs: previousAttrs: {
+  #   #     yarnLock = ./fixes + "/yarn.lock";
+  #   #     hash = "sha256-U/9qnAxyxaC/dxa5tNsw4rh6I5M5tdnAwR6iJIngmNE=";
+  #   #   });
+  #   #   # yarnOfflineCache = fixedFetchYarnDeps {
+  #   #   #   yarnLock = ./fixes + "/yarn.lock";
+  #   #   #   hash = "sha256-U/9qnAxyxaC/dxa5tNsw4rh6I5M5tdnAwR6iJIngmNE=";
+  #   #   # };
+  #   # });
+  # });
 
   yggdrasil =
     let

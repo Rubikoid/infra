@@ -3,11 +3,6 @@
 {
   imports = [ secretsModule ];
 
-  nix = {
-    # idk wtf is it, but sounds good;
-    optimise.automatic = true;
-  };
-
   # must have packages
   environment.systemPackages = with pkgs; [
     vim

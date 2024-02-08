@@ -4,7 +4,8 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-old.url = "nixpkgs/23.05";
-    nixpkgs-pdns-admin.url = "github:Flakebi/nixpkgs/powerdns-admin";
+    # nixpkgs-overleaf.url = "github:JulienMalka/nixpkgs/overleaf";
+    # nixpkgs-pdns-admin.url = "github:Flakebi/nixpkgs/powerdns-admin";
 
     # home-manager upstream
     home-manager = {
@@ -93,6 +94,7 @@
           overlays = [ self.overlay ];
           localSystem = { inherit system; };
           config = {
+            allowUnfree = true;
             permittedInsecurePackages = [ ];
             # TODO: make it better
             allowUnfreePredicate = (pkg: builtins.elem (nixpkgs.lib.getName pkg)
@@ -104,6 +106,7 @@
                 "nvidia-x11"
                 "nvidia-x11-545.29.06-6.1.63"
                 "cudatoolkit"
+                "vmware-workstation-17.0.2"
               ]);
           };
         };

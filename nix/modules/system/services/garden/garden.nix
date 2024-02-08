@@ -98,13 +98,13 @@ in
       "12-garden-${cfg.user}" =
         let
           stat = {
-            mode = "0770";
+            mode = "0750";
             user = cfg.user;
             group = cfg.group;
           };
           entry = {
             d = stat;
-            Z = stat;
+            # Z = stat;
             A.argument = pkgs.my-lib.commaJoin (
               [
                 "default:u:${cfg.user}:rwx"
@@ -120,6 +120,7 @@ in
         in
         {
           ${cfg.homeFolder} = entry;
+          "${cfg.homeFolder}/backups" = entry;
           "${cfg.homeFolder}/documents" = entry;
           "${cfg.homeFolder}/projects" = entry;
           "${cfg.homeFolder}/media" = entry;

@@ -1,4 +1,12 @@
 {
+	"lib fake hash": {
+		"prefix": "fake",
+		"description": "fake hash",
+		"scope": "nix",
+		"body": [
+			"lib.fakeHash"
+		]
+	},
   // Place your infra workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
   // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
   // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is

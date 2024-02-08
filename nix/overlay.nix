@@ -1,7 +1,7 @@
 inputs: final: prev:
 let
   old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
-  pdns-admin-src = import inputs.nixpkgs-pdns-admin ({ localSystem = { inherit (final) system; }; });
+  overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
   fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
 
   inherit (final) system lib stdenv;
@@ -9,7 +9,13 @@ in
 rec {
   my-lib = import ./lib.nix final lib;
 
-  fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
+  # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
+
+  overleaf = final.callPackage
+    (inputs.nixpkgs-overleaf + "/pkgs/servers/overleaf")
+    {
+      nodejs_16 = final.nodejs_18;
+    }; # overleaf-src.overleaf;
 
   syncthing =
     let
@@ -39,15 +45,36 @@ rec {
       });
     };
 
+  grafana =
+    let
+      version = "10.2.2";
+      src = final.fetchFromGitHub {
+        owner = "grafana";
+        repo = "grafana";
+        rev = "v${version}";
+        hash = "sha256-MlrGBa/ZQwfETr5vt7CyJxtvZC021aeWsgKtfuc8wAc=";
+      };
+      srcStatic = final.fetchurl {
+        url = "https://dl.grafana.com/oss/release/grafana-${version}.linux-amd64.tar.gz";
+        hash = "sha256-Mt0si5TxkXGQp5vmVD37fl3WKXuuIcJNtiTcEYCroZ8=";
+      };
+    in
+    prev.grafana.override rec {
+      buildGoModule = args: final.buildGoModule (args // {
+        inherit version src srcStatic;
+        vendorHash = "sha256-z2eDbnezG9TWrqLPxAXHBgdtXvaEf8ccUQUe9MnhjtQ=";
+      });
+    };
+
   linuxPackages = prev.linuxPackages // {
     it87 = prev.linuxPackages.it87.overrideAttrs (old: {
-      version = "unstable-2023-07-22";
+      version = "unstable-2024-01-06";
 
       src = final.fetchFromGitHub {
         owner = "frankcrawford";
         repo = "it87";
-        rev = "52ff3605f45abb0ebb226f271f9c4262e22daf92";
-        sha256 = "sha256-0VIa0Of+clACX/148bFdzmrbgYmGoZQj0DuWBcj2JvE=";
+        rev = "1663f97c9cbc26d4a1f1345df532a3a012473b23";
+        sha256 = "sha256-nQ5NwJXenOHBTH/o6yNd9J+NAfZuLZZ2z9q1rU4LnhI=";
       };
     });
   };
@@ -68,18 +95,18 @@ rec {
 
   yggdrasil =
     let
-      version = "0.5.3";
+      version = "0.5.4";
       src = final.fetchFromGitHub {
         owner = "yggdrasil-network";
         repo = "yggdrasil-go";
         rev = "v${version}";
-        hash = "sha256-+E8CJs6m6iyMQNIqBbKLg8ghZR0FIuY5D1iDoUlaDyo=";
+        hash = "sha256-or+XTt8V/1BuLSJ53w1aKqJfx3Pka6VmC4TpvpP83+0=";
       };
     in
     prev.yggdrasil.override rec {
       buildGoModule = args: final.buildGoModule (args // {
         inherit src version;
-        vendorHash = "sha256-FXlIrsl3fbWpEpwrY5moaJI0H0yXtrTQhHFu+ktWRVM=";
+        vendorHash = "sha256-K7VJ+1x7+DgdwTjEgZ7sJ7SaCssBg+ukQupJ/1FN4F0=";
 
         ldflags = [
           "-X github.com/yggdrasil-network/yggdrasil-go/src/version.buildVersion=${version}"
@@ -90,8 +117,6 @@ rec {
         ];
       });
     };
-
-  powerdns-admin = pdns-admin-src.powerdns-admin;
 
   vuetorrent = stdenv.mkDerivation rec {
     pname = "vuetorrent";
@@ -108,106 +133,6 @@ rec {
       mv public $out
     '';
   };
-  # yggdrasil =
-  #   let
-  #     version = "0.4.7";
-  #     src = final.fetchFromGitHub {
-  #       owner = "yggdrasil-network";
-  #       repo = "yggdrasil-go";
-  #       rev = "v${version}";
-  #       hash = "sha256-01ciAutRIn4DmqlvDTXhRiuZHTtF8b6js7SUrLOjtAY=";
-  #     };
-  #   in
-  #   prev.yggdrasil.override rec {
-  #     buildGoModule = args: final.buildGoModule (args // {
-  #       inherit src version;
-  #       vendorHash = "sha256-hwDi59Yp92eMDqA8OD56nxsKSX2ngxs0lYdmEMLX+Oc=";
-  #     });
-  #   };
-
-  # mastodon = old.mastodon;
-  # yggdrasil = old.yggdrasil;
-
-  # powerdns-admin = prev.powerdns-admin.override {
-  #   # override python
-  #   python3 = prev.python310.override {
-  #     # override packages in python
-  #     packageOverrides = pfinal: pprev: {
-  #       # override werkzeus version in package
-  #       werkzeug = pprev.werkzeug.overridePythonAttrs (old: rec {
-  #         # to 2.2.3
-  #         version = "2.2.3";
-  #         src = final.fetchFromGitHub {
-  #           owner = "pallets";
-  #           repo = "werkzeug";
-  #           rev = version;
-  #           hash = "sha256-MgjxS7OJPImzVgXrhLsoBCu0kso3LkFBtaEqVE7tl+4="; # lib.fakeHash;
-  #         };
-
-  #         nativeBuildInputs = [
-  #           pprev.flit-core
-  #           pprev.setuptools
-  #         ];
-  #       });
-
-  #       flask = pprev.flask.overridePythonAttrs (old: rec {
-  #         version = "2.1.3";
-  #         src = final.fetchFromGitHub {
-  #           owner = "pallets";
-  #           repo = "flask";
-  #           rev = version;
-  #           hash = "sha256-ObxkrIk4jVLUxR49e0MdlNGOdBsgNdXGZihuQkXfA0s="; # lib.fakeHash;
-  #         };
-
-  #         nativeBuildInputs = [
-  #           pprev.flit-core
-  #           pprev.setuptools
-  #         ];
-  #       });
-
-  #       sqlalchemy = pprev.sqlalchemy.overridePythonAttrs (old: rec {
-  #         version = "1.3.24";
-  #         src = final.fetchFromGitHub {
-  #           owner = "sqlalchemy";
-  #           repo = "sqlalchemy";
-  #           rev = "refs/tags/rel_${lib.replaceStrings [ "." ] [ "_" ] version}";
-  #           hash = "sha256-deQmU0kO4xlPZnFmyDazq97DRvoAl+I6IMnejtlPy4Y="; # lib.fakeHash;
-  #         };
-
-  #         disabledTestPaths = [
-  #           # slow and high memory usage, not interesting
-  #           "test/aaa_profiling"
-  #         ];
-  #       });
-
-  #       flask-sqlalchemy = pprev.flask-sqlalchemy.overridePythonAttrs (old: rec {
-  #         version = "2.5.1";
-  #         src = final.fetchFromGitHub {
-  #           owner = "pallets-eco";
-  #           repo = "flask-sqlalchemy";
-  #           rev = version;
-  #           hash = "sha256-alUOTVm0/XE2nZqHZ2qwkL8yjSDYAo03kUsb0o6b0bA="; # lib.fakeHash;
-  #         };
-
-  #         nativeBuildInputs = [
-  #           pprev.flit-core
-  #           pprev.setuptools
-  #         ];
-  #       });
-  #     };
-  #   };
-  # };
-
-  # python.pkgs = prev.python.pkgs // {
-  #   flask-seasurf = prev.python.pkgs.flask-seasurf.overrideAttrs (old: {
-  #     src = final.fetchFromGitHub {
-  #       owner = "maxcountryman";
-  #       repo = "flask-seasurf";
-  #       rev = "f383b482c69e0b0e8064a8eb89305cea3826a7b6";
-  #       hash = lib.fakeSha256;
-  #     };
-  #   });
-  # };
 
   # step-ca =
   #   let

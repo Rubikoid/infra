@@ -44,8 +44,9 @@ rec {
           dontUnpack = src == null;
           dontInstall = true;
 
-          nativeBuildInputs = [ prefetch-yarn-deps ];
+          nativeBuildInputs = [ prefetch-yarn-deps final.cacert ];
           GIT_SSL_CAINFO = "${final.cacert}/etc/ssl/certs/ca-bundle.crt";
+          NODE_EXTRA_CA_CERTS = "${final.cacert}/etc/ssl/certs/ca-bundle.crt";
 
           buildPhase = ''
             runHook preBuild

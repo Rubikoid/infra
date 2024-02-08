@@ -39,4 +39,28 @@ rec {
       });
     in
     "${out}/bin/${scriptName}";
+
+  mkDockerNet = config: name:
+    let
+      net-name = "${name}-net";
+    in
+    {
+      description = "Create the network bridge for ${name}.";
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig.Type = "oneshot";
+      script =
+        let dockercli = "${config.virtualisation.docker.package}/bin/docker";
+        in
+        ''
+          # ${net-name} network
+          check=$(${dockercli} network ls | grep "${net-name}" || true)
+          if [ -z "$check" ]; then
+            ${dockercli} network create ${net-name}
+          else
+            echo "${net-name} already exists in docker"
+          fi
+        '';
+    };
 }

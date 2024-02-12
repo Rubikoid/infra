@@ -14,6 +14,9 @@
     openssh
     openssh-root-key
 
+    # other
+    split-dns
+
     # local
     ./wg.nix
   ];
@@ -24,7 +27,13 @@
       "net.ipv4.ip_forward" = true;
     };
   };
+
   zramSwap.enable = false;
+
+  environment.systemPackages = with pkgs; [
+    tcpdump
+    nix-tree
+  ];
 
   rubikoid.services.yggdrasil = {
     startMulticast = false;

@@ -7,7 +7,7 @@
     {
       version = lib.mkOption {
         type = types.str;
-        default = "v1.90.0-ig222"; # "v1.89.0-ig220";
+        default = "v1.94.1-ig247"; # "v1.90.0-ig222"; # "v1.89.0-ig220";
       };
 
       port = lib.mkOption {
@@ -62,7 +62,7 @@
 
         immich-postgres14 = {
           autoStart = true;
-          image = "postgres:14";
+          image = "tensorchord/pgvecto-rs:pg14-v0.1.11";
           # ports = [ "5432:5432" ];
           volumes = [
             "pgdata:/var/lib/postgresql/data"

@@ -25,6 +25,10 @@ user:
 	echo "[+] Building user"
 	home-manager $(cmd) --flake $(FLAKE_PATH)#$(USER) -L $(args)
 
+pkg:
+	echo "[+] Building package: $(pkg)"
+	nix build $(FLAKE_PATH)#nixosConfigurations.$(HOST).pkgs.$(pkg) -v $(args)
+
 deploy:
 	rsync \
 		-rlptD \

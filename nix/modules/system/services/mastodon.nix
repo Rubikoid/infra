@@ -42,7 +42,7 @@ in
       WEB_DOMAIN = public_url;
       DEFAULT_LOCALE = "ru";
 
-      RAILS_LOG_LEVEL = "info";
+      RAILS_LOG_LEVEL = "warn";
 
       PAPERCLIP_ROOT_PATH = "${mastodon_public_folder}/public-system";
       ALTERNATE_DOMAINS = "${public_url},${private_url}";

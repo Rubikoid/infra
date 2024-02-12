@@ -79,19 +79,7 @@ rec {
     });
   };
 
-  mastodon-glitch = final.callPackage ./pkgs/mastodon/default.nix {};
-  # glitch-base.overrideAttrs (finalAttrs: previousAttrs: {
-  #   # mastodonModules = previousAttrs.mastodonModules.overrideAttrs (finalAttrs: previousAttrs: {
-  #   #   yarnOfflineCache = previousAttrs.yarnOfflineCache.overrideAttrs (finalAttrs: previousAttrs: {
-  #   #     yarnLock = ./fixes + "/yarn.lock";
-  #   #     hash = "sha256-U/9qnAxyxaC/dxa5tNsw4rh6I5M5tdnAwR6iJIngmNE=";
-  #   #   });
-  #   #   # yarnOfflineCache = fixedFetchYarnDeps {
-  #   #   #   yarnLock = ./fixes + "/yarn.lock";
-  #   #   #   hash = "sha256-U/9qnAxyxaC/dxa5tNsw4rh6I5M5tdnAwR6iJIngmNE=";
-  #   #   # };
-  #   # });
-  # });
+  mastodon-glitch = final.callPackage ./pkgs/mastodon/default.nix { };
 
   yggdrasil =
     let
@@ -133,6 +121,20 @@ rec {
       mv public $out
     '';
   };
+
+  owntracks-recorder = prev.owntracks-recorder.overrideAttrs (old: {
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out/bin
+
+      install -m 0755 ot-recorder $out/bin
+
+      cp -r docroot $out/docroot
+
+      runHook postInstall
+    '';
+  });
 
   # step-ca =
   #   let

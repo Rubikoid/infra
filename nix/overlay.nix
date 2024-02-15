@@ -1,6 +1,6 @@
 inputs: final: prev:
 let
-  old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
+  nix-old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
   overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
   fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
 
@@ -28,7 +28,7 @@ rec {
       };
     in
     prev.syncthing.override rec {
-      buildGoModule = args: final.buildGo119Module (args // {
+      buildGoModule = args: nix-old.buildGo119Module (args // {
         inherit src version;
         vendorHash = "sha256-q63iaRxJRvPY0Np20O6JmdMEjSg/kxRneBfs8fRTwXk=";
       });
@@ -45,26 +45,26 @@ rec {
       });
     };
 
-  grafana =
-    let
-      version = "10.2.2";
-      src = final.fetchFromGitHub {
-        owner = "grafana";
-        repo = "grafana";
-        rev = "v${version}";
-        hash = "sha256-MlrGBa/ZQwfETr5vt7CyJxtvZC021aeWsgKtfuc8wAc=";
-      };
-      srcStatic = final.fetchurl {
-        url = "https://dl.grafana.com/oss/release/grafana-${version}.linux-amd64.tar.gz";
-        hash = "sha256-Mt0si5TxkXGQp5vmVD37fl3WKXuuIcJNtiTcEYCroZ8=";
-      };
-    in
-    prev.grafana.override rec {
-      buildGoModule = args: final.buildGoModule (args // {
-        inherit version src srcStatic;
-        vendorHash = "sha256-z2eDbnezG9TWrqLPxAXHBgdtXvaEf8ccUQUe9MnhjtQ=";
-      });
-    };
+  # grafana =
+  #   let
+  #     version = "10.2.2";
+  #     src = final.fetchFromGitHub {
+  #       owner = "grafana";
+  #       repo = "grafana";
+  #       rev = "v${version}";
+  #       hash = "sha256-MlrGBa/ZQwfETr5vt7CyJxtvZC021aeWsgKtfuc8wAc=";
+  #     };
+  #     srcStatic = final.fetchurl {
+  #       url = "https://dl.grafana.com/oss/release/grafana-${version}.linux-amd64.tar.gz";
+  #       hash = "sha256-Mt0si5TxkXGQp5vmVD37fl3WKXuuIcJNtiTcEYCroZ8=";
+  #     };
+  #   in
+  #   prev.grafana.override rec {
+  #     buildGoModule = args: final.buildGoModule (args // {
+  #       inherit version src srcStatic;
+  #       vendorHash = "sha256-z2eDbnezG9TWrqLPxAXHBgdtXvaEf8ccUQUe9MnhjtQ=";
+  #     });
+  #   };
 
   linuxPackages = prev.linuxPackages // {
     it87 = prev.linuxPackages.it87.overrideAttrs (old: {
@@ -135,6 +135,12 @@ rec {
       runHook postInstall
     '';
   });
+
+  samba4Full = prev.samba4Full.override {
+    enableCephFS = false;
+  };
+
+  powerdns-admin = nix-old.powerdns-admin;
 
   # step-ca =
   #   let

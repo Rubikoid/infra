@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-old.url = "nixpkgs/23.05";
+    nixpkgs-old.url = "nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6"; 
     # nixpkgs-overleaf.url = "github:JulienMalka/nixpkgs/overleaf";
     # nixpkgs-pdns-admin.url = "github:Flakebi/nixpkgs/powerdns-admin";
 

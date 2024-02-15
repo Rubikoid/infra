@@ -582,15 +582,15 @@
     version = "1.3.0";
   };
   crack = {
-    dependencies = ["rexml"];
+    dependencies = ["bigdecimal" "rexml"];
     groups = ["default" "test"];
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1cr1kfpw3vkhysvkk3wg7c54m75kd68mbm9rs5azdjdq57xid13r";
+      sha256 = "0r48q8csd1ld0yrzsp45wkfnpmkhk09gsldq8rlikarnmc51s9gf";
       type = "gem";
     };
-    version = "0.4.5";
+    version = "0.4.6";
   };
   crass = {
     groups = ["default" "development" "pam_authentication" "production" "test"];
@@ -1197,10 +1197,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1nynpl0xbj0nphqx1qlmyggq58ms1phf5i03hk64wcc0a17x1m1c";
+      sha256 = "1jf9dxgjz6z7fvymyz2acyvn9iyvwkn6d9sk7y4fxwbmfc75yimm";
       type = "gem";
     };
-    version = "1.0.1";
+    version = "1.1.0";
   };
   hashie = {
     groups = ["default"];
@@ -1374,10 +1374,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0hh8d5l4ki6vg2p5x3v000gkrdqi1kdjv4vk5v8lfz9gr4kdc007";
+      sha256 = "1f8wms39b7z83x6pflq2sjh3sikpk0xjh680igbpkp1j3pl0fpx0";
       type = "gem";
     };
-    version = "1.11.1";
+    version = "1.11.2";
   };
   jmespath = {
     groups = ["default"];
@@ -2051,10 +2051,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0ja2xlicfw13flw56nxbm46mvhv93fjrd5v8g4z6z305184rk24x";
+      sha256 = "127s1qn4dl5cq0xfw6y3pl382wwcmda1ivxs5vi7vccs24l9i53z";
       type = "gem";
     };
-    version = "3.4.0";
+    version = "3.4.1";
   };
   posix-spawn = {
     groups = ["default"];
@@ -2843,10 +2843,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1qkhnmvkw6782vrvd9p03ifl2j206lr3kkljpccvmf18qgkrd356";
+      sha256 = "1am17wfx023z1x9sxq90cyjarcmcwb95mi456mcf13m783r4n190";
       type = "gem";
     };
-    version = "7.1.31";
+    version = "7.1.33";
   };
   simple-navigation = {
     dependencies = ["activesupport"];
@@ -3264,10 +3264,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0vfispr7wd2p1fs9ckn1qnby1yyp4i1dl7qz8n482iw977iyxrza";
+      sha256 = "0rc3g9hhxi6v2l1cp9q3kcjd92bhmdbrb517l4v5pyzwq2nflcyc";
       type = "gem";
     };
-    version = "3.19.1";
+    version = "3.20.0";
   };
   webpacker = {
     dependencies = ["activesupport" "rack-proxy" "railties" "semantic_range"];

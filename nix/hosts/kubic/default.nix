@@ -33,14 +33,31 @@
     mastodon
     ygg-map
     actual
+    harmonia
+    vaultwarden
+    vikunja
+    py-kms
+    # overleaf-docker
+    # overleaf
+    # cocalc
+    betula
+    # owntracks
+    clamav
     ## garden
     immich
+    paperless
+    garden
+    smb
     ## media
     arr
     jellyfin
     ## monitoring
     grafana
     grafana-agent
+    ## syncthing
+    ss
+
+    # ./vm.nix
   ];
 
   # Use the systemd-boot EFI boot loader.

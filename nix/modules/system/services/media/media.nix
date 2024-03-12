@@ -63,12 +63,13 @@ in
       in
       {
         ${cfg.mediaDataFolder} = entry;
-        "${cfg.mediaDataFolder}/generic" = entry;
         "${cfg.mediaDataFolder}/anime" = entry;
+        "${cfg.mediaDataFolder}/cartoon" = entry;
+        "${cfg.mediaDataFolder}/games" = entry;
+        "${cfg.mediaDataFolder}/generic" = entry;
         "${cfg.mediaDataFolder}/movie" = entry;
         "${cfg.mediaDataFolder}/music" = entry;
         "${cfg.mediaDataFolder}/show" = entry;
-        "${cfg.mediaDataFolder}/cartoon" = entry;
         "${cfg.mediaDataFolder}/downloading" = entry;
       };
   };

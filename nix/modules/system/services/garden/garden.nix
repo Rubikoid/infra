@@ -115,6 +115,8 @@ in
               ]
               ++
               (builtins.map (user: "user:${user}:rwx") cfg.usedBy)
+              ++
+              (builtins.map (user: "default:user:${user}:rwx") cfg.usedBy)
             );
           };
         in
@@ -126,6 +128,7 @@ in
           "${cfg.homeFolder}/media" = entry;
           "${cfg.homeFolder}/vault" = entry;
           "${cfg.homeFolder}/ctf" = entry;
+          "${cfg.homeFolder}/ss" = entry;
         };
     };
   };

@@ -7,7 +7,7 @@
     {
       version = lib.mkOption {
         type = types.str;
-        default = "23.11.0";
+        default = "24.2.0";
       };
 
       host = lib.mkOption {

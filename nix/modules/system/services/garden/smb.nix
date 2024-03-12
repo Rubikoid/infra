@@ -67,6 +67,13 @@
             # "force user" = gcfg.user;
             # "force group" = gcfg.group;
           };
+
+          media = {
+            path = "${config.rubikoid.services.media.mediaDataFolder}";
+            browseable = "yes";
+            "read only" = "yes";
+            "guest ok" = "yes";
+          };
         };
 
         openFirewall = true;

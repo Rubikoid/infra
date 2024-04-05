@@ -49,25 +49,7 @@ in
     };
     services.caddy.virtualHosts.${privateName} = {
       extraConfig = ''
-        root * ${config.services.vikunja.package-frontend.outPath}
-        
-        handle /api/* {
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-        }
-        
-        handle /.well-known/* {
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-        }
-        
-        handle /dav/* {
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-        }
-        
-        handle {
-          try_files {path} {path}/ /
-          file_server
-        }
-        
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
         import stepssl_acme
       '';
     };

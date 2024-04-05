@@ -1,6 +1,7 @@
 inputs: final: prev:
 let
   nix-old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
+  nixpkgs-old-stable = import inputs.nixpkgs-old-stable ({ localSystem = { inherit (final) system; }; });
   overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
   fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
 
@@ -16,6 +17,17 @@ rec {
     {
       nodejs_16 = final.nodejs_18;
     }; # overleaf-src.overleaf;
+
+  old-xz = nixpkgs-old-stable.xz;
+
+  # xz = prev.xz.overrideAttrs (finalAttrs: oldAttrs: {
+  #   version = "5.4.6";
+
+  #   src = final.fetchurl {
+  #     url = with finalAttrs; "https://github.com/tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2";
+  #     sha256 = "sha256-kThRsnTo4dMXgeyUnxwj6NvPDs9uc6JDbcIXad0+b0k=";
+  #   };
+  # });
 
   syncthing =
     let

@@ -16,4 +16,11 @@
       enable = true;
     };
   };
+
+  # system.replaceRuntimeDependencies = [
+  #   ({
+  #     original = pkgs.xz;
+  #     replacement = pkgs.old-xz;
+  #   })
+  # ];
 }

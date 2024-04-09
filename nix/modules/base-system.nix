@@ -1,4 +1,4 @@
-{ inputs, pkgs, config, secretsModule, ... }:
+{ inputs, lib, pkgs, config, secretsModule, ... }:
 
 {
   imports = [ secretsModule ];
@@ -12,9 +12,6 @@
 
   networking = {
     hostName = config.device;
-    firewall = {
-      enable = true;
-    };
   };
 
   # system.replaceRuntimeDependencies = [

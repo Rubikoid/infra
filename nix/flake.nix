@@ -178,7 +178,7 @@
                   isWSL = isWSLFilter hostname;
                 }
                 (if (isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
-                (if (isWSLFilter hostname) then import ./fixes/wsl-buildTarball.nix else { })
+                (if (isWSLFilter hostname) then import ./fixes/wsl else { })
                 # { deviceSecrets = ./secrets + "/${hostname}/"; }
               ];
               specialArgs = {

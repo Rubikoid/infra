@@ -7,6 +7,7 @@ keys:
   - &vpn age1tmgzpzap852hze5wyvk5fvg9d6jejpq7rx99aav2apjyuh9c9vrsexkl39
   - &dedic age1hdl2xpvs6utk288xkt59jprwh3ppxvl54kdr95lmcmdhmdx8yqfss0ssw2
   - &kubic age1klfs6z8qk3pqhjv02mnu3pzx993u8cpj4c2r4lsqtfu6l56a6essjuuv4z
+  - &mbp14 age1mutjl6uly4cgaj6qdge0me3e78z90hh35e55rjhw9vssspfttqqsjwq837
 
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -20,6 +21,7 @@ creation_rules:
           - *vpn
           - *dedic
           - *kubic
+          - *mbp14
 
   - path_regex: secrets/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
@@ -75,3 +77,11 @@ creation_rules:
           - *rubikoid_wsl
           - *rubikoid_mbp14
           - *dedic
+
+  - path_regex: secrets/rubi-mbp14/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *rubikoid_mbp14
+          - *mbp14

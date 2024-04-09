@@ -4,12 +4,24 @@
 with lib;
 with types; {
   options = {
+    system-arch-name = lib.mkOption { type = types.str; };
+
     device = mkOption { type = str; };
     deviceSecrets = mkOption { type = path; };
-    
+
     user = mkOption { type = str; };
     userSecrets = mkOption { type = path; };
-    
+
+    isDarwin = mkOption {
+      type = bool;
+      default = false;
+    };
+
+    isWSL = mkOption {
+      type = bool;
+      default = false;
+    };
+
     deviceSpecific = {
       # most of it i don't need...
       # isLaptop = mkOption {

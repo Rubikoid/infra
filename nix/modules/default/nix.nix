@@ -1,4 +1,4 @@
-{ pkgs, inputs, secrets, ... }:
+{ pkgs, lib, config, inputs, secrets, ... }:
 
 {
   nix = {
@@ -17,7 +17,7 @@
 
     gc = {
       automatic = true;
-      dates = "weekly";
+      dates = lib.mkIf (!config.isDarwin) "weekly";
       options = "--delete-older-than 7d";
     };
 

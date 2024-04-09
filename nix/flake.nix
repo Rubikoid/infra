@@ -3,10 +3,10 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+
     nixpkgs-old.url = "nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
-    nixpkgs-old-stable.url = "nixpkgs/23.11";
-    # nixpkgs-overleaf.url = "github:JulienMalka/nixpkgs/overleaf";
-    # nixpkgs-pdns-admin.url = "github:Flakebi/nixpkgs/powerdns-admin";
+    nixpkgs-old-stable.url = "nixpkgs/nixos-23.11";
+    nixpkgs-old-stable-darwin.url = "nixpkgs/nixpkgs-23.11-darwin";
 
     # home-manager upstream
     home-manager = {
@@ -19,7 +19,14 @@
     sops-nix = {
       url = "github:Mic92/sops-nix/2f375ed8702b0d8ee2430885059d5e7975e38f78";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs-old";
+      inputs.nixpkgs-stable.follows = "nixpkgs-old-stable";
+    };
+
+    # sops but for darwin
+    sops-nix-darwin = {
+      url = "github:Kloenk/sops-nix/darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs-old-stable";
     };
 
     # GUI things. WM, plugins
@@ -47,10 +54,20 @@
       url = "github:Janik-Haag/nixos-dns";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # nix-darwin.url = "github:LnL7/nix-darwin/36524adc31566655f2f4d55ad6b875fb5c1a4083";
+    nix-darwin.url = "github:rubikoid/nix-darwin/rubikoid/offline-flag";
+    # nix-darwin.url = "/Users/rubikoid/projects/git/nix-darwin";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-wsl.url = "github:nix-community/NixOS-WSL/aef95bdb6800a3a2af7aa7083d6df03067da6592";
+    nix-wsl.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, ... } @ inputs:
     let
+      strace = x: builtins.trace x x;
+
       # idk magic from @balsoft flake.nix...
       # some function for <dir: path>
       findModules = dir:
@@ -88,6 +105,21 @@
               (builtins.readDir dir)
           )
         );
+
+      readSystem = hostname:
+        if
+          builtins.pathExists (./hosts + "/${hostname}/system")
+        then
+          nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./hosts + "/${hostname}/system"))
+        else
+          "x86_64-linux";
+
+      isDarwinFilter = hostname:
+        if nixpkgs.lib.hasSuffix "-darwin" (readSystem hostname)
+        then true
+        else false;
+
+      isWSLFilter = hostname: nixpkgs.lib.hasSuffix "-wsl" hostname;
 
       # another idk magic from @balsoft flake.nix...
       pkgsFor = system:
@@ -129,25 +161,24 @@
           # define function for defining each host
           mkHost = hostname:
             let
-              # system arch readen from <hostname>/system OR x86_64
-              system =
-                if
-                  builtins.pathExists (./hosts + "/${hostname}/system")
-                then
-                  removeSuffix "\n" (builtins.readFile (./hosts + "/${hostname}/system"))
-                else
-                  "x86_64-linux";
-
-              # nixpkgs platform depended
+              system = readSystem hostname;
               pkgs = pkgsFor system;
             in
             nixosSystem {
               inherit system;
               modules = __attrValues self.defaultModules ++ [
                 (import ./modules/base-system.nix)
+                (import ./modules/base-system-linux.nix)
                 (import (./hosts + "/${hostname}"))
                 { nixpkgs.pkgs = pkgs; }
-                { device = hostname; }
+                {
+                  system-arch-name = system;
+                  device = hostname;
+                  isDarwin = false;
+                  isWSL = isWSLFilter hostname;
+                }
+                (if (isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
+                (if (isWSLFilter hostname) then import ./fixes/wsl-buildTarball.nix else { })
                 # { deviceSecrets = ./secrets + "/${hostname}/"; }
               ];
               specialArgs = {
@@ -159,6 +190,38 @@
             };
         in
         genAttrs hosts mkHost;
+
+      darwinConfigurations = with nixpkgs.lib;
+        let
+          hosts = builtins.filter isDarwinFilter (builtins.attrNames (builtins.readDir ./hosts));
+
+          mkDarwinHost = hostname:
+            let
+              system = readSystem hostname;
+              pkgs = pkgsFor system;
+            in
+            nix-darwin.lib.darwinSystem {
+              inherit system;
+              modules = __attrValues self.defaultModules ++ [
+                (import ./modules/base-system.nix)
+                (import (./hosts + "/${hostname}"))
+                { nixpkgs.pkgs = pkgs; }
+                {
+                  system-arch-name = system;
+                  device = hostname;
+                  isDarwin = true;
+                }
+                # { deviceSecrets = ./secrets + "/${hostname}/"; }
+              ];
+              specialArgs = {
+                inherit inputs;
+
+                secretsModule = secrets.darwinModules.default;
+                secrets = secrets.secretsBuilder hostname;
+              };
+            };
+        in
+        genAttrs hosts mkDarwinHost;
 
       homeConfigurations = with nixpkgs.lib;
         let

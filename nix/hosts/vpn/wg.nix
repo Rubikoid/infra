@@ -19,6 +19,11 @@ in
 
       A=$1 # action: -A/-D
       I=$2 # wg interface
+
+      port_forward() {
+        iptables -t nat $A PREROUTING -i $OUT -p tcp --dport $2 -j DNAT --to-destination $1:$2
+        iptables -t nat $A PREROUTING -i $OUT -p udp --dport $2 -j DNAT --to-destination $1:$2
+      }
   
       ${config.sops.placeholder."firewall_setup.sh"}
     '';

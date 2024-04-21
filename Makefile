@@ -1,4 +1,4 @@
-HOST ?= $(shell hostname)
+HOST ?= $(shell hostname -s)
 USER ?= $(shell whoami)
 
 FLAKE_PATH = ~/infra/nix?submodules=1

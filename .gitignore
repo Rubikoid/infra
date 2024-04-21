@@ -1,2 +1,6 @@
 **/*.tmp.*
 secret-key*
+
+nix/*.tar.gz
+
+.git.backup

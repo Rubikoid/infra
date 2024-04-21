@@ -1,16 +1,23 @@
 HOST ?= $(shell hostname -s)
 USER ?= $(shell whoami)
 
-FLAKE_PATH = ~/infra/nix?submodules=1
+BASE_FLAKE = ~/infra/nix
+FLAKE_PATH = $(BASE_FLAKE)?submodules=1
+
+# DARWIN_FLAKE_PATH = /Users/rubikoid/projects/personal/infra/nix?submodules=1
 
 cmd ?= switch
 
-.PHONY: system system-inspect system-inspect-deriv repl user deploy short-clean clean
+.PHONY: system system-darwin system-inspect system-inspect-deriv system-inspect-nb repl user pkg deploy short-clean clean
 .DEFAULT: system
 
 system:
 	echo "[+] Building system"
-	sudo nixos-rebuild $(cmd) --flake $(FLAKE_PATH)#$(HOST) -v $(args)
+	sudo nixos-rebuild $(cmd) --flake $(FLAKE_PATH)#$(HOST) -v --no-update-lock-file $(args)
+
+system-darwin:
+	echo "[+] Building darwin system"
+	darwin-rebuild $(cmd) --flake $(FLAKE_PATH)#$(HOST) -v $(args)
 
 system-inspect:
 	nix run n#nix-tree -- '/var/run/current-system'

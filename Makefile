@@ -13,10 +13,13 @@ system:
 	sudo nixos-rebuild $(cmd) --flake $(FLAKE_PATH)#$(HOST) -v $(args)
 
 system-inspect:
-	nix run github:utdemir/nix-tree -- '/var/run/current-system'
+	nix run n#nix-tree -- '/var/run/current-system'
 
 system-inspect-deriv:
-	nix run github:utdemir/nix-tree -- --derivation '/var/run/current-system'
+	nix run n#nix-tree -- --derivation '/var/run/current-system'
+
+system-inspect-nb:
+	nix run n#nix-tree -- --derivation "$(FLAKE_PATH)"#nixosConfigurations."$(HOST)".config.system.build.toplevel
 
 repl:
 	nix repl --file './nix/test.nix'

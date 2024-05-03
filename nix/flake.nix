@@ -66,6 +66,8 @@
 
   outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, ... } @ inputs:
     let
+      supportedSystems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
+
       strace = x: builtins.trace x x;
 
       # idk magic from @balsoft flake.nix...
@@ -248,6 +250,21 @@
             };
         in
         genAttrs users mkUser;
+
+      devShell = with nixpkgs.lib;
+        let
+          genShell = system:
+            let
+              pkgs = pkgsFor system;
+            in
+            pkgs.mkShell {
+              packages = with pkgs; [
+                nil
+                nixpkgs-fmt
+              ];
+            };
+        in
+        genAttrs supportedSystems genShell;
 
       lib = import ./lib.nix nixpkgs.lib;
     };

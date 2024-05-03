@@ -68,8 +68,8 @@
         resolvconf.useLocalResolver = true;
 
         firewall = {
-          allowedTCPPorts = [ 53 cfg.dns-server.port ];
-          allowedUDPPorts = [ 53 cfg.dns-server.port ];
+          allowedTCPPorts = [ 53 ]; # cfg.dns-server.port
+          allowedUDPPorts = [ 53 ]; # cfg.dns-server.port
         };
       };
 

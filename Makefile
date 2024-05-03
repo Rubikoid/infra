@@ -2,13 +2,14 @@ HOST ?= $(shell hostname -s)
 USER ?= $(shell whoami)
 
 BASE_FLAKE = ~/infra/nix
-FLAKE_PATH = $(BASE_FLAKE)?submodules=1
+FLAKE_PATH = $(shell realpath $(BASE_FLAKE))?submodules=1
 
 # DARWIN_FLAKE_PATH = /Users/rubikoid/projects/personal/infra/nix?submodules=1
 
 cmd ?= switch
+flk ?= check
 
-.PHONY: system system-darwin system-inspect system-inspect-deriv system-inspect-nb repl user pkg deploy short-clean clean
+.PHONY: system system-darwin system-inspect system-inspect-deriv system-inspect-nb repl user pkg flake develop deploy short-clean clean
 .DEFAULT: system
 
 system:
@@ -38,6 +39,12 @@ user:
 pkg:
 	echo "[+] Building package: $(pkg)"
 	nix build $(FLAKE_PATH)#nixosConfigurations.$(HOST).pkgs.$(pkg) -v $(args)
+
+flake:
+	nix flake $(flk) -v $(args) $(FLAKE_PATH) 
+
+develop:
+	nix develop $(args) $(FLAKE_PATH)
 
 deploy:
 	rsync \

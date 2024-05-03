@@ -12,6 +12,11 @@
   environment.systemPackages = with pkgs; [
     bash
     vim
+  ] ++ [
+    (pkgs.writeShellScriptBin
+      "vscode-server-env-setup.sh"
+      (builtins.readFile (./. + "/vscode-server-env-setup.sh"))
+    )
   ];
 
   wsl = {

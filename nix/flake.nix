@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    # nixpkgs.url = "nixpkgs/2726f127c15a4cc9810843b96cad73c7eb39e443";
 
     nixpkgs-old.url = "nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
     nixpkgs-old-stable.url = "nixpkgs/nixos-23.11";
@@ -30,14 +31,14 @@
     };
 
     # GUI things. WM, plugins
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
+    # hyprland = {
+    #   url = "github:hyprwm/Hyprland";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # hyprland-plugins = {
+    #   url = "github:hyprwm/hyprland-plugins";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
     # and launcher
     anyrun = {
       url = "github:Kirottu/anyrun";

@@ -12,6 +12,7 @@
   environment.systemPackages = with pkgs; [
     bash
     vim
+    file
   ] ++ [
     (pkgs.writeShellScriptBin
       "vscode-server-env-setup.sh"
@@ -19,20 +20,29 @@
     )
   ];
 
+  programs = {
+    direnv.enable = true;
+    gnupg.agent.enable = true;
+  };
+
   wsl = {
     enable = true;
     defaultUser = "rubikoid";
     nativeSystemd = false;
+    useWindowsDriver = true;
 
     wslConf = {
       network.generateResolvConf = false;
     };
   };
 
+  # programs.nix-ld.enable = true;
+
+  hardware.opengl.enable = lib.mkForce false;
+
   networking.nameservers = [
     "192.168.1.107"
   ];
 
-  nixpkgs.hostPlatform = lib.mkDefault config.system-arch-name;
   system.stateVersion = "24.05"; # Did you read the comment?
 }

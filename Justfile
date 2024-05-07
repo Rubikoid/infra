@@ -40,6 +40,9 @@ system-inspect-nb:
 repl:
 	nix repl --file './nix/test.nix'
 
+flake action="show" *args=default_args:
+    nix flake {{action}} {{args}} "{{FLAKE_PATH}}"
+
 # user:
 # 	echo "[+] Building user"
 # 	home-manager $(cmd) --flake $(FLAKE_PATH)#$(USER) -L $(args)
@@ -47,9 +50,6 @@ repl:
 # pkg:
 # 	echo "[+] Building package: $(pkg)"
 # 	nix build $(FLAKE_PATH)#nixosConfigurations.$(HOST).pkgs.$(pkg) -v $(args)
-
-# flake:
-# 	nix flake $(flk) -v $(args) $(FLAKE_PATH) 
 
 # develop:
 # 	nix develop $(args) $(FLAKE_PATH)

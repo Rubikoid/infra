@@ -18,17 +18,6 @@ rec {
       nodejs_16 = final.nodejs_18;
     }; # overleaf-src.overleaf;
 
-  old-xz = nixpkgs-old-stable.xz;
-
-  # xz = prev.xz.overrideAttrs (finalAttrs: oldAttrs: {
-  #   version = "5.4.6";
-
-  #   src = final.fetchurl {
-  #     url = with finalAttrs; "https://github.com/tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2";
-  #     sha256 = "sha256-kThRsnTo4dMXgeyUnxwj6NvPDs9uc6JDbcIXad0+b0k=";
-  #   };
-  # });
-
   syncthing =
     let
       version = "1.23.0-free";
@@ -46,38 +35,6 @@ rec {
       });
     };
 
-  grafana-loki =
-    let
-      version = "2.8.4";
-    in
-    prev.grafana-loki.override rec {
-      buildGoModule = args: final.buildGoModule (args // {
-        inherit version;
-        vendorHash = null;
-      });
-    };
-
-  # grafana =
-  #   let
-  #     version = "10.2.2";
-  #     src = final.fetchFromGitHub {
-  #       owner = "grafana";
-  #       repo = "grafana";
-  #       rev = "v${version}";
-  #       hash = "sha256-MlrGBa/ZQwfETr5vt7CyJxtvZC021aeWsgKtfuc8wAc=";
-  #     };
-  #     srcStatic = final.fetchurl {
-  #       url = "https://dl.grafana.com/oss/release/grafana-${version}.linux-amd64.tar.gz";
-  #       hash = "sha256-Mt0si5TxkXGQp5vmVD37fl3WKXuuIcJNtiTcEYCroZ8=";
-  #     };
-  #   in
-  #   prev.grafana.override rec {
-  #     buildGoModule = args: final.buildGoModule (args // {
-  #       inherit version src srcStatic;
-  #       vendorHash = "sha256-z2eDbnezG9TWrqLPxAXHBgdtXvaEf8ccUQUe9MnhjtQ=";
-  #     });
-  #   };
-
   linuxPackages = prev.linuxPackages // {
     it87 = prev.linuxPackages.it87.overrideAttrs (old: {
       version = "unstable-2024-01-06";
@@ -92,31 +49,6 @@ rec {
   };
 
   mastodon-glitch = final.callPackage ./pkgs/mastodon/default.nix { };
-
-  yggdrasil =
-    let
-      version = "0.5.4";
-      src = final.fetchFromGitHub {
-        owner = "yggdrasil-network";
-        repo = "yggdrasil-go";
-        rev = "v${version}";
-        hash = "sha256-or+XTt8V/1BuLSJ53w1aKqJfx3Pka6VmC4TpvpP83+0=";
-      };
-    in
-    prev.yggdrasil.override rec {
-      buildGoModule = args: final.buildGoModule (args // {
-        inherit src version;
-        vendorHash = "sha256-K7VJ+1x7+DgdwTjEgZ7sJ7SaCssBg+ukQupJ/1FN4F0=";
-
-        ldflags = [
-          "-X github.com/yggdrasil-network/yggdrasil-go/src/version.buildVersion=${version}"
-          "-X github.com/yggdrasil-network/yggdrasil-go/src/version.buildName=yggdrasil"
-          "-X github.com/yggdrasil-network/yggdrasil-go/src/config.defaultAdminListen=unix:///var/run/yggdrasil/yggdrasil.sock"
-          "-s"
-          "-w"
-        ];
-      });
-    };
 
   vuetorrent = stdenv.mkDerivation rec {
     pname = "vuetorrent";
@@ -148,9 +80,9 @@ rec {
     '';
   });
 
-  samba4Full = prev.samba4Full.override {
-    enableCephFS = false;
-  };
+  # samba4Full = prev.samba4Full.override {
+  #   enableCephFS = false;
+  # };
 
   powerdns-admin = nix-old.powerdns-admin;
 

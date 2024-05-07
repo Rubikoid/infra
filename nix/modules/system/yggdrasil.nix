@@ -1,4 +1,7 @@
-{ config, secrets, lib, ... }:
+{ mode, config, secrets, lib, ... }:
+let
+  cfg = config.rubikoid.services.yggdrasil;
+in
 {
   options.rubikoid.services.yggdrasil =
     let
@@ -16,29 +19,19 @@
       };
     };
 
-  config =
-    let
-      cfg = config.rubikoid.services.yggdrasil;
-    in
+  config = lib.recursiveUpdate
     {
       sops.secrets."yggdrasil.hjson" = {
         sopsFile = secrets.deviceSecrets + "/yggdrasil.hjson";
         format = "binary";
       };
 
-      networking.firewall.allowedTCPPorts = lib.mkIf cfg.openPublic [ secrets.yggdrasil.publicPort ];
-
       services.yggdrasil = {
         enable = true;
-        openMulticastPort = cfg.startMulticast;
-        group = "wheel";
-        denyDhcpcdInterfaces = [ "ygg" ];
 
         configFile = config.sops.secrets."yggdrasil.hjson".path;
         settings = lib.recursiveUpdate
           {
-            IfName = "ygg";
-
             Listen =
               if cfg.openPublic
               then [ "tls://0.0.0.0:${toString secrets.yggdrasil.publicPort}?password=${secrets.yggdrasil.mainPassword}" ]
@@ -61,5 +54,16 @@
           }
           secrets.yggdrasil.settings;
       };
-    };
+    }
+    (lib.optionalAttrs (mode == "NixOS")
+      {
+        IfName = "ygg";
+        networking.firewall.allowedTCPPorts = lib.mkIf cfg.openPublic [ secrets.yggdrasil.publicPort ];
+        services.yggdrasil = {
+          openMulticastPort = cfg.startMulticast;
+          group = "wheel";
+          denyDhcpcdInterfaces = [ "ygg" ];
+        };
+      }
+    );
 }

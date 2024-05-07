@@ -189,6 +189,8 @@
 
                 secretsModule = secrets.nixosModules.default;
                 secrets = secrets.secretsBuilder hostname;
+
+                mode = "NixOS";
               };
             };
         in
@@ -221,6 +223,8 @@
 
                 secretsModule = secrets.darwinModules.default;
                 secrets = secrets.secretsBuilder hostname;
+
+                mode = "Darwin";
               };
             };
         in
@@ -247,7 +251,11 @@
                 { user = name; }
                 # { userSecrets = ./secrets + "/${name}/"; }
               ];
-              extraSpecialArgs = { inherit inputs; };
+              extraSpecialArgs = {
+                inherit inputs;
+
+                mode = "home-manager";
+              };
             };
         in
         genAttrs users mkUser;

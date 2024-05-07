@@ -3,7 +3,10 @@
 {
   imports = with inputs.self.systemModules; [
     ca_rubikoid
-  ];
+    yggdrasil
+  ] ++ (with inputs.self.darwinModules; [
+    yggdrasil
+  ]);
 
   environment.systemPackages = with pkgs; [
     yabai

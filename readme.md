@@ -1,6 +1,26 @@
 # WTF is it
 
-Configuration of most of my infa
+Configuration of most of my infa.
+
+Now it contains only nix things...
+
+## Todo
+
+- [ ] Refactor secrets pseudo-module and make it normal module:
+  - [ ] Add proper schema for every secret param
+  - [ ] Refactor some secret values and places
+  - [ ] Make it nix module instead of ugly attrset
+- [ ] Refactor flake.nix
+- [ ] Make WSL builder less ugly (and less copypasted) and more nix-way
+- [ ] Beatify and push all the local-ugly-undone modules:
+  - [ ] wireguard-client
+  - [ ] budget-git
+  - [ ] vaultwarden
+  - [ ] monitoring:
+    - [ ] grafana-agent-simple
+    - [ ] grafana-agent
+    - [ ] grafana
+  - [ ] ss (syncthing)
 
 ## inspiration
 

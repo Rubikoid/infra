@@ -69,61 +69,6 @@
     let
       supportedSystems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
 
-      strace = x: builtins.trace x x;
-
-      # idk magic from @balsoft flake.nix...
-      # some function for <dir: path>
-      findModules = dir:
-        # magic
-        builtins.concatLists (
-          # magic
-          builtins.attrValues (
-            # apply first function to every elem of readdir
-            builtins.mapAttrs
-              (
-                name: # filename
-                type: # filetype: regular, directory, symlink, unknown
-
-                # if just a simple file - remove .nix and add it to path
-                if type == "regular" then
-                  if (builtins.match "(.*)\\.nix" name) != null then [{
-                    # but check, is it really .nix file...
-                    name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
-                    value = dir + "/${name}";
-                  }]
-                  else [ ] # ~~i don't knew why it red...~~ because it is todo tree parsed
-
-                # if it directory
-                else if type == "directory" then
-                  if (builtins.readDir (dir + "/${name}")) ? "default.nix" then [{
-                    # if contains default.nix - load it
-                    inherit name;
-                    value = dir + "/${name}";
-                  }]
-                  else
-                  # else just recursive load
-                    findModules (dir + "/${name}")
-                else [ ] # ~~i don't knew why it red...~~ because it is todo tree parsed
-              )
-              (builtins.readDir dir)
-          )
-        );
-
-      readSystem = hostname:
-        if
-          builtins.pathExists (./hosts + "/${hostname}/system")
-        then
-          nixpkgs.lib.removeSuffix "\n" (builtins.readFile (./hosts + "/${hostname}/system"))
-        else
-          "x86_64-linux";
-
-      isDarwinFilter = hostname:
-        if nixpkgs.lib.hasSuffix "-darwin" (readSystem hostname)
-        then true
-        else false;
-
-      isWSLFilter = hostname: nixpkgs.lib.hasSuffix "-wsl" hostname;
-
       # another idk magic from @balsoft flake.nix...
       pkgsFor = system:
         import inputs.nixpkgs {
@@ -147,12 +92,16 @@
           };
         };
 
+      lib = import ./lib.nix nixpkgs nixpkgs.lib;
       secrets = import ../secrets inputs;
     in
     {
-      defaultModules = builtins.listToAttrs (findModules ./modules/default);
-      systemModules = builtins.listToAttrs (findModules ./modules/system);
-      userModules = builtins.listToAttrs (findModules ./modules/user);
+      inherit lib;
+
+      defaultModules = builtins.listToAttrs (lib.findModules ./modules/default);
+      systemModules = builtins.listToAttrs (lib.findModules ./modules/system);
+      darwinModules = builtins.listToAttrs (lib.findModules ./modules/darwin);
+      userModules = builtins.listToAttrs (lib.findModules ./modules/user);
       overlay = import ./overlay.nix inputs;
 
       # idk another magic from @balsoft flake.nix... (but somethere explained)
@@ -164,7 +113,7 @@
           # define function for defining each host
           mkHost = hostname:
             let
-              system = readSystem hostname;
+              system = lib.readSystem hostname;
               pkgs = pkgsFor system;
             in
             nixosSystem {
@@ -178,10 +127,10 @@
                   system-arch-name = system;
                   device = hostname;
                   isDarwin = false;
-                  isWSL = isWSLFilter hostname;
+                  isWSL = lib.isWSLFilter hostname;
                 }
-                (if (isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
-                (if (isWSLFilter hostname) then import ./fixes/wsl else { })
+                (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
+                (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
                 # { deviceSecrets = ./secrets + "/${hostname}/"; }
               ];
               specialArgs = {
@@ -198,11 +147,11 @@
 
       darwinConfigurations = with nixpkgs.lib;
         let
-          hosts = builtins.filter isDarwinFilter (builtins.attrNames (builtins.readDir ./hosts));
+          hosts = builtins.filter lib.isDarwinFilter (builtins.attrNames (builtins.readDir ./hosts));
 
           mkDarwinHost = hostname:
             let
-              system = readSystem hostname;
+              system = lib.readSystem hostname;
               pkgs = pkgsFor system;
             in
             nix-darwin.lib.darwinSystem {
@@ -274,7 +223,5 @@
             };
         in
         genAttrs supportedSystems genShell;
-
-      lib = import ./lib.nix nixpkgs.lib;
     };
 }

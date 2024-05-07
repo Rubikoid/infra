@@ -46,7 +46,7 @@
     };
 
     ygg-map = {
-      url = "github:rubikoid/yggdrasil-map-ng/380b5446fb79ab3a1e06b1b798712915ecf0af6b";
+      url = "github:rubikoid/yggdrasil-map-ng/e3e0203eb4c2715668d620e0778761a605e66178";
       # url = "git+file:///root/ygg-map";
       inputs.nixpkgs.follows = "nixpkgs";
     };

@@ -17,6 +17,8 @@ rebuild_cmd := if os() == "linux" {
 
 nix := "n"
 
+nom := if HOST == "kubic" { "|& nom" } else { "" }
+
 default: system
 
 help:
@@ -24,7 +26,7 @@ help:
 
 system cmd=default_cmd *args=default_args:
     @echo "[+] Building system: '{{HOST}}' at '{{FLAKE_PATH}}'"
-    {{rebuild_cmd}} {{cmd}} -v --no-update-lock-file {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}"
+    {{rebuild_cmd}} {{cmd}} --no-update-lock-file {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{nom}}
 
 system-inspect:
 	nix run "{{nix}}#nix-tree" -- '/var/run/current-system'

@@ -23,7 +23,7 @@ creation_rules:
           - *kubic
           - *mbp14
 
-  - path_regex: secrets/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+  - path_regex: secrets/hosts/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
@@ -31,7 +31,7 @@ creation_rules:
           - *rubikoid_mbp14
           - *vpn
 
-  - path_regex: secrets/ly370/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+  - path_regex: secrets/hosts/ly370/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
@@ -39,14 +39,14 @@ creation_rules:
           - *rubikoid_mbp14
           - *ly370
 
-  - path_regex: secrets/rpi4/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+  - path_regex: secrets/hosts/rpi4/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
 
-  - path_regex: secrets/dedic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+  - path_regex: secrets/hosts/dedic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
@@ -54,7 +54,7 @@ creation_rules:
           - *rubikoid_mbp14
           - *dedic
 
-  - path_regex: secrets/kubic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+  - path_regex: secrets/hosts/kubic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
@@ -62,7 +62,7 @@ creation_rules:
           - *rubikoid_mbp14
           - *kubic
 
-  - path_regex: secrets/dedic/step/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+  - path_regex: secrets/hosts/dedic/step/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
@@ -70,7 +70,7 @@ creation_rules:
           - *rubikoid_mbp14
           - *dedic
 
-  - path_regex: secrets/dedic/step/(certs|keys)/[^/]+\.(|crt|pub|key)$
+  - path_regex: secrets/hosts/dedic/step/(certs|keys)/[^/]+\.(|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370
@@ -78,7 +78,7 @@ creation_rules:
           - *rubikoid_mbp14
           - *dedic
 
-  - path_regex: secrets/rubi-mbp14/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+  - path_regex: secrets/hosts/rubi-mbp14/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
       - age:
           - *rubikoid_ly370

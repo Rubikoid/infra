@@ -26,7 +26,7 @@ help:
 
 system cmd=default_cmd *args=default_args:
     @echo "[+] Building system: '{{HOST}}' at '{{FLAKE_PATH}}'"
-    {{rebuild_cmd}} {{cmd}} --no-update-lock-file {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{nom}}
+    {{rebuild_cmd}} {{cmd}} {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{nom}}
 
 system-inspect:
 	nix run "{{nix}}#nix-tree" -- '/var/run/current-system'
@@ -43,9 +43,9 @@ repl:
 flake action="show" *args=default_args:
     nix flake {{action}} {{args}} "{{FLAKE_PATH}}"
 
-home cmd=default_cmd *args=default_args:
-    @echo "[+] Building user '{{USER}}' at '{{FLAKE_PATH}}'"
-    home-manager {{cmd}} {{args}} --flake "{{FLAKE_PATH}}#{{USER}}" {{nom}}
+# user:
+# 	echo "[+] Building user"
+# 	home-manager $(cmd) --flake $(FLAKE_PATH)#$(USER) -L $(args)
 
 # pkg:
 # 	echo "[+] Building package: $(pkg)"

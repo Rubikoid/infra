@@ -2,12 +2,11 @@
   description = "NixOS config for entire life...";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    # nixpkgs.url = "nixpkgs/2726f127c15a4cc9810843b96cad73c7eb39e443";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    nixpkgs-old.url = "nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
-    nixpkgs-old-stable.url = "nixpkgs/nixos-23.11";
-    nixpkgs-old-stable-darwin.url = "nixpkgs/nixpkgs-23.11-darwin";
+    nixpkgs-old.url = "github:NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
+    nixpkgs-old-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs-old-stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-23.11-darwin";
 
     # home-manager upstream
     home-manager = {
@@ -18,7 +17,7 @@
 
     # sops
     sops-nix = {
-      url = "github:Mic92/sops-nix/2f375ed8702b0d8ee2430885059d5e7975e38f78";
+      url = "github:Mic92/sops-nix/0dc50257c00ee3c65fef3a255f6564cfbfe6eb7f";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nixpkgs-stable.follows = "nixpkgs-old-stable";
     };

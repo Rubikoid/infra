@@ -24,9 +24,13 @@ nix shell $PKGS_EXPRESSION.patchelf $PKGS_EXPRESSION.stdenv.cc -c bash -c "
     
     for versiondir in $VSCODE_SERVER_DIR/bin/*/; do
         # Currently only "libstdc++.so.6" needs to be patched
+        echo \"Patching $versiondir\"
         patchelf --set-interpreter \"\$NIX_INTERPRETER\" --set-rpath \"\$NIX_RPATH\" \"\$versiondir\"\"node_modules/node-pty/build/Release/pty.node\"
         patchelf --set-interpreter \"\$NIX_INTERPRETER\" --set-rpath \"\$NIX_RPATH\" \"\$versiondir\"\"node\"
     done
+
+    echo \"Patching codelldb\"
+    patchelf --set-interpreter \"\$NIX_INTERPRETER\" --set-rpath \"\$NIX_RPATH\" \"$VSCODE_SERVER_DIR/extensions/vadimcn.vscode-lldb-1.10.0/adapter/codelldb\"
 "
 
 echo "== '$0' SCRIPT END =="

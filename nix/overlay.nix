@@ -80,11 +80,32 @@ rec {
     '';
   });
 
+  helix =
+    let
+      version = "24.03";
+      codestats_patch = final.fetchpatch2 {
+        url = "https://github.com/Rubikoid/helix/pull/1.patch";
+        sha256 = "sha256-hmFUNKxOt75roCBhidCaHULuR9TSJopGfpardP6vZ00=";
+      };
+      src = final.fetchzip {
+        url = "https://github.com/helix-editor/helix/releases/download/${version}/helix-${version}-source.tar.xz";
+        hash = "sha256-1myVGFBwdLguZDPo1jrth/q2i5rn5R2+BVKIkCCUalc=";
+        stripRoot = false;
+      };
+    in
+    prev.helix.override {
+      rustPlatform.buildRustPackage = args: final.rustPlatform.buildRustPackage (args // {
+        inherit version src;
+        cargoHash = "sha256-HprItlie4lq1hz1A5JjU1r9F0ncGP/feyL3CYfLPZzs=";
+        cargoPatches = [ codestats_patch ];
+      });
+    };
+
   # samba4Full = prev.samba4Full.override {
   #   enableCephFS = false;
   # };
 
-  powerdns-admin = nix-old.powerdns-admin;
+  # powerdns-admin = nix-old.powerdns-admin;
 
   # step-ca =
   #   let

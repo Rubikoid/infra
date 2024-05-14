@@ -1,10 +1,6 @@
 { config, secrets, pkgs, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
-    home-manager
-  ];
-
   # Setup users
   users.users = {
     rubikoid = {

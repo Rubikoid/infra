@@ -1,11 +1,10 @@
-{ inputs, pkgs, lib, config, ... }:
+{ inputs, pkgs, lib, config, secrets, device, mode, ... }:
 
 {
-  imports = [ inputs.sops-nix.homeManagerModule ];
-
+  # programs.home-manager.enable = true; # idk why i need that
   home = {
     username = config.user;
-    homeDirectory = "/home/${config.user}";
-    stateVersion = "22.11";
+    homeDirectory = "/home/${config.user}"; # TODO: macos
+    stateVersion = "24.05";
   };
 }

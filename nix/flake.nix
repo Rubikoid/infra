@@ -96,12 +96,13 @@
       secrets = import ../secrets inputs;
     in
     {
-      inherit lib;
+      inherit lib secrets;
 
       defaultModules = builtins.listToAttrs (lib.findModules ./modules/default);
       systemModules = builtins.listToAttrs (lib.findModules ./modules/system);
       darwinModules = builtins.listToAttrs (lib.findModules ./modules/darwin);
       userModules = builtins.listToAttrs (lib.findModules ./modules/user);
+      users = builtins.listToAttrs (lib.findModules ./users);
       overlay = import ./overlay.nix inputs;
 
       # idk another magic from @balsoft flake.nix... (but somethere explained)
@@ -119,19 +120,17 @@
             nixosSystem {
               inherit system;
               modules = __attrValues self.defaultModules ++ [
+                {
+                  system-arch-name = system;
+                  device = hostname;
+                  isWSL = lib.isWSLFilter hostname;
+                }
                 (import ./modules/base-system.nix)
                 (import ./modules/base-system-linux.nix)
                 (import (./hosts + "/${hostname}"))
                 { nixpkgs.pkgs = pkgs; }
-                {
-                  system-arch-name = system;
-                  device = hostname;
-                  isDarwin = false;
-                  isWSL = lib.isWSLFilter hostname;
-                }
                 (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
                 (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
-                # { deviceSecrets = ./secrets + "/${hostname}/"; }
               ];
               specialArgs = {
                 inherit inputs;
@@ -158,6 +157,7 @@
               inherit system;
               modules = __attrValues self.defaultModules ++ [
                 (import ./modules/base-system.nix)
+                (import ./modules/base-system-darwin.nix)
                 (import (./hosts + "/${hostname}"))
                 { nixpkgs.pkgs = pkgs; }
                 {
@@ -165,7 +165,6 @@
                   device = hostname;
                   isDarwin = true;
                 }
-                # { deviceSecrets = ./secrets + "/${hostname}/"; }
               ];
               specialArgs = {
                 inherit inputs;
@@ -179,35 +178,35 @@
         in
         genAttrs hosts mkDarwinHost;
 
-      homeConfigurations = with nixpkgs.lib;
-        let
-          # get hosts list from ./hosts directory
-          users = builtins.attrNames (builtins.readDir ./users);
+      # homeConfigurations = with nixpkgs.lib;
+      #   let
+      #     # get hosts list from ./hosts directory
+      #     users = builtins.attrNames (builtins.readDir ./users);
 
-          mkUser = name:
-            let
-              system = "x86_64-linux"; # TODO: make this properly
-              pkgs = pkgsFor system;
-            in
-            home-manager.lib.homeManagerConfiguration {
-              pkgs = pkgs;
-              modules = __attrValues self.defaultModules ++ [
-                (import ./modules/base-user.nix)
-                (import (./users + "/${name}"))
-                # {
-                #   nixpkgs.overlays = [ self.overlay ];
-                # }
-                { user = name; }
-                # { userSecrets = ./secrets + "/${name}/"; }
-              ];
-              extraSpecialArgs = {
-                inherit inputs;
+      #     mkUser = name:
+      #       let
+      #         system = "x86_64-linux"; # TODO: make this properly
+      #         pkgs = pkgsFor system;
+      #       in
+      #       home-manager.lib.homeManagerConfiguration {
+      #         pkgs = pkgs;
+      #         modules = __attrValues self.defaultModules ++ [
+      #           (import ./modules/base-user.nix)
+      #           (import (./users + "/${name}"))
+      #           # {
+      #           #   nixpkgs.overlays = [ self.overlay ];
+      #           # }
+      #           { user = name; }
+      #           # { userSecrets = ./secrets + "/${name}/"; }
+      #         ];
+      #         extraSpecialArgs = {
+      #           inherit inputs;
 
-                mode = "home-manager";
-              };
-            };
-        in
-        genAttrs users mkUser;
+      #           mode = "home-manager";
+      #         };
+      #       };
+      #   in
+      #   genAttrs users mkUser;
 
       devShell = with nixpkgs.lib;
         let
@@ -219,6 +218,7 @@
               packages = with pkgs; [
                 nil
                 nixpkgs-fmt
+                sops
               ];
             };
         in

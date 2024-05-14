@@ -2,17 +2,20 @@
 
 {
   imports = with inputs.self.systemModules; [
+    hm
+    locale
     zsh
     zsh-config
 
     # ca
     ca_rubikoid
+
+    # users
+    rubikoid
   ];
 
   environment.systemPackages = with pkgs; [
-    bash
-    vim
-    file
+
   ] ++ [
     (pkgs.writeShellScriptBin
       "vscode-server-env-setup.sh"
@@ -22,7 +25,6 @@
 
   programs = {
     direnv.enable = true;
-    gnupg.agent.enable = true;
   };
 
   wsl = {

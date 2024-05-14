@@ -43,9 +43,9 @@ repl:
 flake action="show" *args=default_args:
     nix flake {{action}} {{args}} "{{FLAKE_PATH}}"
 
-# user:
-# 	echo "[+] Building user"
-# 	home-manager $(cmd) --flake $(FLAKE_PATH)#$(USER) -L $(args)
+home cmd=default_cmd *args=default_args:
+    @echo "[+] Building user '{{USER}}' at '{{FLAKE_PATH}}'"
+    home-manager {{cmd}} {{args}} --flake "{{FLAKE_PATH}}#{{USER}}" {{nom}}
 
 # pkg:
 # 	echo "[+] Building package: $(pkg)"

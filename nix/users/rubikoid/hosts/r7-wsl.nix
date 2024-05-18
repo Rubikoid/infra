@@ -2,6 +2,7 @@
 {
   imports = with inputs.self.userModules; [
     sops
+    helix
   ];
 
   home.packages = with pkgs; [
@@ -14,8 +15,6 @@
     htop
     fzf
     tmux
-    helix
-    sops
   ];
 
   programs.gpg.enable = true;

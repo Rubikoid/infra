@@ -2,9 +2,13 @@
 
 {
   # programs.home-manager.enable = true; # idk why i need that
-  home = {
-    username = config.user;
-    homeDirectory = "/home/${config.user}"; # TODO: macos
-    stateVersion = "24.05";
-  };
+  home =
+    let
+      baseHomePath = if lib.hasPrefix "Darwin" mode then "/Users" else "/home";
+    in
+    {
+      username = config.user;
+      homeDirectory = "${baseHomePath}/${config.user}";
+      stateVersion = "24.05";
+    };
 }

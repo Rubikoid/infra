@@ -57,9 +57,9 @@ in
     }
     (lib.optionalAttrs (mode == "NixOS")
       {
-        IfName = "ygg";
         networking.firewall.allowedTCPPorts = lib.mkIf cfg.openPublic [ secrets.yggdrasil.publicPort ];
         services.yggdrasil = {
+          settings.IfName = "ygg";
           openMulticastPort = cfg.startMulticast;
           group = "wheel";
           denyDhcpcdInterfaces = [ "ygg" ];

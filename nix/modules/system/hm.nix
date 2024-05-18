@@ -1,4 +1,4 @@
-{ inputs, mode, config, ... }:
+{ inputs, mode, config, secrets, ... }:
 {
   imports = [
     inputs.home-manager."${if mode == "Darwin" then "darwinModules" else "nixosModules"}".home-manager
@@ -7,7 +7,8 @@
   home-manager = {
     useGlobalPkgs = true;
     extraSpecialArgs = {
-      inherit inputs;
+      inherit inputs secrets;
+
       device = config.device;
       mode = "${mode}-HM";
     };

@@ -57,6 +57,9 @@
     ## syncthing
     ss
 
+    # other
+    remote-build-host
+
     # ./vm.nix
   ];
 

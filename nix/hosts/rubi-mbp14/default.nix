@@ -2,11 +2,14 @@
 
 {
   imports = with inputs.self.systemModules; [
+    hm
+    yggdrasil
+
     # ca
     ca_rubikoid
 
-    hm
-    yggdrasil
+    # other
+    remote-build
 
     # users
     rubikoid
@@ -39,6 +42,7 @@
       "far2l"
       "fzf"
       "python@3.10"
+      "lunchy"
     ];
 
     casks = [

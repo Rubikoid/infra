@@ -64,7 +64,7 @@ deploy target *args=default_args:
 		{{target}}:~/infra
 
 deploy-rebuild target *args=default_args: (deploy target)
-    ssh {{target}} just --justfile '~/infra/Justfile' {{ args }}
+    ssh {{target}} just --justfile '~/infra/Justfile' system switch --no-update-lock-file {{ args }}
 
 short-clean:
 	sudo nix-collect-garbage -d

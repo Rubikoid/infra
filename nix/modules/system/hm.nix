@@ -8,19 +8,19 @@
     useGlobalPkgs = true;
     extraSpecialArgs = {
       inherit inputs secrets;
+      inherit (config) device;
 
-      device = config.device;
       mode = "${mode}-HM";
     };
 
     users.rubikoid = { inputs, ... }: {
       imports = [
-        ./../base-user.nix # ok ugly and what you can do with it... 
-        inputs.self.users.rubikoid
-        inputs.self.defaultModules.options
         {
           user = "rubikoid";
         }
+        ./../base-user.nix # ok ugly and what you can do with it... 
+        inputs.self.users.rubikoid
+        inputs.self.defaultModules.options
       ];
     };
   };

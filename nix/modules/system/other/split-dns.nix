@@ -10,7 +10,7 @@ in
 
     settings = {
       server = {
-        interface = [ "127.0.0.1" ];
+        interface = [ "127.0.0.1" "::1" ];
         domain-insecure = [ ] ++ scr.domain-insecure;
         verbosity = 3;
 

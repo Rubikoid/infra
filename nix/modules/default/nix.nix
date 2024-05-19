@@ -14,7 +14,8 @@
       # };
     };
 
-    # idk wtf is it, but sounds good;
+    # linking hardlinks inside store
+    # good thing
     optimise.automatic = true;
 
     gc = {
@@ -30,13 +31,19 @@
         "flakes"
         "repl-flake"
       ];
+
+      # чтобы работало, надо либо чтобы юзер в trusted-users, либо репа в trusted-substituters
+      # я добавляю и то и туда, чтобы работало гарантированно. 
       substituters = [
         "https://${secrets.harmonia.addr}"
-        "https://cache.nixos.org"
+        # "https://cache.nixos.org" # а это больше не добавляю, потому что оно дополняет, а не заменяет, как выяснилось
+      ];
+      trusted-substituters = [
+        "https://${secrets.harmonia.addr}"
       ];
       trusted-public-keys = [
         "${secrets.harmonia.addr}:${secrets.harmonia.key}"
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        # "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
     };
   };

@@ -61,6 +61,9 @@ in
         StandardError = "journal";
         StandardOutput = "journal";
 
+        Restart = "on-failure";
+        RestartSec = "5s";
+
         DynamicUser = true;
         RuntimeDirectory = "tg-bot-api";
         LogsDirectory = "tg-bot-api";

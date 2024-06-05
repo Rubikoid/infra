@@ -26,7 +26,11 @@ help:
 
 system cmd=default_cmd *args=default_args:
     @echo "[+] Building system: '{{HOST}}' at '{{FLAKE_PATH}}'"
-    {{rebuild_cmd}} {{cmd}} {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{nom}}
+    {{rebuild_cmd}} {{cmd}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{args}} {{nom}}
+
+system-off cmd=default_cmd *args=default_args:
+    @echo "[+] Building system: '{{HOST}}' at '{{FLAKE_PATH}}'"
+    {{rebuild_cmd}} {{cmd}} --builders "" {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{nom}}
 
 system-inspect:
 	nix run "{{nix}}#nix-tree" -- '/var/run/current-system'

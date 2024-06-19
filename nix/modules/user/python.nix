@@ -16,11 +16,18 @@
       (python.withPackages (ps:
         (with ps; [
           pip
+          # dev packages, that i need usually on random project
           pydantic
           pydantic-settings
           fastapi
           rich
+          typer
+          aiohttp
+          orjson
+          requests
+          loguru
           cyclopts
+          # etc
           python-lsp-server # yes, it is another lsp.
         ])
         ++
@@ -59,6 +66,8 @@
 
         ignore = [
           # Ignored #   | plugin name           | Description                                                       # Why it is ignored
+          #
+          # "ANN401" #  | flake8-annotations      | Dynamically typed expressions (Any) are disallowed                # i knew.
           #
           "D100" #    | pydocstyle              | Missing docstring in public module                                # well, i know, where i should and shoul't write docs 
           "D101" #    | pydocstyle              | Missing docstring in public class                                 # well, i know, where i should and shoul't write docs 

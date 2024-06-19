@@ -36,6 +36,7 @@
           (genCS "gleam" "Gleam" { })
           (genCS "python" "Python" {
             auto-format = true;
+            rulers = [ 120 ];
             language-servers = [
               # {
               #   name = "pylsp";
@@ -61,6 +62,7 @@
           })
           (genCS "log" "Log" { })
           (genCS "toml" "TOML" { })
+          (genCS "bash" "Shell Script" { })
         ];
     };
 

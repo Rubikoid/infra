@@ -12,6 +12,12 @@ rec {
 
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
 
+  python312 = prev.python312.override {
+    packageOverrides = pprev: pfinal: {
+      cyclopts = final.callPackage ./pkgs/cyclopts.nix { };
+    };
+  };
+
   overleaf = final.callPackage
     (inputs.nixpkgs-overleaf + "/pkgs/servers/overleaf")
     {

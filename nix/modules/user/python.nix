@@ -20,8 +20,8 @@
           pydantic-settings
           fastapi
           rich
+          cyclopts
           python-lsp-server # yes, it is another lsp.
-          # cyclopts # not packaged yet
         ])
         ++
         (with pkgs; [

@@ -3,6 +3,7 @@
   imports = with inputs.self.userModules; [
     sops
     helix
+    python
   ];
 
   home.packages = with pkgs; [

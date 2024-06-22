@@ -55,8 +55,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nix-darwin.url = "github:LnL7/nix-darwin/36524adc31566655f2f4d55ad6b875fb5c1a4083";
-    nix-darwin.url = "github:rubikoid/nix-darwin/rubikoid/offline-flag";
+    nix-darwin.url = "github:LnL7/nix-darwin/master";
+    # nix-darwin.url = "github:rubikoid/nix-darwin/rubikoid/offline-flag";
     # nix-darwin.url = "/Users/rubikoid/projects/git/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 

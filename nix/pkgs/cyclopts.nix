@@ -1,12 +1,22 @@
 { lib
 , fetchFromGitHub
-, python312
+, buildPythonPackage
+  # native deps
+, poetry-core
+, poetry-dynamic-versioning
+  # deps
+, attrs
+, docstring-parser
+, importlib-metadata
+, rich
+, rich-rst
+, typing-extensions
+  # optional deps
+, tomli
+, pyyaml
 ,
 }:
-let
-  python = python312;
-in
-python.pkgs.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "cyclopts";
   version = "2.7.0";
   pyproject = true;
@@ -19,11 +29,11 @@ python.pkgs.buildPythonPackage rec {
   };
 
   nativeBuildInputs = [
-    python.pkgs.poetry-core
-    python.pkgs.poetry-dynamic-versioning
+    poetry-core
+    poetry-dynamic-versioning
   ];
 
-  propagatedBuildInputs = with python.pkgs; [
+  propagatedBuildInputs = [
     attrs
     docstring-parser
     importlib-metadata
@@ -32,7 +42,7 @@ python.pkgs.buildPythonPackage rec {
     typing-extensions
   ];
 
-  passthru.optional-dependencies = with python.pkgs; {
+  passthru.optional-dependencies = {
     toml = [
       tomli
     ];

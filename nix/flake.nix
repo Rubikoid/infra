@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
     nixpkgs-old.url = "github:NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
     nixpkgs-old-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
@@ -218,6 +219,7 @@
                 nil
                 nixpkgs-fmt
                 sops
+                # nixfmt-rfc-style
               ];
             };
         in

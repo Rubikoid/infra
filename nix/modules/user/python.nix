@@ -27,6 +27,9 @@
           requests
           loguru
           cyclopts
+          pytest
+          setuptools
+          wheel
           # etc
           python-lsp-server # yes, it is another lsp.
         ])

@@ -14,12 +14,15 @@
   # optional deps
 , tomli
 , pyyaml
+, pythonOlder
 ,
 }:
 buildPythonPackage rec {
   pname = "cyclopts";
   version = "2.7.0";
   pyproject = true;
+
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "BrianPugh";

@@ -98,14 +98,14 @@
     moreutils
     jq
     # nvidia-docker
+    helix
   ];
 
   hardware = {
     # Enable OpenGL
-    opengl = {
+    graphics = {
       enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
+      enable32Bit = true;
     };
     nvidia = {
       # Modesetting is required.
@@ -161,6 +161,8 @@
     package = pkgs.postgresql_14;
     dataDir = "/backup-drive/data/psql//${config.services.postgresql.package.psqlSchema}";
   };
+
+  networking.firewall.interfaces.home.allowedTCPPorts = [ 9008 9009 ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

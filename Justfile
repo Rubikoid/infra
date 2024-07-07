@@ -33,16 +33,16 @@ system-off cmd=default_cmd *args=default_args:
     {{rebuild_cmd}} {{cmd}} --builders "" {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{nom}}
 
 system-inspect:
-	nix run "{{nix}}#nix-tree" -- '/var/run/current-system'
+    nix run "{{nix}}#nix-tree" -- '/var/run/current-system'
 
 system-inspect-deriv:
-	nix run "{{nix}}#nix-tree" -- --derivation '/var/run/current-system'
+    nix run "{{nix}}#nix-tree" -- --derivation '/var/run/current-system'
 
 system-inspect-nb:
-	nix run "{{nix}}#nix-tree" -- --derivation "'{{FLAKE_PATH}}'#nixosConfigurations.'{{HOST}}'.config.system.build.toplevel"
+    nix run "{{nix}}#nix-tree" -- --derivation "{{FLAKE_PATH}}#nixosConfigurations.'{{HOST}}'.config.system.build.toplevel"
 
 repl:
-	nix repl --file './nix/test.nix'
+    nix repl --file './nix/test.nix'
 
 flake action="show" *args=default_args:
     nix flake {{action}} {{args}} "{{FLAKE_PATH}}"
@@ -50,6 +50,9 @@ flake action="show" *args=default_args:
 home cmd=default_cmd *args=default_args:
     @echo "[+] Building user '{{USER}}' at '{{FLAKE_PATH}}'"
     home-manager {{cmd}} {{args}} --flake "{{FLAKE_PATH}}#{{USER}}" {{nom}}
+
+build pkg *args=default_args:
+    nix build "{{FLAKE_PATH}}#{{pkg}}" -v {{args}}
 
 # pkg:
 # 	echo "[+] Building package: $(pkg)"
@@ -59,23 +62,25 @@ home cmd=default_cmd *args=default_args:
 # 	nix develop $(args) $(FLAKE_PATH)
 
 deploy target *args=default_args:
-	rsync \
-		-rlptD \
-		--delete \
-		-vzhP \
-		{{args}} \
-		. \
-		{{target}}:~/infra
+    rsync \
+        -rlptD \
+        --delete \
+        -vzhP \
+        --exclude=".direnv" \
+        --exclude=".stfolder" \
+        {{args}} \
+        . \
+        {{target}}:~/infra
 
 deploy-rebuild target *args=default_args: (deploy target)
     ssh {{target}} just --justfile '~/infra/Justfile' system switch --no-update-lock-file {{ args }}
 
 short-clean:
-	sudo nix-collect-garbage -d
+    sudo nix-collect-garbage -d
 
 clean:
-	sudo nix-collect-garbage -d
-	sudo nix-env --delete-generations +1
-	sudo nix-store --gc
-	sudo rm /nix/var/nix/gcroots/auto/*
-	sudo nix-collect-garbage -d
+    sudo nix-collect-garbage -d
+    sudo nix-env --delete-generations +1
+    sudo nix-store --gc
+    sudo rm /nix/var/nix/gcroots/auto/*
+    sudo nix-collect-garbage -d

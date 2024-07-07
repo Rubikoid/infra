@@ -319,6 +319,9 @@
                       mode = "NixOS";
                     };
                   };
+
+              glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
+              glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
             };
         in
         genAttrs supportedSystems genPkg;

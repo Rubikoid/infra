@@ -21,6 +21,18 @@
     # 
     nil
     nixpkgs-fmt
+
+    ripgrep
+
+    lazygit
+
+    # ladybird
+    # rustpython
+    # (rustpython.withPackages (p: with p; [
+    #   pydantic
+    #   pydantic-settings
+    # ])
+    # )
   ];
 }
 

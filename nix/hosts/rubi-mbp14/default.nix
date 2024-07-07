@@ -18,6 +18,10 @@
     yggdrasil
   ]);
 
+  environment.systemPackages = with pkgs; [
+    nvd
+  ];
+
   services.nix-daemon.enable = true;
 
   programs = {
@@ -37,8 +41,6 @@
     };
 
     brews = [
-      "age"
-      "ansible"
       "far2l"
       "fzf"
       "python@3.10"
@@ -47,6 +49,7 @@
 
     casks = [
       "keepassxc"
+      "stats"
     ];
   };
 

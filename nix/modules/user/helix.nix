@@ -102,6 +102,8 @@
         };
       };
 
+      keys.normal."C-g" = [ ":new" ":insert-output ${pkgs.lazygit}/bin/lazygit" ":buffer-close!" ":redraw" ];
+
       # Make use of g+{left, right} in normal mode
       # in vim this was ^$, but... here no, and this is better
       keys.normal.g = {

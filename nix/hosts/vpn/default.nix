@@ -19,6 +19,10 @@
 
     # local
     ./wg.nix
+
+    # services
+    ## monitoring
+    grafana-agent-simple
   ];
 
   boot = {
@@ -84,6 +88,14 @@
   };
 
   systemd.services.dante.after = [ "yggdrasil.service" ];
+
+  networking.resolvconf.extraConfig = ''
+    unbound_conf=/etc/unbound-resolvconf.conf
+  '';
+
+  services.unbound.settings.include = [
+    "/etc/unbound-resolvconf.conf"
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

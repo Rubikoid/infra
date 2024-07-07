@@ -9,6 +9,6 @@
     isNormalUser = true;
     shell = pkgs.bashInteractive; # pkgs.shadow;
     openssh.authorizedKeys.keys = secrets.ssh.nix-builder;
-    group = config.users.groups.nix-builder;
+    group = config.users.groups.nix-builder.name;
   };
 }

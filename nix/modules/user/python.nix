@@ -30,6 +30,7 @@
           pytest
           setuptools
           wheel
+          pyyaml
           # etc
           python-lsp-server # yes, it is another lsp.
         ])

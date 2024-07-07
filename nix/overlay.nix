@@ -1,7 +1,6 @@
 inputs: final: prev:
 let
   nix-old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
-  nix-master = import inputs.nixpkgs-master ({ localSystem = { inherit (final) system; }; });
 
   nixpkgs-old-stable = import inputs.nixpkgs-old-stable ({ localSystem = { inherit (final) system; }; });
   overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
@@ -13,8 +12,6 @@ rec {
   my-lib = import ./lib.nix final lib;
 
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
-
-  openssh = nix-master.openssh;
 
   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
     (

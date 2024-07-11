@@ -5,8 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nixpkgs-old.url = "github:NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
+    nixpkgs-old-basedpyright.url = "github:NixOS/nixpkgs/48596fb13bc91bdc1b44bcdd6b0f87f0467d34c0";
     nixpkgs-old-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
-    nixpkgs-old-stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-23.11-darwin";
 
     # home-manager upstream
     home-manager = {
@@ -55,10 +55,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-darwin.url = "github:LnL7/nix-darwin/master";
-    # nix-darwin.url = "github:rubikoid/nix-darwin/rubikoid/offline-flag";
-    # nix-darwin.url = "/Users/rubikoid/projects/git/nix-darwin";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin = {
+      # url = "github:rubikoid/nix-darwin/rubikoid/offline-flag";
+      # url = "/Users/rubikoid/projects/git/nix-darwin";
+      url = "github:LnL7/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-wsl = {
       url = "github:nix-community/NixOS-WSL/aef95bdb6800a3a2af7aa7083d6df03067da6592";

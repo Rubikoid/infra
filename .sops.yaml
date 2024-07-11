@@ -85,3 +85,11 @@ creation_rules:
           - *rubikoid_wsl
           - *rubikoid_mbp14
           - *mbp14
+
+  - path_regex: secrets/hosts/r7-wsl/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *rubikoid_mbp14
+          - *wsl

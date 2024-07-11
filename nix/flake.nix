@@ -71,9 +71,14 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    inputs.microvm = {
+      url = "github:astro/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, nixos-generators, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, ... } @ inputs:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
 
@@ -104,6 +109,19 @@
 
       lib = import ./lib.nix nixpkgs nixpkgs.lib;
       secrets = import ../secrets inputs;
+
+      forEachSystem = f: nixpkgs.lib.genAttrs supportedSystems (system: f {
+        inherit system;
+        pkgs = pkgsFor system;
+      });
+
+      raw_hosts = builtins.attrNames (builtins.readDir ./hosts);
+      forEachHost = filter: f: nixpkgs.lib.genAttrs (builtins.filter filter raw_hosts) (hostname: f rec {
+        inherit hostname;
+        system = lib.readSystem hostname;
+        pkgs = pkgsFor system;
+      });
+      forEachHostSimple = forEachHost (hostname: true);
     in
     {
       inherit lib secrets;
@@ -115,217 +133,69 @@
       users = builtins.listToAttrs (lib.findModules ./users);
       overlay = import ./overlay.nix inputs;
 
-      # idk another magic from @balsoft flake.nix... (but somethere explained)
-      nixosConfigurations = with nixpkgs.lib;
-        let
-          # get hosts list from ./hosts directory
-          hosts = builtins.attrNames (builtins.readDir ./hosts);
+      nixosConfigurations = forEachHostSimple ({ system, hostname, pkgs }: nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = nixpkgs.lib.__attrValues self.defaultModules ++ [
+          (import ./modules/base-system.nix)
+          (import ./modules/base-system-linux.nix)
+          (import (./hosts + "/${hostname}"))
+          { nixpkgs.pkgs = pkgs; }
+          {
+            system-arch-name = system;
+            device = hostname;
+            isWSL = lib.isWSLFilter hostname;
+          }
+          (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
+          (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
+        ];
+        specialArgs = {
+          inherit inputs;
 
-          # define function for defining each host
-          mkHost = hostname:
-            let
-              system = lib.readSystem hostname;
-              pkgs = pkgsFor system;
-            in
-            nixosSystem {
-              inherit system;
-              modules = __attrValues self.defaultModules ++ [
-                {
-                  system-arch-name = system;
-                  device = hostname;
-                  isWSL = lib.isWSLFilter hostname;
-                }
-                (import ./modules/base-system.nix)
-                (import ./modules/base-system-linux.nix)
-                (import (./hosts + "/${hostname}"))
-                { nixpkgs.pkgs = pkgs; }
-                (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
-                (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
-              ];
-              specialArgs = {
-                inherit inputs;
+          secretsModule = secrets.nixosModules.default;
+          secrets = secrets.secretsBuilder hostname;
 
-                secretsModule = secrets.nixosModules.default;
-                secrets = secrets.secretsBuilder hostname;
+          mode = "NixOS";
+        };
+      });
 
-                mode = "NixOS";
-              };
-            };
-        in
-        genAttrs hosts mkHost;
+      darwinConfigurations = forEachHost lib.isDarwinFilter ({ system, hostname, pkgs }: nix-darwin.lib.darwinSystem {
+        inherit system;
+        modules = nixpkgs.lib.__attrValues self.defaultModules ++ [
+          (import ./modules/base-system.nix)
+          (import ./modules/base-system-darwin.nix)
+          (import (./hosts + "/${hostname}"))
+          { nixpkgs.pkgs = pkgs; }
+          {
+            system-arch-name = system;
+            device = hostname;
+            isDarwin = true;
+          }
+        ];
+        specialArgs = {
+          inherit inputs;
 
-      darwinConfigurations = with nixpkgs.lib;
-        let
-          hosts = builtins.filter lib.isDarwinFilter (builtins.attrNames (builtins.readDir ./hosts));
+          secretsModule = secrets.darwinModules.default;
+          secrets = secrets.secretsBuilder hostname;
 
-          mkDarwinHost = hostname:
-            let
-              system = lib.readSystem hostname;
-              pkgs = pkgsFor system;
-            in
-            nix-darwin.lib.darwinSystem {
-              inherit system;
-              modules = __attrValues self.defaultModules ++ [
-                (import ./modules/base-system.nix)
-                (import ./modules/base-system-darwin.nix)
-                (import (./hosts + "/${hostname}"))
-                { nixpkgs.pkgs = pkgs; }
-                {
-                  system-arch-name = system;
-                  device = hostname;
-                  isDarwin = true;
-                }
-              ];
-              specialArgs = {
-                inherit inputs;
+          mode = "Darwin";
+        };
+      });
 
-                secretsModule = secrets.darwinModules.default;
-                secrets = secrets.secretsBuilder hostname;
+      devShell = forEachSystem ({ system, pkgs }:
+        pkgs.mkShell {
+          packages = with pkgs; [
+            nil
+            nixpkgs-fmt
+            sops
+            # nixfmt-rfc-style
+          ];
+        }
+      );
 
-                mode = "Darwin";
-              };
-            };
-        in
-        genAttrs hosts mkDarwinHost;
-
-      # homeConfigurations = with nixpkgs.lib;
-      #   let
-      #     # get hosts list from ./hosts directory
-      #     users = builtins.attrNames (builtins.readDir ./users);
-
-      #     mkUser = name:
-      #       let
-      #         system = "x86_64-linux"; # TODO: make this properly
-      #         pkgs = pkgsFor system;
-      #       in
-      #       home-manager.lib.homeManagerConfiguration {
-      #         pkgs = pkgs;
-      #         modules = __attrValues self.defaultModules ++ [
-      #           (import ./modules/base-user.nix)
-      #           (import (./users + "/${name}"))
-      #           # {
-      #           #   nixpkgs.overlays = [ self.overlay ];
-      #           # }
-      #           { user = name; }
-      #           # { userSecrets = ./secrets + "/${name}/"; }
-      #         ];
-      #         extraSpecialArgs = {
-      #           inherit inputs;
-
-      #           mode = "home-manager";
-      #         };
-      #       };
-      #   in
-      #   genAttrs users mkUser;
-
-      devShell = with nixpkgs.lib;
-        let
-          genShell = system:
-            let
-              pkgs = pkgsFor system;
-            in
-            pkgs.mkShell {
-              packages = with pkgs; [
-                nil
-                nixpkgs-fmt
-                sops
-                # nixfmt-rfc-style
-              ];
-            };
-        in
-        genAttrs supportedSystems genShell;
-
-      packages = with nixpkgs.lib;
-        let
-          genPkg = _system:
-            let
-              pkgs = _pkgsFor inputs.nixpkgs _system;
-            in
-            {
-              kubic-repair =
-                let
-                  hostname = "kubic";
-                  system = lib.readSystem hostname;
-                in
-                nixos-generators.nixosGenerate
-                  {
-                    inherit pkgs system;
-                    modules = (with self.systemModules; [
-                      ca_rubikoid
-
-                      ntfs
-                      zfs
-
-                      openssh
-                      openssh-root-key
-
-                      gigabyte-fans
-
-                      smartd
-                    ]) ++
-                    [
-                      (import ./modules/default/options.nix)
-                      (import ./modules/base-system.nix)
-                      (import ./modules/base-system-linux.nix)
-                      {
-                        system-arch-name = system;
-                        device = hostname;
-                        isWSL = false;
-                      }
-                      {
-                        nix = {
-                          package = pkgs.nix;
-                          registry = {
-                            nixpkgs.flake = inputs.nixpkgs;
-                            n.flake = inputs.nixpkgs;
-                          };
-                          settings = {
-                            experimental-features = [
-                              "nix-command"
-                              "flakes"
-                              "repl-flake"
-                            ];
-                          };
-                        };
-                      }
-                      {
-                        boot.supportedFilesystems = [ "exfat" "f2fs" "fat8" "fat16" "fat32" ];
-
-                        networking.hostId = (secrets.secretsBuilder hostname).zfsHostId; # need by zfs
-                        # systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
-                        services.zfs.autoScrub.enable = false;
-
-                        # auto detect type of disk
-                        # disable auto offline tests (they are slow and we don't need them now)
-                        # check health
-                        services.smartd.defaults.monitored = "-d auto -o off -H -l selftest -l selfteststs -l error -l xerror -f -t -C 197 -U 198";
-
-                        environment.systemPackages = with pkgs; [
-                          tmux
-                          btop
-                          htop
-                          rsync
-                          lm_sensors
-                        ];
-
-                        system.stateVersion = "23.11";
-                      }
-                    ];
-                    format = "install-iso";
-                    specialArgs = {
-                      inherit inputs;
-
-                      secretsModule = secrets.nixosModules.default;
-                      secrets = secrets.secretsBuilder hostname;
-
-                      mode = "NixOS";
-                    };
-                  };
-
-              glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
-              glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
-            };
-        in
-        genAttrs supportedSystems genPkg;
+      packages = forEachSystem ({ system, pkgs }: {
+        kubic-repair = import ./repair-iso.nix { inherit inputs lib system pkgs; };
+        glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
+        glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
+      });
     };
 }

@@ -41,6 +41,8 @@ rec {
       )
     );
 
+  # read system for hostname
+  # defaults to x86_64-linux
   readSystem = hostname:
     if
       builtins.pathExists (./hosts + "/${hostname}/system")
@@ -49,11 +51,10 @@ rec {
     else
       "x86_64-linux";
 
-  isDarwinFilter = hostname:
-    if lib.hasSuffix "-darwin" (readSystem hostname)
-    then true
-    else false;
+  # simple predicate for darwin
+  isDarwinFilter = hostname: lib.hasSuffix "-darwin" (readSystem hostname);
 
+  # simple predicate for WSL ;)
   isWSLFilter = hostname: lib.hasSuffix "-wsl" hostname;
 
   # join strings by comma
@@ -75,7 +76,7 @@ rec {
         paths
       );
 
-  # i don't remember WTF is it ;(
+  # i don't remember WTF is it too;(
   mkBinarySecrets = basePath: extraAttrs: paths:
     mkSecrets
       basePath

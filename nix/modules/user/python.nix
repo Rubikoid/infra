@@ -32,7 +32,7 @@
           wheel
           pyyaml
           # etc
-          python-lsp-server # yes, it is another lsp.
+          # python-lsp-server # yes, it is another lsp.
         ])
         ++
         (with pkgs; [

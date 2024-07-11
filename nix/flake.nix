@@ -72,7 +72,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    inputs.microvm = {
+    microvm = {
       url = "github:astro/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -135,7 +135,7 @@
 
       nixosConfigurations = forEachHostSimple ({ system, hostname, pkgs }: nixpkgs.lib.nixosSystem {
         inherit system;
-        modules = nixpkgs.lib.__attrValues self.defaultModules ++ [
+        modules = builtins.attrValues self.defaultModules ++ [
           (import ./modules/base-system.nix)
           (import ./modules/base-system-linux.nix)
           (import (./hosts + "/${hostname}"))
@@ -160,7 +160,7 @@
 
       darwinConfigurations = forEachHost lib.isDarwinFilter ({ system, hostname, pkgs }: nix-darwin.lib.darwinSystem {
         inherit system;
-        modules = nixpkgs.lib.__attrValues self.defaultModules ++ [
+        modules = builtins.attrValues self.defaultModules ++ [
           (import ./modules/base-system.nix)
           (import ./modules/base-system-darwin.nix)
           (import (./hosts + "/${hostname}"))

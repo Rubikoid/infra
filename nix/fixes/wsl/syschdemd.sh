@@ -26,6 +26,13 @@ fix_shm_dir() {
   fi
 }
 
+fix_cgroup() {
+    echo "Found cgroup shit..." $(mount | grep "cgroup")
+    umount /sys/fs/cgroup/* || echo "..."
+    umount /sys/fs/cgroup || echo "..."
+    mount -t cgroup2 cgroup2 /sys/fs/cgroup -o rw,nosuid,nodev,noexec,relatime,nsdelegate || echo "unable to mount cgroup2"
+}
+
 activate() {
   mount --bind -o ro /nix/store /nix/store
 
@@ -105,6 +112,8 @@ main() {
   ensure_root
 
   fix_shm_dir
+
+  fix_cgroup
 
   if [ ! -e "/run/current-system" ]; then
     activate

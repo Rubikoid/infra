@@ -7,7 +7,7 @@
     {
       version = lib.mkOption {
         type = types.str;
-        default = "v1.94.1-ig247"; # "v1.90.0-ig222"; # "v1.89.0-ig220";
+        default = "v1.108.0-ig303"; # "v1.95.1-ig252"; # "v1.94.1-ig247"; # "v1.90.0-ig222"; # "v1.89.0-ig220";
       };
 
       port = lib.mkOption {
@@ -49,6 +49,8 @@
             DB_PASSWORD = "postgres";
             DB_DATABASE_NAME = "immich";
             REDIS_HOSTNAME = "immich-redis";
+
+            IMMICH_BUILD_DATA = "/app/immich/server";
           };
           extraOptions = [ "--network=immich-net" "--gpus=all" ];
         };
@@ -62,7 +64,7 @@
 
         immich-postgres14 = {
           autoStart = true;
-          image = "tensorchord/pgvecto-rs:pg14-v0.1.11";
+          image = "tensorchord/pgvecto-rs:pg14-v0.2.0";
           # ports = [ "5432:5432" ];
           volumes = [
             "pgdata:/var/lib/postgresql/data"

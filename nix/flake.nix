@@ -63,7 +63,7 @@
     };
 
     nix-wsl = {
-      url = "github:nix-community/NixOS-WSL/aef95bdb6800a3a2af7aa7083d6df03067da6592";
+      url = "github:nix-community/NixOS-WSL/2405.5.4";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -73,12 +73,12 @@
     };
 
     microvm = {
-      url = "github:astro/microvm.nix";
+      url = "github:astro/microvm.nix/a808af7775f508a2afedd1e4940a382fe1194f21"; # master as of 15-07-2024
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, microvm, ... } @ inputs:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
 
@@ -116,15 +116,21 @@
       });
 
       raw_hosts = builtins.attrNames (builtins.readDir ./hosts);
-      forEachHost = filter: f: nixpkgs.lib.genAttrs (builtins.filter filter raw_hosts) (hostname: f rec {
+      raw_vms = builtins.attrNames (builtins.readDir ./vms);
+
+      forEachPkgsBuilder = source: filter: f: nixpkgs.lib.genAttrs (builtins.filter filter source) (hostname: f rec {
         inherit hostname;
         system = lib.readSystem hostname;
         pkgs = pkgsFor system;
       });
+
+      forEachHost = forEachPkgsBuilder raw_hosts;
+      forEachVM = forEachPkgsBuilder raw_vms (hostname: true);
       forEachHostSimple = forEachHost (hostname: true);
     in
     {
       inherit lib secrets;
+      inherit raw_vms;
 
       defaultModules = builtins.listToAttrs (lib.findModules ./modules/default);
       systemModules = builtins.listToAttrs (lib.findModules ./modules/system);
@@ -133,30 +139,54 @@
       users = builtins.listToAttrs (lib.findModules ./users);
       overlay = import ./overlay.nix inputs;
 
-      nixosConfigurations = forEachHostSimple ({ system, hostname, pkgs }: nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = builtins.attrValues self.defaultModules ++ [
-          (import ./modules/base-system.nix)
-          (import ./modules/base-system-linux.nix)
-          (import (./hosts + "/${hostname}"))
-          { nixpkgs.pkgs = pkgs; }
-          {
-            system-arch-name = system;
-            device = hostname;
-            isWSL = lib.isWSLFilter hostname;
-          }
-          (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
-          (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
-        ];
-        specialArgs = {
-          inherit inputs;
+      nixosConfigurations =
+        let
+          genericNixOSConfig = { system, hostname, pkgs }: {
+            inherit system;
+            modules = builtins.attrValues self.defaultModules ++ [
+              (import ./modules/base-system.nix)
+              (import ./modules/base-system-linux.nix)
+              { nixpkgs.pkgs = pkgs; }
+              {
+                system-arch-name = system;
+                device = hostname;
+                isWSL = lib.isWSLFilter hostname;
+              }
+              (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
+              # (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
+            ];
+            specialArgs = {
+              inherit inputs;
 
-          secretsModule = secrets.nixosModules.default;
-          secrets = secrets.secretsBuilder hostname;
+              secretsModule = secrets.nixosModules.default;
+              secrets = secrets.secretsBuilder hostname;
+            };
+          };
 
-          mode = "NixOS";
-        };
-      });
+          mkSystem = { ... } @ inp: extra: nixpkgs.lib.nixosSystem (lib.recursiveMerge [
+            (genericNixOSConfig inp)
+            extra
+          ]);
+        in
+        (forEachHostSimple ({ system, hostname, pkgs } @ inp: mkSystem inp {
+          modules = [
+            (import (./hosts + "/${hostname}"))
+          ];
+          specialArgs = {
+            mode = "NixOS";
+          };
+        }))
+        //
+        forEachVM ({ system, hostname, pkgs } @ inp: mkSystem inp {
+          modules = [
+            microvm.nixosModules.microvm
+            (import ./modules/base-system-vm.nix)
+            (import (./vms + "/${hostname}"))
+          ];
+          specialArgs = {
+            mode = "NixOS";
+          };
+        });
 
       darwinConfigurations = forEachHost lib.isDarwinFilter ({ system, hostname, pkgs }: nix-darwin.lib.darwinSystem {
         inherit system;

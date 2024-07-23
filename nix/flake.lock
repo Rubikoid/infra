@@ -168,6 +168,7 @@
       "original": {
         "owner": "astro",
         "repo": "microvm.nix",
+        "rev": "a808af7775f508a2afedd1e4940a382fe1194f21",
         "type": "github"
       }
     },
@@ -223,17 +224,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1710519878,
-        "narHash": "sha256-0dbc10OBFUVYyXC+C+N6vRUd8xyBSRxkcZ4Egipbx0M=",
+        "lastModified": 1720391164,
+        "narHash": "sha256-RrJsSelbJ/SCrnCH0yLEvgVSKVoG7b45Qhf/6fOiQ8I=",
         "owner": "nix-community",
         "repo": "NixOS-WSL",
-        "rev": "aef95bdb6800a3a2af7aa7083d6df03067da6592",
+        "rev": "05098ab6e48684c573d7033bd583b1eea2f5f851",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
+        "ref": "2405.5.4",
         "repo": "NixOS-WSL",
-        "rev": "aef95bdb6800a3a2af7aa7083d6df03067da6592",
         "type": "github"
       }
     },

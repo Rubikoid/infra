@@ -4,6 +4,7 @@
     sops
     helix
     python
+    dev
   ];
 
   home.packages = with pkgs; [
@@ -19,12 +20,6 @@
 
     # glib, gobject-introspection, harfbuzz, ldc, librsvg, lima, llvm, python-tk@3.12, qt@5 and yt-dlp
     # 
-    nil
-    nixpkgs-fmt
-
-    ripgrep
-
-    lazygit
 
     # ladybird
     # rustpython

@@ -4,6 +4,7 @@
     sops
     helix
     python
+    dev
   ];
 
   home.packages = with pkgs; [
@@ -11,8 +12,7 @@
     vim
     file
     socat
-    nil
-    nixpkgs-fmt
+
     htop
     fzf
     tmux

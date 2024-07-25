@@ -11,4 +11,6 @@
     openssh.authorizedKeys.keys = secrets.ssh.nix-builder;
     group = config.users.groups.nix-builder.name;
   };
+
+  nix.settings.trusted-users = [ "nix-builder" ];
 }

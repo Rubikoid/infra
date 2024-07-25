@@ -22,7 +22,6 @@
         systems = [
           "x86_64-linux"
           "aarch64-linux"
-          "aarch64-darwin"
         ];
         # system = "x86_64-linux";
         maxJobs = 8; # kubic has 8/16 CPU, so...

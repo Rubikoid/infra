@@ -28,108 +28,144 @@ in
       };
     };
 
-    user = lib.mkOption {
-      type = types.str;
-      default = "rubikoid";
-    };
+    users = lib.mkOption {
+      type = types.attrsOf (types.submodule ({ name, ... }: {
+        options = {
+          user = lib.mkOption {
+            type = types.str;
+            default = name;
+          };
 
-    group = lib.mkOption {
-      type = types.str;
-      default = "rubikoid";
-    };
+          group = lib.mkOption {
+            type = types.str;
+            default = cfg.users.${name}.user;
+          };
 
-    usedBy = lib.mkOption {
-      type = types.listOf types.str;
-      default = [ ];
-    };
+          usedBy = lib.mkOption {
+            type = types.listOf types.str;
+            default = [ ];
+          };
 
-    homeFolder = lib.mkOption {
-      type = types.path;
-      default = cfg.baseFolder + "/${cfg.user}";
+          homeFolder = lib.mkOption {
+            type = types.path;
+            default = cfg.baseFolder + "/${cfg.users.${name}.user}";
+          };
+
+          folders = lib.mkOption {
+            type = types.listOf types.str;
+            default = [ "backups" "documents" "media" ];
+          };
+        };
+      }));
     };
   };
 
-  config = {
-    users = {
+  config =
+    let
+      mapUser = keyFunc: valueFunc: (
+        lib.mapAttrs'
+          (name: value: {
+            name = keyFunc value;
+            value = valueFunc value;
+          })
+          cfg.users
+      );
+    in
+    {
+      rubikoid.services.garden.users.rubikoid = {
+        folders = [ "projects" "vault" "ctf" "ss" ];
+      };
+      rubikoid.services.garden.users.affection = {
+        folders = [ "screenshots" ];
+      };
+
       users = {
-        ${cfg.global.user} = {
-          home = cfg.global.dataFolder;
-          group = cfg.global.group;
-          isSystemUser = true;
-        };
-        ${cfg.user} = {
-          # home = userHome;
-          group = cfg.group;
-          isNormalUser = true;
-        };
+        users = {
+          ${cfg.global.user} = {
+            home = cfg.global.dataFolder;
+            group = cfg.global.group;
+            isSystemUser = true;
+          };
+        } // (
+          mapUser
+            (value: value.user)
+            (value: {
+              group = value.group;
+              isNormalUser = true;
+            })
+        );
+
+        groups = {
+          ${cfg.global.group} = {
+            members = [ cfg.global.user ] ++ (lib.mapAttrsToList (name: value: value.user) cfg.users);
+          };
+        } // (
+          mapUser
+            (value: value.group)
+            (value: {
+              members = [ value.user ];
+            })
+        );
       };
 
-      groups = {
-        ${cfg.global.group} = {
-          members = [ cfg.global.user cfg.user ];
-        };
-        ${cfg.group} = {
-          members = [ cfg.user ];
-        };
-      };
-    };
-
-    systemd.tmpfiles.settings = {
-      "11-garden" =
-        let
-          entry = {
-            d = {
-              mode = "0775";
-              user = cfg.global.user;
-              group = cfg.global.group;
-            };
-            A.argument = pkgs.my-lib.commaJoin [
-              "default:u::rwx"
-              "default:g::rwx"
-              "default:o::r-x"
-            ];
-          };
-        in
-        {
-          ${cfg.global.dataFolder} = entry;
-          "${cfg.global.dataFolder}/software" = entry;
-        };
-
-      "12-garden-${cfg.user}" =
-        let
-          stat = {
-            mode = "0750";
-            user = cfg.user;
-            group = cfg.group;
-          };
-          entry = {
-            d = stat;
-            # Z = stat;
-            A.argument = pkgs.my-lib.commaJoin (
-              [
-                "default:u:${cfg.user}:rwx"
-                "default:g:${cfg.user}:r-x"
+      systemd.tmpfiles.settings = {
+        "11-garden" =
+          let
+            entry = {
+              d = {
+                mode = "0775";
+                user = cfg.global.user;
+                group = cfg.global.group;
+              };
+              A.argument = pkgs.my-lib.commaJoin [
                 "default:u::rwx"
-                "default:g::r-x"
-                "default:o::---"
-              ]
-              ++
-              (builtins.map (user: "user:${user}:rwx") cfg.usedBy)
-              ++
-              (builtins.map (user: "default:user:${user}:rwx") cfg.usedBy)
-            );
+                "default:g::rwx"
+                "default:o::r-x"
+              ];
+            };
+          in
+          {
+            ${cfg.global.dataFolder} = entry;
+            "${cfg.global.dataFolder}/software" = entry;
           };
-        in
-        {
-          ${cfg.homeFolder} = entry;
-          "${cfg.homeFolder}/backups" = entry;
-          "${cfg.homeFolder}/documents" = entry;
-          "${cfg.homeFolder}/projects" = entry;
-          "${cfg.homeFolder}/media" = entry;
-          "${cfg.homeFolder}/vault" = entry;
-          "${cfg.homeFolder}/ctf" = entry;
-          "${cfg.homeFolder}/ss" = entry;
-        };
+      } // (
+        mapUser
+          (value: "12-garden-${value.user}")
+          (value:
+            let
+              stat = {
+                mode = "0750";
+                user = value.user;
+                group = value.group;
+              };
+              entry = {
+                d = stat;
+                # Z = stat;
+                A.argument = pkgs.my-lib.commaJoin (
+                  [
+                    "default:u:${value.user}:rwx"
+                    "default:g:${value.user}:r-x"
+                    "default:u::rwx"
+                    "default:g::r-x"
+                    "default:o::---"
+                  ]
+                  ++
+                  (builtins.map (user: "user:${user}:rwx") value.usedBy)
+                  ++
+                  (builtins.map (user: "default:user:${user}:rwx") value.usedBy)
+                );
+              };
+              homeFolder = value.homeFolder;
+            in
+            {
+              ${homeFolder} = entry;
+            } // builtins.listToAttrs (builtins.map
+              (key: {
+                name = "${homeFolder}/${key}";
+                value = entry;
+              })
+              value.folders)
+          )
+      );
     };
-  };
 }

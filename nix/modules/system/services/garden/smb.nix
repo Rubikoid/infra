@@ -10,6 +10,15 @@
     let
       gcfg = config.rubikoid.services.garden;
       cfg = gcfg.smb;
+
+      mapUser = keyFunc: valueFunc: (
+        lib.mapAttrs'
+          (name: value: {
+            name = keyFunc value;
+            value = valueFunc value;
+          })
+          gcfg.users
+      );
     in
     {
       services.samba-wsdd.enable = true; # make shares visible for windows 10 clients
@@ -57,24 +66,26 @@
             "force group" = gcfg.global.group;
           };
 
-          ${gcfg.user} = {
-            path = "${gcfg.homeFolder}";
-            browseable = "yes";
-            "read only" = "no";
-            "guest ok" = "no";
-            "create mask" = "0640";
-            "directory mask" = "0750";
-            # "force user" = gcfg.user;
-            # "force group" = gcfg.group;
-          };
-
           media = {
             path = "${config.rubikoid.services.media.mediaDataFolder}";
             browseable = "yes";
             "read only" = "yes";
             "guest ok" = "yes";
           };
-        };
+        } // (
+          mapUser
+            (value: value.user)
+            (value: {
+              path = "${value.homeFolder}";
+              browseable = "yes";
+              "read only" = "no";
+              "guest ok" = "no";
+              "create mask" = "0640";
+              "directory mask" = "0750";
+              # "force user" = gcfg.user;
+              # "force group" = gcfg.group;
+            })
+        );
 
         openFirewall = true;
       };

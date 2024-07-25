@@ -1,4 +1,5 @@
-#!/usr/bin/env -S nix shell nixpkgs#coreutils nixpkgs#bundix nixpkgs#nix-prefetch-github nixpkgs#jq -c bash
+#!/usr/bin/env nix 
+#! nix shell nixpkgs#coreutils nixpkgs#bundix nixpkgs#nix-prefetch-github nixpkgs#jq -c bash
 
 set -e
 

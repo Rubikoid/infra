@@ -21,5 +21,5 @@ applyPatches {
     repo = "mastodon";
     inherit (versionData) rev hash;
   };
-  patches = lib.filesystem.listFilesRecursive ./patches;
+  # patches = lib.filesystem.listFilesRecursive ./patches;
 }

@@ -1,8 +1,9 @@
 inputs: final: prev:
 let
   nix-old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
-
+  nixpkgs-old-basedpyright = import inputs.nixpkgs-old-basedpyright ({ localSystem = { inherit (final) system; }; });
   nixpkgs-old-stable = import inputs.nixpkgs-old-stable ({ localSystem = { inherit (final) system; }; });
+
   overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
   fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
 
@@ -13,10 +14,39 @@ rec {
 
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
 
+  # k3s = nixpkgs-old-stable.k3s;
+
+  # iptables =
+  #   let
+  #     wrapper = final.writeShellScript "iptables-wrapper.sh" ''
+  #       echo "args: " "$0" "$@" >> /tmp/log.txt
+  #       exit 1
+  #       # ${prev.iptables}/bin/$0 "$@"
+  #     '';
+  #   in
+  #   prev.iptables.overrideAttrs (old: {
+  #     postInstall = ''
+  #       rm $out/sbin/{iptables,iptables-restore,iptables-save,ip6tables,ip6tables-restore,ip6tables-save}
+  #       ln -sv xtables-nft-multi $out/bin/iptables
+  #       ln -sv xtables-nft-multi $out/bin/iptables-restore
+  #       ln -sv xtables-nft-multi $out/bin/iptables-save
+  #       ln -sv xtables-nft-multi $out/bin/ip6tables
+  #       ln -sv xtables-nft-multi $out/bin/ip6tables-restore
+  #       ln -sv xtables-nft-multi $out/bin/ip6tables-save
+
+  #       rm $out/sbin/{iptables-legacy,iptables-legacy-restore,iptables-legacy-save}
+  #       ln -sv ${wrapper} $out/bin/iptables-legacy
+  #       ln -sv ${wrapper} $out/bin/iptables-legacy-restore
+  #       ln -sv ${wrapper} $out/bin/iptables-legacy-save
+  #     '';
+  #   });
+
+  basedpyright = nixpkgs-old-basedpyright.basedpyright;
+
   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
     (
       python-final: python-prev: {
-        cyclopts = final.callPackage ./pkgs/cyclopts.nix;
+        # cyclopts = final.callPackage ./pkgs/cyclopts.nix;
       }
     )
   ];

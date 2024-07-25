@@ -54,6 +54,12 @@ home cmd=default_cmd *args=default_args:
 build pkg *args=default_args:
     nix build "{{FLAKE_PATH}}#{{pkg}}" -v {{args}}
 
+run-vm name *args=default_args:
+    nix run {{args}} "{{FLAKE_PATH}}#nixosConfigurations.{{name}}.config.microvm.declaredRunner"
+
+get-age-key:
+    nix shell "{{nix}}#ssh-to-age" --command sh -c 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
+
 # pkg:
 # 	echo "[+] Building package: $(pkg)"
 # 	nix build $(FLAKE_PATH)#nixosConfigurations.$(HOST).pkgs.$(pkg) -v $(args)
@@ -71,6 +77,7 @@ deploy target *args=default_args:
         {{args}} \
         . \
         {{target}}:~/infra
+
 
 deploy-rebuild target *args=default_args: (deploy target)
     ssh {{target}} just --justfile '~/infra/Justfile' system switch --no-update-lock-file {{ args }}

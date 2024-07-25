@@ -7,3 +7,5 @@ nix/*.tar.gz
 
 .direnv
 .stfolder
+
+test/

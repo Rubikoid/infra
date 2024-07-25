@@ -1,4 +1,4 @@
-{ pkgs, config, secrets, inputs, lib, ... }:
+{ pkgs, config, secrets, inputs, lib, utils, ... }:
 
 {
   imports = with inputs.self.systemModules; [
@@ -62,11 +62,28 @@
     };
   };
 
-  system.activationScripts.gitbash = lib.stringAfter [ "setupLogin" ] ''
-    echo "setting up /bin/bash and /bin/git..."
-    ln -sf ${pkgs.bashInteractive}/bin/bash /bin/bash
-    ln -sf ${pkgs.git}/bin/git /bin/git
-  '';
+  system.activationScripts.gitbash =
+    let
+      srcShell = config.users.users.rubikoid.shell;
+      shell =
+        let
+          shellPath = utils.toShellPath srcShell;
+          wrapper = pkgs.stdenvNoCC.mkDerivation {
+            name = "wrapped-${lib.last (lib.splitString "/" (shellPath))}";
+            buildCommand = ''
+              mkdir -p $out
+              cp ${config.system.build.nativeUtils}/bin/shell-wrapper $out/wrapper
+              ln -s ${shellPath} $out/shell
+            '';
+          };
+        in
+        wrapper.outPath + "/wrapper";
+    in
+    lib.stringAfter [ "setupLogin" ] ''
+      echo "setting up /bin/bash (fake ;) )..."
+      ln -sf ${shell} /bin/bash
+    '';
+  #  ln -sf ${pkgs.git}/bin/git /bin/git
 
   system.stateVersion = "24.05"; # Did you read the comment?
 }

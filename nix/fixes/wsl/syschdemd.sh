@@ -113,7 +113,7 @@ main() {
 
   fix_shm_dir
 
-  fix_cgroup
+  # fix_cgroup
 
   if [ ! -e "/run/current-system" ]; then
     activate

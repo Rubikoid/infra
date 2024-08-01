@@ -67,6 +67,9 @@ get-age-key:
 # develop:
 # 	nix develop $(args) $(FLAKE_PATH)
 
+develop shell="default" *args=default_args: 
+    nix develop "{{FLAKE_PATH}}#{{shell}}" {{args}} -c "$SHELL"
+
 deploy target *args=default_args:
     rsync \
         -rlptD \

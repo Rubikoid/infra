@@ -211,16 +211,27 @@
         };
       });
 
-      devShell = forEachSystem ({ system, pkgs }:
-        pkgs.mkShell {
+      devShells = forEachSystem ({ system, pkgs }: {
+        default = pkgs.mkShell {
           packages = with pkgs; [
             nil
             nixpkgs-fmt
             sops
             # nixfmt-rfc-style
           ];
-        }
-      );
+        };
+
+        yark = pkgs.mkShell {
+          packages = with pkgs; [
+            python312Packages.yark
+            ffmpeg
+          ];
+
+          shellHook = ''
+            export ALL_PROXY="${secrets.hostLessSecrets.proxy}"
+          '';
+        };
+      });
 
       packages = forEachSystem ({ system, pkgs }: {
         kubic-repair = import ./repair-iso.nix { inherit inputs lib system pkgs; };

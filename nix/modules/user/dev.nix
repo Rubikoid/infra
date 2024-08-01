@@ -6,9 +6,23 @@
 
     ripgrep
 
-    lazygit
+    # lazygit
 
     k9s
     kubectl
   ];
+
+  programs.lazygit = {
+    enable = true;
+    settings = {
+      customCommands = [
+        {
+          key = "p";
+          context = "global";
+          command = "git pull --rebase --autostash -v";
+          description = "GUPAV:";
+        }
+      ];
+    };
+  };
 }

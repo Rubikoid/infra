@@ -1,91 +1,89 @@
 { lib, config, secrets, pkgs, ... }:
+let
+  types = lib.types;
+  cfg = config.rubikoid.services.akkoma;
+  httpCfg = config.rubikoid.http.services.akkoma;
+
+  public_url = "${cfg.caddyName}.${secrets.dns.public}";
+
+  mkRaw = (pkgs.formats.elixirConf { }).lib.mkRaw;
+  mkMap = (pkgs.formats.elixirConf { }).lib.mkMap;
+in
 {
-  options.rubikoid.services.akkoma =
-    let
-      types = lib.types;
-    in
-    {
-      host = lib.mkOption {
-        type = types.str;
-        default = "127.0.0.1";
-      };
-
-      port = lib.mkOption {
-        type = types.port;
-        default = 4000;
-      };
-
-      caddyName = lib.mkOption {
-        type = types.str;
-        default = "fedi";
-      };
+  options.rubikoid.services.akkoma = {
+    host = lib.mkOption {
+      type = types.str;
+      default = "127.0.0.1";
     };
 
-  config =
-    let
-      cfg = config.rubikoid.services.akkoma;
+    port = lib.mkOption {
+      type = types.port;
+      default = 4000;
+    };
 
-      public_url = "${cfg.caddyName}.${secrets.dns.public}";
-      private_url = "${cfg.caddyName}.${secrets.dns.private}";
+    caddyName = lib.mkOption {
+      type = types.str;
+      default = "fedi";
+    };
+  };
 
-      mkRaw = (pkgs.formats.elixirConf { }).lib.mkRaw;
-      mkMap = (pkgs.formats.elixirConf { }).lib.mkMap;
-    in
-    {
-      services.akkoma = {
-        enable = true;
+  config = {
+    services.akkoma = {
+      enable = true;
 
-        config = {
-          # ":logger".":ex_syslogger" = {
-          #   level = ":debug";
-          # };
+      config = {
+        # ":logger".":ex_syslogger" = {
+        #   level = ":debug";
+        # };
 
-          ":pleroma" = {
-            ":instance" = {
-              name = "Rubikoid's akkoma";
-              email = "akkoma+admin@rubikoid.ru";
-              description = "Just small akkoma inst";
-              registration_open = false;
-              invites_enabled = true;
+        ":pleroma" = {
+          ":instance" = {
+            name = "Rubikoid's akkoma";
+            email = "akkoma+admin@rubikoid.ru";
+            description = "Just small akkoma inst";
+            registration_open = false;
+            invites_enabled = true;
 
-              federating = true;
+            federating = true;
 
-              allow_relay = true;
-              public = true;
-            };
-
-            "Pleroma.Web.Endpoint" = {
-              http = {
-                ip = cfg.host;
-                port = cfg.port;
-              };
-              url.host = public_url;
-            };
-
-            ":mrf".policies = map mkRaw [
-              "Pleroma.Web.ActivityPub.MRF.SimplePolicy"
-            ];
-
-            ":mrf_simple" = { };
+            allow_relay = true;
+            public = true;
           };
+
+          "Pleroma.Web.Endpoint" = {
+            http = {
+              ip = cfg.host;
+              port = cfg.port;
+            };
+            url.host = public_url;
+          };
+
+          ":mrf".policies = map mkRaw [
+            "Pleroma.Web.ActivityPub.MRF.SimplePolicy"
+          ];
+
+          ":mrf_simple" = { };
         };
       };
-      
-      # reverse_proxy unix/${cfg.http.ip}
-      services.caddy.virtualHosts.${private_url} = {
-        extraConfig = ''
-          encode gzip
-      
-          @forward-from-upstream header X-Forwarded-Host "${public_url}"
-
-          reverse_proxy @forward-from-upstream http://127.0.0.1:${toString cfg.port} {
-            header_up Host "${public_url}"
-          }
-
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-      
-          import stepssl_acme
-        '';
-      };
     };
+
+    rubikoid.http.services.akkoma = {
+      name = cfg.caddyName;
+      hostOnHost = cfg.host;
+      inherit (cfg) port;
+
+      caddyConfig = ''
+        encode gzip
+      
+        @forward-from-upstream header X-Forwarded-Host "${public_url}"
+
+        reverse_proxy @forward-from-upstream http://127.0.0.1:${toString httpCfg.port} {
+          header_up Host "${public_url}"
+        }
+
+        reverse_proxy http://127.0.0.1:${toString httpCfg.port}
+        import stepssl_acme
+      '';
+    };
+  };
 }

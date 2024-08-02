@@ -3,7 +3,6 @@
 let
   types = lib.types;
   cfg = config.rubikoid.services.vikunja;
-  privateName = "${cfg.caddyName}.${secrets.dns.private}";
 in
 {
   options.rubikoid.services.vikunja = {
@@ -34,7 +33,7 @@ in
 
       port = cfg.port;
 
-      frontendHostname = privateName;
+      frontendHostname = config.rubikoid.http.services.vikunja.fqdn;
       frontendScheme = "https";
 
       # database = {
@@ -47,11 +46,11 @@ in
         };
       };
     };
-    services.caddy.virtualHosts.${privateName} = {
-      extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-        import stepssl_acme
-      '';
+
+    rubikoid.http.services.vikunja = {
+      name = cfg.caddyName;
+      hostOnHost = cfg.host;
+      inherit (cfg) port;
     };
   };
 }

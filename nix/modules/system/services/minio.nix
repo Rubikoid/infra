@@ -78,11 +78,10 @@
         dataDir = cfg.dataFolders;
       };
 
-      services.caddy.virtualHosts."${cfg.caddyName}.${secrets.dns.private}" = {
-        extraConfig = ''
-          reverse_proxy http://127.0.0.1:${toString cfg.console.port}
-          import stepssl_acme
-        '';
+      rubikoid.http.services.minio = {
+        name = cfg.caddyName;
+        hostOnHost = cfg.console.host;
+        inherit (cfg.console) port;
       };
     };
 }

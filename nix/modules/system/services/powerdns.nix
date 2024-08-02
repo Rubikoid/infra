@@ -146,11 +146,10 @@
           extraArgs = [ "-b" "${cfg.admin.host}:${toString cfg.admin.port}" ];
         };
 
-        caddy.virtualHosts."${cfg.caddyName}.${secrets.dns.private}" = {
-          extraConfig = ''
-            reverse_proxy http://127.0.0.1:${toString cfg.admin.port}
-            import stepssl_acme
-          '';
+        rubikoid.http.services.pdns-admin = {
+          name = cfg.caddyName;
+          hostOnHost = cfg.admin.host;
+          inherit (cfg.admin) port;
         };
       };
     };

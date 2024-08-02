@@ -80,11 +80,10 @@
 
       networking.firewall.allowedTCPPorts = [ cfg.port ];
 
-      services.caddy.virtualHosts."${cfg.caddyName}.${secrets.dns.private}" = {
-        extraConfig = ''
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-          import stepssl_acme
-        '';
+      rubikoid.http.services.immich = {
+        name = cfg.caddyName;
+        hostOnHost = "127.0.0.1";
+        inherit (cfg) port;
       };
     };
 }

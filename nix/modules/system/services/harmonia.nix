@@ -3,6 +3,7 @@
 let
   types = lib.types;
   cfg = config.rubikoid.services.harmonia;
+  httpCfg = config.rubikoid.http.services.harmonia;
 in
 {
   options.rubikoid.services.harmonia = {
@@ -33,11 +34,14 @@ in
       };
     };
 
-    services.caddy.virtualHosts."${cfg.caddyName}.${secrets.dns.private}" = {
-      extraConfig = ''
+    rubikoid.http.services.harmonia = {
+      name = cfg.caddyName;
+      hostOnHost = cfg.host;
+      inherit (cfg) port;
+
+      caddyConfig = ''
         encode zstd gzip
-        
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
+        reverse_proxy http://${httpCfg.hostOnHost}:${toString httpCfg.port}
         import stepssl_acme
       '';
     };

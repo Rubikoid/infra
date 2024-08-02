@@ -57,10 +57,13 @@ in
       });
     systemd.services.ferretdb.serviceConfig.ExecStart = lib.mkForce "${pkgs.ferretdb}/bin/ferretdb --postgresql-url=\"postgres://localhost/ferretdb?host=/run/postgresql\"";
 
-    services.caddy.virtualHosts."${cfg.caddyName}.${secrets.dns.private}" = {
-      extraConfig = ''
+    rubikoid.http.services.overleaf = {
+      name = cfg.caddyName;
+      hostOnHost = cfg.host;
+      inherit (cfg) port;
+      caddyConfig = ''
         reverse_proxy /socket.io http://[::1]:3026
-        reverse_proxy http://[::1]:${toString cfg.port}
+        reverse_proxy http://[::1]:${toString config.rubikoid.http.services.overleaf.port}
         import stepssl_acme
       '';
     };

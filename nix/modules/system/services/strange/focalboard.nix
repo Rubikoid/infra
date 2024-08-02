@@ -3,8 +3,6 @@
 let
   types = lib.types;
   cfg = config.rubikoid.services.focalboard;
-  accessUrl = "${cfg.caddyName}.${secrets.dns.private}";
-  internalUrl = "${cfg.caddyName}.${secrets.dns.private}";
 in
 {
   options.rubikoid.services.focalboard = {
@@ -38,7 +36,7 @@ in
   config =
     let
       jsonedCfg = pkgs.writeText "config.json" (builtins.toJSON {
-        serverRoot = "https://${internalUrl}";
+        serverRoot = "https://${config.rubikoid.http.services.focalboard.fqdn}";
         port = 8000;
         dbtype = "sqlite3";
         dbconfig = "./data/focalboard.db";
@@ -71,11 +69,10 @@ in
         };
       };
 
-      services.caddy.virtualHosts.${internalUrl} = {
-        extraConfig = ''
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-          import stepssl_acme
-        '';
+      rubikoid.http.services.focalboard = {
+        name = cfg.caddyName;
+        hostOnHost = cfg.host;
+        inherit (cfg) port;
       };
     };
 }

@@ -2,8 +2,7 @@
 
 let
   mastodon_key = "rubikoid.ru";
-  public_url = "social.rubikoid.ru";
-  private_url = "social.internal.rubikoid.ru";
+  public_url = "social.${secrets.dns.public}";
 
   # mastodon_public_folder = "/backup-drive/data/mastodon";
   mastodon_public_folder = "/var/lib/mastodon";
@@ -45,7 +44,7 @@ in
       RAILS_LOG_LEVEL = "warn";
 
       PAPERCLIP_ROOT_PATH = "${mastodon_public_folder}/public-system";
-      ALTERNATE_DOMAINS = "${public_url},${private_url}";
+      ALTERNATE_DOMAINS = "${public_url},${config.rubikoid.http.services.mastodon.fqdn}";
 
       SMTP_AUTH_METHOD = "plain";
       SMTP_SSL = "true";
@@ -75,13 +74,15 @@ in
   # http://127.0.0.1:${toString config.services.mastodon.webPort}
   # http://127.0.0.1:${toString config.services.mastodon.streamingPort}
 
-  services.caddy.virtualHosts.${private_url} =
-    let
-      steaming_base = "unix//run/mastodon-streaming";
-      streaming_srvs = toString (map (i: "${steaming_base}/streaming-${toString i}.socket") (lib.range 1 config.services.mastodon.streamingProcesses));
-    in
-    {
-      extraConfig = ''
+  rubikoid.http.services.mastodon = {
+    name = "social";
+    port = 0; # have to do this
+    caddyConfig =
+      let
+        steaming_base = "unix//run/mastodon-streaming";
+        streaming_srvs = toString (map (i: "${steaming_base}/streaming-${toString i}.socket") (lib.range 1 config.services.mastodon.streamingProcesses));
+      in
+      ''
         root * ${config.services.mastodon.package.outPath}/public
         encode zstd gzip
 
@@ -138,5 +139,5 @@ in
 
         import stepssl_acme
       '';
-    };
+  };
 }

@@ -3,8 +3,6 @@
 let
   types = lib.types;
   cfg = config.rubikoid.services.livebook;
-
-  private-url = "${cfg.caddyName}.${secrets.dns.private}";
 in
 {
   options.rubikoid.services.livebook = {
@@ -45,11 +43,10 @@ in
         environmentFile = env;
       };
 
-    services.caddy.virtualHosts.${private-url} = {
-      extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-        import stepssl_acme
-      '';
+    rubikoid.http.services.livebook = {
+      name = cfg.caddyName;
+      hostOnHost = cfg.host;
+      inherit (cfg) port;
     };
   };
 }

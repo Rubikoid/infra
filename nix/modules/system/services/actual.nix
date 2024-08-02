@@ -50,11 +50,10 @@
         };
       };
 
-      services.caddy.virtualHosts."${cfg.caddyName}.${secrets.dns.private}" = {
-        extraConfig = ''
-          reverse_proxy http://127.0.0.1:${toString cfg.port}
-          import stepssl_acme
-        '';
+      rubikoid.http.services.actual = {
+        name = cfg.caddyName;
+        hostOnHost = cfg.host;
+        inherit (cfg) port;
       };
     };
 }

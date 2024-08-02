@@ -10,6 +10,8 @@
 
     k9s
     kubectl
+    
+    bat
   ];
 
   programs.lazygit = {

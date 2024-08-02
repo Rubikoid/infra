@@ -51,7 +51,7 @@
     };
 
     nixos-dns = {
-      url = "github:Janik-Haag/nixos-dns";
+      url = "github:Janik-Haag/nixos-dns/c4f734d771038db15700a61a8703d0da5f993b3a";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -78,7 +78,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, microvm, ... } @ inputs:
+  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, microvm, nixos-dns, ... } @ inputs:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
 
@@ -127,10 +127,17 @@
       forEachHost = forEachPkgsBuilder raw_hosts;
       forEachVM = forEachPkgsBuilder raw_vms (hostname: true);
       forEachHostSimple = forEachHost (hostname: true);
+
+      dnsConfig = {
+        nixosConfigurations = {
+          inherit (self.nixosConfigurations) kubic;
+        };
+      };
     in
     {
       inherit lib secrets;
       inherit raw_vms;
+      inherit dnsConfig;
 
       defaultModules = builtins.listToAttrs (lib.findModules ./modules/default);
       systemModules = builtins.listToAttrs (lib.findModules ./modules/system);
@@ -160,6 +167,8 @@
 
               secretsModule = secrets.nixosModules.default;
               secrets = secrets.secretsBuilder hostname;
+
+              my-lib = lib;
             };
           };
 
@@ -237,6 +246,16 @@
         kubic-repair = import ./repair-iso.nix { inherit inputs lib system pkgs; };
         glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
         glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
+
+        dns =
+          let
+            generate = nixos-dns.utils.generate pkgs;
+          in
+          {
+            zoneFiles = generate.zoneFiles (dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; });
+          };
       });
+
+      dnsDebugConfig = nixos-dns.utils.debug.config (dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; });
     };
 }

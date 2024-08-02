@@ -273,6 +273,7 @@
       "original": {
         "owner": "Janik-Haag",
         "repo": "nixos-dns",
+        "rev": "c4f734d771038db15700a61a8703d0da5f993b3a",
         "type": "github"
       }
     },

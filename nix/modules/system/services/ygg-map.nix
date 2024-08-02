@@ -13,24 +13,26 @@ in
     };
   };
 
-  config.services = {
-    ygg-map = {
-      enable = true;
-      openFirewall = true;
-      http.host = "::";
+  config = {
+    services = {
+      ygg-map = {
+        enable = true;
+        openFirewall = true;
+        http.host = "::";
+      };
+
+      caddy.virtualHosts."http://map.bk252" = {
+        extraConfig = ''
+          reverse_proxy http://[::1]:${toString config.services.ygg-map.http.port}
+          import stepssl_acme
+        '';
+      };
     };
 
-    rubikoid.http.services.paperless = {
+    rubikoid.http.services.ygg-map = {
       name = cfg.caddyName;
       hostOnHost = "[::1]";
       inherit (config.services.ygg-map.http) port;
-    };
-
-    caddy.virtualHosts."http://map.bk252" = {
-      extraConfig = ''
-        reverse_proxy http://[::1]:${toString config.services.ygg-map.http.port}
-        import stepssl_acme
-      '';
     };
   };
 }

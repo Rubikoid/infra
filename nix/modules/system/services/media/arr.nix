@@ -44,9 +44,9 @@ in
     };
 
     rubikoid.http.services.qbittorrent = {
-      name = cfg.caddyName;
+      name = cfg.qbittorrent.caddyName;
       hostOnHost = "127.0.0.1";
-      inherit (cfg) port;
+      inherit (cfg.qbittorrent) port;
     };
   };
 }

@@ -54,6 +54,9 @@ home cmd=default_cmd *args=default_args:
 build pkg *args=default_args:
     nix build "{{FLAKE_PATH}}#{{pkg}}" -v {{args}}
 
+eval attr *args=default_args:
+    nix eval "{{FLAKE_PATH}}#{{attr}}" {{args}}
+
 run-vm name *args=default_args:
     nix run {{args}} "{{FLAKE_PATH}}#nixosConfigurations.{{name}}.config.microvm.declaredRunner"
 

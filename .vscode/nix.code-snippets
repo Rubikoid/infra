@@ -1,4 +1,23 @@
 {
+	"submodule": {
+		"prefix": "submod",
+		"description": "submodule simplifyer",
+		"scope": "nix",
+		"body": [
+			"${1:name} = lib.mkOption {",
+			"  type = types.attrsOf (types.submodule ({ name, ... }: {",
+			"    options = {",
+			"      name = lib.mkOption {",
+			"        type = types.str;",
+			"        default = name;",
+			"      };",
+			"    };",
+			"  }));",
+			"  default = { };",
+			"};",
+			""
+		]
+	},
 	"lib fake hash": {
 		"prefix": "fake",
 		"description": "fake hash",

@@ -58,7 +58,8 @@ in
         {
           enable = true;
           defaultTTL = 86400; # 24h
-          baseDomains.${cfg.rootZone} = { };
+          baseDomains."${cfg.rootZone}" = { };
+          baseDomains."nodes.${cfg.rootZone}" = { };
         }
       ] ++ (builtins.map
         (node:
@@ -68,7 +69,7 @@ in
             cnameRecords = builtins.map
               (cn: {
                 name = nodeFQDN cn;
-                value = { cname.data = fqdn; };
+                value = { cname.data = "${fqdn}."; };
               })
               node.cname;
           in
@@ -89,7 +90,7 @@ in
             node = nodeFQDN nodeName;
           in
           {
-            subDomains.${fqdn}.cname.data = node;
+            subDomains.${fqdn}.cname = { data = "${node}."; ttl = 60; };
           })
         cfg.services
       ));

@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, config, secretsModule, ... }:
+{ inputs, lib, pkgs, config, secretsModule, my-lib, ... }:
 
 {
   imports = [ secretsModule ];
@@ -11,7 +11,7 @@
   ];
 
   networking = {
-    hostName = config.device;
+    hostName = my-lib.strace config.device;
   };
 
   # system.replaceRuntimeDependencies = [

@@ -9,6 +9,8 @@
     zsh
     zsh-config
     wg-client
+    dns
+    http
 
     # ca
     ca_rubikoid
@@ -61,6 +63,13 @@
     remote-build-host
 
     # ./vm.nix
+
+    # containers
+    # yatb-kube
+
+    # wtf
+    macvtap
+    microvm
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -100,6 +109,11 @@
     # nvidia-docker
     helix
   ];
+
+  rubikoid.microvm.vms = [
+    "yatb-kube-master"
+  ];
+  microvm.autostart = lib.mkForce [ ];
 
   hardware = {
     # Enable OpenGL

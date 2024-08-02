@@ -9,3 +9,4 @@ nix/*.tar.gz
 .stfolder
 
 test/
+result

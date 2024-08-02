@@ -2,6 +2,7 @@ pkgs: lib:
 rec {
   # trace and return itself out
   strace = x: builtins.trace x x;
+  straceSeq = x: lib.debug.traceSeq x x;
 
   # known magic from @balsoft flake.nix...
   # some function for <dir: path>
@@ -192,4 +193,8 @@ rec {
     in
     f [ ] attrList;
 
+  # stolen from https://gist.github.com/udf/4d9301bdc02ab38439fd64fbda06ea43
+  mkMergeTopLevel = names: attrs: lib.getAttrs names (
+    lib.mapAttrs (k: v: lib.mkMerge v) (lib.foldAttrs (n: a: [ n ] ++ a) [ ] attrs)
+  );
 }

@@ -45,6 +45,8 @@
     betula
     # owntracks
     clamav
+    dawarich
+    xandikos
     ## garden
     immich
     paperless
@@ -147,10 +149,10 @@
       enable = true;
       enableNvidia = true;
 
-      storageDriver = "zfs";
-      daemon.settings = {
-        data-root = "/backup-drive/docker-data";
-      };
+      # storageDriver = "zfs";
+      # daemon.settings = {
+      #   data-root = "/backup-drive/docker-data";
+      # };
     };
   };
 

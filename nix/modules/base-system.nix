@@ -1,23 +1,29 @@
 { inputs, lib, pkgs, config, secretsModule, my-lib, ... }:
-
+let
+  cfg = config.rubikoid;
+in
 {
   imports = [ secretsModule ];
 
-  # must have packages
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-    just
-  ];
+  config = {
+    secrets.enable = lib.mkDefault true;
 
-  networking = {
-    hostName = my-lib.strace config.device;
+    # must have packages
+    environment.systemPackages = with pkgs; [
+      vim
+      git
+      just
+    ];
+
+    networking = {
+      hostName = my-lib.strace config.device;
+    };
+
+    # system.replaceRuntimeDependencies = [
+    #   ({
+    #     original = pkgs.xz;
+    #     replacement = pkgs.old-xz;
+    #   })
+    # ];
   };
-
-  # system.replaceRuntimeDependencies = [
-  #   ({
-  #     original = pkgs.xz;
-  #     replacement = pkgs.old-xz;
-  #   })
-  # ];
 }

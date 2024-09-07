@@ -14,7 +14,7 @@
         # how to connect
         protocol = "ssh-ng";
         sshUser = "nix-builder";
-        hostName = "kubic.${secrets.dns.private}";
+        hostName = "kubic.nodes.${secrets.dns.private}";
         sshKey = config.sops.secrets."nix-builder-private-key".path;
         publicHostKey = secrets.ssh.public.kubic;
 

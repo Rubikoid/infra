@@ -12,6 +12,11 @@
     kubectl
     
     bat
+
+    whois
+    ldns
+
+    glab
   ];
 
   programs.lazygit = {

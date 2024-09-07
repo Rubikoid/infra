@@ -31,6 +31,12 @@
           setuptools
           wheel
           pyyaml
+          cryptography
+          uvicorn
+          pycryptodome
+          python-jose
+          jinja2
+          python-multipart
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

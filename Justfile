@@ -19,6 +19,8 @@ nix := "n"
 
 nom := if HOST == "kubic" { "|& nom" } else { "" }
 
+diff-current-system := "/nix/var/nix/profiles/system"
+
 default: system
 
 help:
@@ -31,6 +33,12 @@ system cmd=default_cmd *args=default_args:
 system-off cmd=default_cmd *args=default_args:
     @echo "[+] Building system: '{{HOST}}' at '{{FLAKE_PATH}}'"
     {{rebuild_cmd}} {{cmd}} --builders "" {{args}} --flake "{{FLAKE_PATH}}#{{HOST}}" {{nom}}
+
+system-build-diff *args=default_args:
+    @echo "[+] Building system: '{{HOST}}' at '{{FLAKE_PATH}}'"
+    {{rebuild_cmd}} build --flake "{{FLAKE_PATH}}#{{HOST}}" {{args}} {{nom}}
+    nix run "{{nix}}#nvd" diff "{{diff-current-system}}" "./result"
+    rm ./result
 
 system-inspect:
     nix run "{{nix}}#nix-tree" -- '/var/run/current-system'
@@ -87,6 +95,9 @@ deploy target *args=default_args:
 
 deploy-rebuild target *args=default_args: (deploy target)
     ssh {{target}} just --justfile '~/infra/Justfile' system switch --no-update-lock-file {{ args }}
+
+remote-sw hostname target *args=default_args: (deploy target)
+    nixos-rebuild switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --verbose --show-trace {{args}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
 
 short-clean:
     sudo nix-collect-garbage -d

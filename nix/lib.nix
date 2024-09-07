@@ -3,6 +3,7 @@ rec {
   # trace and return itself out
   strace = x: builtins.trace x x;
   straceSeq = x: lib.debug.traceSeq x x;
+  straceSeqN = n: x: lib.debug.traceSeqN n x x;
 
   # known magic from @balsoft flake.nix...
   # some function for <dir: path>

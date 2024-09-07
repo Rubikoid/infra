@@ -7,6 +7,7 @@
     nixpkgs-old.url = "github:NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
     nixpkgs-old-basedpyright.url = "github:NixOS/nixpkgs/48596fb13bc91bdc1b44bcdd6b0f87f0467d34c0";
     nixpkgs-old-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs-old-tmux.url = "github:NixOS/nixpkgs/7a339d87931bba829f68e94621536cad9132971a";
 
     # home-manager upstream
     home-manager = {
@@ -118,12 +119,13 @@
       raw_hosts = builtins.attrNames (builtins.readDir ./hosts);
       raw_vms = builtins.attrNames (builtins.readDir ./vms);
 
-      forEachPkgsBuilder = source: filter: f: nixpkgs.lib.genAttrs (builtins.filter filter source) (hostname: f rec {
-        inherit hostname;
+      _forEachPkgsBuilder = original_inputs: source: filter: f: nixpkgs.lib.genAttrs (builtins.filter filter source) (hostname: f rec {
+        inherit hostname original_inputs;
         system = lib.readSystem hostname;
         pkgs = pkgsFor system;
       });
 
+      forEachPkgsBuilder = _forEachPkgsBuilder inputs;
       forEachHost = forEachPkgsBuilder raw_hosts;
       forEachVM = forEachPkgsBuilder raw_vms (hostname: true);
       forEachHostSimple = forEachHost (hostname: true);
@@ -133,11 +135,41 @@
           inherit (self.nixosConfigurations) kubic;
         };
       };
+
+      genericNixOSConfig = { system, hostname, pkgs, original_inputs } @ inp: {
+        inherit system;
+        modules = builtins.attrValues self.defaultModules ++ [
+          (import ./modules/base-system.nix)
+          (import ./modules/base-system-linux.nix)
+          { nixpkgs.pkgs = pkgs; }
+          {
+            system-arch-name = system;
+            device = hostname;
+            isWSL = lib.isWSLFilter hostname;
+          }
+          (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
+          # (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
+        ];
+        specialArgs = {
+          inputs = original_inputs;
+
+          secretsModule = secrets.nixosModules.default;
+          secrets = secrets.secretsBuilder hostname;
+
+          my-lib = lib;
+        };
+      };
+
+      mkSystem = { ... } @ inp: extra: nixpkgs.lib.nixosSystem (lib.recursiveMerge [
+        (genericNixOSConfig inp)
+        extra
+      ]);
     in
     {
       inherit lib secrets;
       inherit raw_vms;
       inherit dnsConfig;
+      inherit forEachSystem _forEachPkgsBuilder genericNixOSConfig mkSystem;
 
       defaultModules = builtins.listToAttrs (lib.findModules ./modules/default);
       systemModules = builtins.listToAttrs (lib.findModules ./modules/system);
@@ -147,37 +179,7 @@
       overlay = import ./overlay.nix inputs;
 
       nixosConfigurations =
-        let
-          genericNixOSConfig = { system, hostname, pkgs }: {
-            inherit system;
-            modules = builtins.attrValues self.defaultModules ++ [
-              (import ./modules/base-system.nix)
-              (import ./modules/base-system-linux.nix)
-              { nixpkgs.pkgs = pkgs; }
-              {
-                system-arch-name = system;
-                device = hostname;
-                isWSL = lib.isWSLFilter hostname;
-              }
-              (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
-              # (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
-            ];
-            specialArgs = {
-              inherit inputs;
-
-              secretsModule = secrets.nixosModules.default;
-              secrets = secrets.secretsBuilder hostname;
-
-              my-lib = lib;
-            };
-          };
-
-          mkSystem = { ... } @ inp: extra: nixpkgs.lib.nixosSystem (lib.recursiveMerge [
-            (genericNixOSConfig inp)
-            extra
-          ]);
-        in
-        (forEachHostSimple ({ system, hostname, pkgs } @ inp: mkSystem inp {
+        (forEachHostSimple ({ system, hostname, pkgs, ... } @ inp: mkSystem inp {
           modules = [
             (import (./hosts + "/${hostname}"))
           ];
@@ -186,7 +188,7 @@
           };
         }))
         //
-        forEachVM ({ system, hostname, pkgs } @ inp: mkSystem inp {
+        forEachVM ({ system, hostname, pkgs, ... } @ inp: mkSystem inp {
           modules = [
             microvm.nixosModules.microvm
             (import ./modules/base-system-vm.nix)
@@ -197,7 +199,7 @@
           };
         });
 
-      darwinConfigurations = forEachHost lib.isDarwinFilter ({ system, hostname, pkgs }: nix-darwin.lib.darwinSystem {
+      darwinConfigurations = forEachHost lib.isDarwinFilter ({ system, hostname, pkgs, ... }: nix-darwin.lib.darwinSystem {
         inherit system;
         modules = builtins.attrValues self.defaultModules ++ [
           (import ./modules/base-system.nix)
@@ -217,6 +219,8 @@
           secrets = secrets.secretsBuilder hostname;
 
           mode = "Darwin";
+
+          my-lib = lib;
         };
       });
 
@@ -240,12 +244,31 @@
             export ALL_PROXY="${secrets.hostLessSecrets.proxy}"
           '';
         };
+
+        yt-dlp = pkgs.mkShell {
+          packages = with pkgs; [
+            yt-dlp
+            ffmpeg
+          ];
+
+          shellHook = ''
+            export ALL_PROXY="${secrets.hostLessSecrets.proxy}"
+          '';
+        };
+
+        selenium = pkgs.mkShell {
+          packages = with pkgs; [
+            geckodriver
+            firefox
+          ];
+        };
       });
 
       packages = forEachSystem ({ system, pkgs }: {
         kubic-repair = import ./repair-iso.nix { inherit inputs lib system pkgs; };
         glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
         glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
+        dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
 
         dns =
           let
@@ -254,6 +277,8 @@
           {
             zoneFiles = generate.zoneFiles (dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; });
           };
+
+        cloud-image-selectel-test = self.nixosConfigurations.selectel-test.config.system.build.selectelCloudImage;
       });
 
       dnsDebugConfig = nixos-dns.utils.debug.config (dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; });

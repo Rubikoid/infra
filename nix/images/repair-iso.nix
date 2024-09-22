@@ -19,9 +19,9 @@ inputs.nixos-generators.nixosGenerate {
     smartd
   ]) ++
   [
-    (import ./modules/default/options.nix)
-    (import ./modules/base-system.nix)
-    (import ./modules/base-system-linux.nix)
+    (import ../modules/default/options.nix)
+    (import ../modules/base-system.nix)
+    (import ../modules/base-system-linux.nix)
     {
       system-arch-name = system;
       device = hostname;

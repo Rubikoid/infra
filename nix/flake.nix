@@ -265,10 +265,13 @@
       });
 
       packages = forEachSystem ({ system, pkgs }: {
-        kubic-repair = import ./repair-iso.nix { inherit inputs lib system pkgs; };
+        kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
+        lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
+
         glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
         glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
         dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
+        octodns-selectel = pkgs.python312Packages.callPackage ./pkgs/octodns-selectel.nix { };
 
         dns =
           let

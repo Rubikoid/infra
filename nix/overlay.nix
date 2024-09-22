@@ -3,6 +3,7 @@ let
   nix-old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
   nixpkgs-old-basedpyright = import inputs.nixpkgs-old-basedpyright ({ localSystem = { inherit (final) system; }; });
   nixpkgs-old-stable = import inputs.nixpkgs-old-stable ({ localSystem = { inherit (final) system; }; });
+  nixpkgs-old-tmux = import inputs.nixpkgs-old-tmux ({ localSystem = { inherit (final) system; }; });
 
   overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
   fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
@@ -11,6 +12,9 @@ let
 in
 rec {
   my-lib = import ./lib.nix final lib;
+
+  tmux = nixpkgs-old-tmux.tmux;
+  fzf = nixpkgs-old-tmux.fzf;
 
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
 
@@ -144,7 +148,7 @@ rec {
   #   enableCephFS = false;
   # };
 
-  # powerdns-admin = nix-old.powerdns-admin;
+  powerdns-admin = nixpkgs-old-stable.powerdns-admin;
 
   # step-ca =
   #   let

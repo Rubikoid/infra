@@ -3,7 +3,8 @@
 HOST := `hostname -s`
 USER := `whoami`
 
-BASE_FLAKE := home_directory() / "infra/nix"
+# BASE_FLAKE := home_directory() / "infra/nix"
+BASE_FLAKE := justfile_directory() / "nix"
 FLAKE_PATH := canonicalize(BASE_FLAKE) + "?submodules=1"
 
 default_cmd := "switch"
@@ -20,6 +21,9 @@ nix := "n"
 nom := if HOST == "kubic" { "|& nom" } else { "" }
 
 diff-current-system := "/nix/var/nix/profiles/system"
+
+DISABLE_BUILDERS := "0"
+builders := if DISABLE_BUILDERS == "1" { "--builders ''" } else { "" }
 
 default: system
 
@@ -46,8 +50,8 @@ system-inspect:
 system-inspect-deriv:
     nix run "{{nix}}#nix-tree" -- --derivation '/var/run/current-system'
 
-system-inspect-nb:
-    nix run "{{nix}}#nix-tree" -- --derivation "{{FLAKE_PATH}}#nixosConfigurations.'{{HOST}}'.config.system.build.toplevel"
+system-inspect-nb hostname:
+    nix run "{{nix}}#nix-tree" -- --derivation "{{FLAKE_PATH}}#nixosConfigurations.{{hostname}}.config.system.build.toplevel"
 
 repl:
     nix repl --file './nix/test.nix'
@@ -75,29 +79,43 @@ get-age-key:
 # 	echo "[+] Building package: $(pkg)"
 # 	nix build $(FLAKE_PATH)#nixosConfigurations.$(HOST).pkgs.$(pkg) -v $(args)
 
-# develop:
-# 	nix develop $(args) $(FLAKE_PATH)
-
 develop shell="default" *args=default_args: 
     nix develop "{{FLAKE_PATH}}#{{shell}}" {{args}} -c "$SHELL"
 
+[no-cd]
+shell shell="default" *args=default_args: 
+    nix develop "{{FLAKE_PATH}}#{{shell}}" {{args}} -c "$SHELL"
+
+[no-cd]
+[private]
+_shell shell="default" *args=default_args: 
+    nix develop "{{FLAKE_PATH}}#{{shell}}" {{args}}
+
 deploy target *args=default_args:
+    @echo "I am {{canonicalize(source_directory())}}"
     rsync \
         -rlptD \
         --delete \
         -vzhP \
         --exclude=".direnv" \
         --exclude=".stfolder" \
+        --exclude=".venv" \
+        --checksum --ignore-times \
         {{args}} \
-        . \
+        "{{canonicalize(source_directory())}}/" \
         {{target}}:~/infra
 
 
 deploy-rebuild target *args=default_args: (deploy target)
     ssh {{target}} just --justfile '~/infra/Justfile' system switch --no-update-lock-file {{ args }}
 
-remote-sw hostname target *args=default_args: (deploy target)
-    nixos-rebuild switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --verbose --show-trace {{args}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
+remote-sw hostname target *args=default_args:
+    @echo "DISABLE_BUILDERS: {{ DISABLE_BUILDERS }}"
+    @echo "HOST: {{ HOST }}"
+    nixos-rebuild switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --verbose --show-trace {{args}} {{builders}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
+
+vm-run hostname *args=default_args:
+    nix run "{{FLAKE_PATH}}#nixosConfigurations.{{hostname}}.config.system.build.vm" {{args}}
 
 short-clean:
     sudo nix-collect-garbage -d

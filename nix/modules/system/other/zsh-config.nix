@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   programs.zsh = {
@@ -8,7 +8,7 @@
       alias tmux="tmux attach || tmux"
     '';
     ohMyZsh = {
-      theme = "candy";
+      theme = lib.mkDefault "candy";
       plugins = [
         "git"
         "systemd"

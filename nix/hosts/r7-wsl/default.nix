@@ -6,6 +6,7 @@
     locale
     zsh
     zsh-config
+    yggdrasil
 
     # ca
     ca_rubikoid
@@ -16,6 +17,9 @@
     # containers
 
     remote-build
+
+    openssh
+    openssh-root-key
   ];
 
   environment.systemPackages = with pkgs; [
@@ -47,6 +51,11 @@
   hardware.graphics.enable = lib.mkForce false;
   hardware.opengl.enable = lib.mkForce false;
 
+  networking.firewall.allowedTCPPorts = [
+    9999
+    9900
+  ];
+
   networking.nameservers = [
     "192.168.1.107"
   ];
@@ -59,6 +68,19 @@
     settings = {
       FERRETDB_LISTEN_ADDR = ":27017";
       FERRETDB_TELEMETRY = "disabled";
+    };
+  };
+
+  virtualisation = {
+    oci-containers.backend = "docker";
+
+    docker = {
+      enable = true;
+      
+      # storageDriver = "zfs";
+      # daemon.settings = {
+      #   data-root = "/backup-drive/docker-data";
+      # };
     };
   };
 

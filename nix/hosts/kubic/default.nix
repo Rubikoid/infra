@@ -180,6 +180,10 @@
 
   networking.firewall.interfaces.home.allowedTCPPorts = [ 9008 9009 ];
 
+  networking.hosts = {
+    "185.130.225.97" = [ "vpn.rubikoid.ru" ];
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

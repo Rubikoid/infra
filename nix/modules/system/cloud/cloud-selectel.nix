@@ -65,6 +65,9 @@ in
         "nofb" # c-p from live system
         "clocksource_failover=acpi_pm" # c-p from live system
         # "vga=0x0300"
+        "nomodeset"
+        "gfxpayload=text"
+        "vga=keep"
       ];
 
       growPartition = true;
@@ -80,8 +83,15 @@ in
     services.openssh.enable = true;
     services.cloud-init = lib.mkDefault {
       enable = true;
-      # settings = { }; 
+      settings = {
+        # network.config = "disabled";
+      };
     };
+
+    systemd.network.enable = true;
+    networking.useNetworkd = true;
+    networking.useDHCP = true;
+    networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
 
     services.qemuGuest.enable = true;
 

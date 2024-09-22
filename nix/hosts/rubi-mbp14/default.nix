@@ -50,8 +50,11 @@
     casks = [
       "keepassxc"
       "stats"
+      "jordanbaird-ice"
     ];
   };
+
+  services.tailscale.enable = false;
 
   security.pam.enableSudoTouchIdAuth = true;
 

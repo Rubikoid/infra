@@ -17,6 +17,7 @@
     ldns
 
     glab
+    jq
   ];
 
   programs.lazygit = {

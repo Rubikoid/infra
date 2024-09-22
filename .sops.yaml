@@ -9,6 +9,7 @@ keys:
   - &kubic age1klfs6z8qk3pqhjv02mnu3pzx993u8cpj4c2r4lsqtfu6l56a6essjuuv4z
   - &mbp14 age1mutjl6uly4cgaj6qdge0me3e78z90hh35e55rjhw9vssspfttqqsjwq837
   - &yatb-kube-master age16xhh9cq9x8s6zy8ag9jjv4fw3tn8xj4xcr8u40pdmkzzesqe446qcrcj4j
+  - &orb-nix age10mcqfg8tde8y6tc7zxz8d7sj2y2mq4d72hz3e079jyn7zln6vqgqfvem4u
 
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -24,6 +25,7 @@ creation_rules:
           - *kubic
           - *mbp14
           - *yatb-kube-master
+          - *orb-nix
 
   - path_regex: secrets/hosts/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
@@ -103,3 +105,11 @@ creation_rules:
           - *rubikoid_wsl
           - *rubikoid_mbp14
           - *yatb-kube-master
+
+  - path_regex: secrets/hosts/orb-nix/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *rubikoid_mbp14
+          - *orb-nix

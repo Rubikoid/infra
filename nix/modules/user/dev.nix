@@ -18,6 +18,11 @@
 
     glab
     jq
+
+    inetutils
+    ldns
+
+    far2l
   ];
 
   programs.lazygit = {

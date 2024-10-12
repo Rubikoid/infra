@@ -1,8 +1,12 @@
 inputs: final: prev:
 let
   nix-old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
-  nixpkgs-old-basedpyright = import inputs.nixpkgs-old-basedpyright ({ localSystem = { inherit (final) system; }; });
-  nixpkgs-old-stable = import inputs.nixpkgs-old-stable ({ localSystem = { inherit (final) system; }; });
+  nixpkgs-old-basedpyright = import inputs.nixpkgs-old-basedpyright ({
+    localSystem = { inherit (final) system; };
+  });
+  nixpkgs-old-stable = import inputs.nixpkgs-old-stable ({
+    localSystem = { inherit (final) system; };
+  });
   nixpkgs-old-tmux = import inputs.nixpkgs-old-tmux ({ localSystem = { inherit (final) system; }; });
 
   overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
@@ -11,10 +15,9 @@ let
   inherit (final) system lib stdenv;
 in
 rec {
-  my-lib = import ./lib.nix final lib;
-
   tmux = nixpkgs-old-tmux.tmux;
   fzf = nixpkgs-old-tmux.fzf;
+  basedpyright = nixpkgs-old-basedpyright.basedpyright;
 
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
 
@@ -45,21 +48,15 @@ rec {
   #     '';
   #   });
 
-  basedpyright = nixpkgs-old-basedpyright.basedpyright;
-
   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-    (
-      python-final: python-prev: {
-        # cyclopts = final.callPackage ./pkgs/cyclopts.nix;
-      }
-    )
+    (python-final: python-prev: {
+      # cyclopts = final.callPackage ./pkgs/cyclopts.nix;
+    })
   ];
 
-  overleaf = final.callPackage
-    (inputs.nixpkgs-overleaf + "/pkgs/servers/overleaf")
-    {
-      nodejs_16 = final.nodejs_18;
-    }; # overleaf-src.overleaf;
+  overleaf = final.callPackage (inputs.nixpkgs-overleaf + "/pkgs/servers/overleaf") {
+    nodejs_16 = final.nodejs_18;
+  }; # overleaf-src.overleaf;
 
   syncthing =
     let
@@ -72,10 +69,15 @@ rec {
       };
     in
     prev.syncthing.override rec {
-      buildGoModule = args: nix-old.buildGo119Module (args // {
-        inherit src version;
-        vendorHash = "sha256-q63iaRxJRvPY0Np20O6JmdMEjSg/kxRneBfs8fRTwXk=";
-      });
+      buildGoModule =
+        args:
+        nix-old.buildGo119Module (
+          args
+          // {
+            inherit src version;
+            vendorHash = "sha256-q63iaRxJRvPY0Np20O6JmdMEjSg/kxRneBfs8fRTwXk=";
+          }
+        );
     };
 
   linuxPackages = prev.linuxPackages // {
@@ -90,8 +92,6 @@ rec {
       };
     });
   };
-
-  mastodon-glitch = final.callPackage ./pkgs/mastodon/default.nix { };
 
   vuetorrent = stdenv.mkDerivation rec {
     pname = "vuetorrent";
@@ -137,11 +137,16 @@ rec {
       };
     in
     prev.helix.override {
-      rustPlatform.buildRustPackage = args: final.rustPlatform.buildRustPackage (args // {
-        inherit version src;
-        cargoHash = "sha256-HprItlie4lq1hz1A5JjU1r9F0ncGP/feyL3CYfLPZzs=";
-        cargoPatches = [ codestats_patch ];
-      });
+      rustPlatform.buildRustPackage =
+        args:
+        final.rustPlatform.buildRustPackage (
+          args
+          // {
+            inherit version src;
+            cargoHash = "sha256-HprItlie4lq1hz1A5JjU1r9F0ncGP/feyL3CYfLPZzs=";
+            cargoPatches = [ codestats_patch ];
+          }
+        );
     };
 
   # samba4Full = prev.samba4Full.override {

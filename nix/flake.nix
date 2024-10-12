@@ -40,10 +40,10 @@
     #   inputs.hyprland.follows = "hyprland";
     # };
     # and launcher
-    anyrun = {
-      url = "github:Kirottu/anyrun";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # anyrun = {
+    #   url = "github:Kirottu/anyrun";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     ygg-map = {
       url = "github:rubikoid/yggdrasil-map-ng/e3e0203eb4c2715668d620e0778761a605e66178";
@@ -79,56 +79,20 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-darwin, nix-wsl, microvm, nixos-dns, ... } @ inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      nix-darwin,
+      nix-wsl,
+      microvm,
+      nixos-dns,
+      ...
+    }@inputs:
     let
-      supportedSystems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
-
-      # another idk magic from @balsoft flake.nix...
-      _pkgsFor = nixpkgs: system:
-        import nixpkgs {
-          overlays = [ self.overlay ];
-          localSystem = { inherit system; };
-          config = {
-            allowUnfree = true;
-            permittedInsecurePackages = [ ];
-            # TODO: make it better
-            allowUnfreePredicate = (pkg: builtins.elem (nixpkgs.lib.getName pkg)
-              [
-                "code"
-                "obsidian"
-                "nvidia-persistenced"
-                "nvidia-settings"
-                "nvidia-x11"
-                "nvidia-x11-545.29.06-6.1.63"
-                "cudatoolkit"
-                "vmware-workstation-17.0.2"
-              ]);
-          };
-        };
-
-      pkgsFor = _pkgsFor inputs.nixpkgs;
-
-      lib = import ./lib.nix nixpkgs nixpkgs.lib;
+      lib = import ./lib inputs nixpkgs.lib;
       secrets = import ../secrets inputs;
-
-      forEachSystem = f: nixpkgs.lib.genAttrs supportedSystems (system: f {
-        inherit system;
-        pkgs = pkgsFor system;
-      });
-
-      raw_hosts = builtins.attrNames (builtins.readDir ./hosts);
-      raw_vms = builtins.attrNames (builtins.readDir ./vms);
-
-      _forEachPkgsBuilder = original_inputs: source: filter: f: nixpkgs.lib.genAttrs (builtins.filter filter source) (hostname: f rec {
-        inherit hostname original_inputs;
-        system = lib.readSystem hostname;
-        pkgs = pkgsFor system;
-      });
-
-      forEachPkgsBuilder = _forEachPkgsBuilder inputs;
-      forEachHost = forEachPkgsBuilder raw_hosts;
-      forEachVM = forEachPkgsBuilder raw_vms (hostname: true);
-      forEachHostSimple = forEachHost (hostname: true);
 
       dnsConfig = {
         nixosConfigurations = {
@@ -136,154 +100,146 @@
         };
       };
 
-      genericNixOSConfig = { system, hostname, pkgs, original_inputs } @ inp: {
-        inherit system;
-        modules = builtins.attrValues self.defaultModules ++ [
-          (import ./modules/base-system.nix)
-          (import ./modules/base-system-linux.nix)
-          { nixpkgs.pkgs = pkgs; }
-          {
-            system-arch-name = system;
-            device = hostname;
-            isWSL = lib.isWSLFilter hostname;
-          }
-          (if (lib.isWSLFilter hostname) then nix-wsl.nixosModules.default else { })
-          # (if (lib.isWSLFilter hostname) then import ./fixes/wsl else { })
-        ];
-        specialArgs = {
-          inputs = original_inputs;
+      forEachHost = lib.r.forEachHost ./hosts inputs;
 
-          secretsModule = secrets.nixosModules.default;
+      forEachNixOSHost = forEachHost (_: true);
+      forEachVMHost = lib.r.forEachHost ./vms inputs (_: true);
+      forEachDarwinHost = forEachHost lib.r.isDarwinFilter;
+
+      extraSpecialArgsGenerator =
+        {
+          hostname,
+          isDarwin,
+          ...
+        }@info:
+        {
+          secretsModule = secrets."${if isDarwin then "darwinModules" else "nixosModules"}".default;
           secrets = secrets.secretsBuilder hostname;
-
-          my-lib = lib;
         };
-      };
-
-      mkSystem = { ... } @ inp: extra: nixpkgs.lib.nixosSystem (lib.recursiveMerge [
-        (genericNixOSConfig inp)
-        extra
-      ]);
     in
     {
       inherit lib secrets;
-      inherit raw_vms;
       inherit dnsConfig;
-      inherit forEachSystem _forEachPkgsBuilder genericNixOSConfig mkSystem;
 
-      defaultModules = builtins.listToAttrs (lib.findModules ./modules/default);
-      systemModules = builtins.listToAttrs (lib.findModules ./modules/system);
-      darwinModules = builtins.listToAttrs (lib.findModules ./modules/darwin);
-      userModules = builtins.listToAttrs (lib.findModules ./modules/user);
-      users = builtins.listToAttrs (lib.findModules ./users);
-      overlay = import ./overlay.nix inputs;
+      users = builtins.listToAttrs (lib.r.findModules ./users);
 
       nixosConfigurations =
-        (forEachHostSimple ({ system, hostname, pkgs, ... } @ inp: mkSystem inp {
-          modules = [
-            (import (./hosts + "/${hostname}"))
-          ];
-          specialArgs = {
-            mode = "NixOS";
-          };
-        }))
-        //
-        forEachVM ({ system, hostname, pkgs, ... } @ inp: mkSystem inp {
-          modules = [
-            microvm.nixosModules.microvm
-            (import ./modules/base-system-vm.nix)
-            (import (./vms + "/${hostname}"))
-          ];
-          specialArgs = {
-            mode = "NixOS";
-          };
-        });
-
-      darwinConfigurations = forEachHost lib.isDarwinFilter ({ system, hostname, pkgs, ... }: nix-darwin.lib.darwinSystem {
-        inherit system;
-        modules = builtins.attrValues self.defaultModules ++ [
-          (import ./modules/base-system.nix)
-          (import ./modules/base-system-darwin.nix)
-          (import (./hosts + "/${hostname}"))
-          { nixpkgs.pkgs = pkgs; }
-          {
-            system-arch-name = system;
-            device = hostname;
-            isDarwin = true;
+        (forEachNixOSHost (
+          { info, ... }@args:
+          lib.r.mkSystem args {
+            modules = [ ];
+            specialArgs = extraSpecialArgsGenerator info;
           }
-        ];
-        specialArgs = {
-          inherit inputs;
+        ))
+        // (forEachVMHost (
+          { info, ... }@args:
+          lib.r.mkSystem args {
+            modules = [
+              microvm.nixosModules.microvm
+              (import ./modules/base-system-vm.nix)
+            ];
+            specialArgs = extraSpecialArgsGenerator info;
+          }
+        ));
 
-          secretsModule = secrets.darwinModules.default;
-          secrets = secrets.secretsBuilder hostname;
+      darwinConfigurations = forEachDarwinHost (
+        { info, ... }@args:
+        lib.r.mkSystem args {
+          modules = [ ];
+          specialArgs = extraSpecialArgsGenerator info;
+        }
+      );
 
-          mode = "Darwin";
-
-          my-lib = lib;
-        };
-      });
-
-      devShells = forEachSystem ({ system, pkgs }: {
-        default = pkgs.mkShell {
-          packages = with pkgs; [
-            nil
-            nixpkgs-fmt
-            sops
-            # nixfmt-rfc-style
-          ];
-        };
-
-        yark = pkgs.mkShell {
-          packages = with pkgs; [
-            python312Packages.yark
-            ffmpeg
-          ];
-
-          shellHook = ''
-            export ALL_PROXY="${secrets.hostLessSecrets.proxy}"
-          '';
-        };
-
-        yt-dlp = pkgs.mkShell {
-          packages = with pkgs; [
-            yt-dlp
-            ffmpeg
-          ];
-
-          shellHook = ''
-            export ALL_PROXY="${secrets.hostLessSecrets.proxy}"
-          '';
-        };
-
-        selenium = pkgs.mkShell {
-          packages = with pkgs; [
-            geckodriver
-            firefox
-          ];
-        };
-      });
-
-      packages = forEachSystem ({ system, pkgs }: {
-        kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
-        lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
-
-        glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
-        glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
-        dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
-        octodns-selectel = pkgs.python312Packages.callPackage ./pkgs/octodns-selectel.nix { };
-
-        dns =
-          let
-            generate = nixos-dns.utils.generate pkgs;
-          in
-          {
-            zoneFiles = generate.zoneFiles (dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; });
+      devShells = lib.r.forEachSystem (
+        { system, pkgs }:
+        {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              nil
+              # nixpkgs-fmt
+              sops
+              nixfmt-rfc-style
+            ];
           };
 
-        cloud-image-selectel-test = self.nixosConfigurations.selectel-test.config.system.build.selectelCloudImage;
-      });
+          yark = pkgs.mkShell {
+            packages = with pkgs; [
+              python312Packages.yark
+              ffmpeg
+            ];
 
-      dnsDebugConfig = nixos-dns.utils.debug.config (dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; });
+            shellHook = ''
+              export ALL_PROXY="${secrets.hostLessSecrets.proxy}"
+            '';
+          };
+
+          yt-dlp = pkgs.mkShell {
+            packages = with pkgs; [
+              yt-dlp
+              ffmpeg
+
+              (pkgs.writeShellScriptBin "download-music" ''
+                set -euo pipefail
+
+                url="$1"
+                echo "URL: $url"
+
+                yt-dlp \
+                  --sponsorblock-remove sponsor,music_offtopic \
+                  "$url"
+                fname=$(yt-dlp --print filename "$url")
+                fname1="''${fname%.*}"
+                echo "File name: $fname, $fname1"
+
+                targetfname="$fname1.mp3"
+                echo "TFN: $targetfname"
+
+                ffmpeg -i "$fname" -acodec libmp3lame "$targetfname"
+              '')
+            ];
+
+            shellHook = ''
+              export ALL_PROXY="${secrets.hostLessSecrets.proxy}"
+            '';
+          };
+
+          selenium = pkgs.mkShell {
+            packages = with pkgs; [
+              geckodriver
+              firefox
+            ];
+          };
+        }
+      );
+
+      packages = lib.r.forEachSystem (
+        { system, pkgs }:
+        {
+          kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
+          lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
+
+          glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
+          glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
+          dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
+          octodns-selectel = pkgs.python312Packages.callPackage ./pkgs/octodns-selectel.nix { };
+
+          dns =
+            let
+              generate = nixos-dns.utils.generate pkgs;
+            in
+            {
+              zoneFiles = generate.zoneFiles (
+                dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
+              );
+            };
+
+          cloud-image-selectel-test =
+            self.nixosConfigurations.selectel-test.config.system.build.selectelCloudImage;
+        }
+      );
+
+      dnsDebugConfig = nixos-dns.utils.debug.config (
+        dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
+      );
     };
 }

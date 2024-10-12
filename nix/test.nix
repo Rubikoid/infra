@@ -1,5 +1,4 @@
 rec {
   nixpkgs = import <nixpkgs> { };
-  lib = nixpkgs.lib;
-  my-lib = import ./lib.nix nixpkgs lib;
+  lib = import ./lib { inherit nixpkgs; } nixpkgs.lib;
 }

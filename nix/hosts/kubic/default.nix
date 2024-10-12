@@ -47,6 +47,7 @@
     clamav
     dawarich
     xandikos
+    # tubearchivist
     ## garden
     immich
     paperless
@@ -113,7 +114,7 @@
   ];
 
   rubikoid.microvm.vms = [
-    "yatb-kube-master"
+    # "yatb-kube-master"
   ];
   microvm.autostart = lib.mkForce [ ];
 
@@ -181,7 +182,7 @@
   networking.firewall.interfaces.home.allowedTCPPorts = [ 9008 9009 ];
 
   networking.hosts = {
-    "185.130.225.97" = [ "vpn.rubikoid.ru" ];
+    "${secrets.dns.vpn_ip}" = [ "vpn.rubikoid.ru" ];
   };
 
   # This value determines the NixOS release from which the default

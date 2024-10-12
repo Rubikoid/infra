@@ -18,7 +18,7 @@
   ];
 
   networking.hosts = {
-    "192.168.1.107" = [ "kubic.nodes.internal.rubikoid.ru" ];
+    ${secrets.dns.data.nodes.kubic.at_home} = [ "kubic.nodes.${secrets.dns.private}" ];
   };
 
   system.stateVersion = "24.05"; # Did you read the comment?

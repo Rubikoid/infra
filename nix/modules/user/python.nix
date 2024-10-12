@@ -37,6 +37,10 @@
           python-jose
           jinja2
           python-multipart
+          httpx
+          httpx-ws
+          debugpy
+          websockets
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

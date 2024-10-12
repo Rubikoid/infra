@@ -54,7 +54,12 @@ system-inspect-nb hostname:
     nix run "{{nix}}#nix-tree" -- --derivation "{{FLAKE_PATH}}#nixosConfigurations.{{hostname}}.config.system.build.toplevel"
 
 repl:
-    nix repl --file './nix/test.nix'
+    nix repl --file './nix/test.nix' --show-trace
+
+sys-repl *args=default_args:
+    @echo "[+] Opening REPL for '{{HOST}}' at '{{FLAKE_PATH}}'"
+    nix --extra-experimental-features repl-flake repl "{{FLAKE_PATH}}#nixosConfigurations.{{HOST}}" {{args}}
+
 
 flake action="show" *args=default_args:
     nix flake {{action}} {{args}} "{{FLAKE_PATH}}"

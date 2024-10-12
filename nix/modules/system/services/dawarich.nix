@@ -35,7 +35,7 @@ in
   };
 
   config = {
-    systemd.services.docker-network-dawarich = pkgs.my-lib.mkDockerNet config "${sname}";
+    systemd.services.docker-network-dawarich = lib.r.mkDockerNet config "${sname}";
 
     rubikoid.services.dawarich = {
       sidekiqWorkers = 50;

@@ -150,7 +150,7 @@ in
       };
 
       powerdns-admin = {
-        enable = true;
+        enable = false;
 
         config = ''
           BIND_ADDRESS = '${cfg.admin.host}'

@@ -14,7 +14,7 @@
     extraNfsdConfig = '''';
 
     # exports = ''
-    #   /mnt         192.168.1.100(ro,insecure,nohide,no_subtree_check)
+    #   /mnt         192.168.10.200(ro,insecure,nohide,no_subtree_check)
     # '';
   };
 }

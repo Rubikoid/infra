@@ -117,7 +117,7 @@ in
                 user = cfg.global.user;
                 group = cfg.global.group;
               };
-              A.argument = pkgs.my-lib.commaJoin [
+              A.argument = lib.r.commaJoin [
                 "default:u::rwx"
                 "default:g::rwx"
                 "default:o::r-x"
@@ -141,7 +141,7 @@ in
               entry = {
                 d = stat;
                 # Z = stat;
-                A.argument = pkgs.my-lib.commaJoin (
+                A.argument = lib.r.commaJoin (
                   [
                     "default:u:${value.user}:rwx"
                     "default:g:${value.user}:r-x"

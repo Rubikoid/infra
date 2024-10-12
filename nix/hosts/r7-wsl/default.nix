@@ -1,7 +1,7 @@
 { pkgs, config, secrets, inputs, lib, utils, ... }:
 
 {
-  imports = with inputs.self.systemModules; [
+  imports = with lib.r.modules.system; [
     hm
     locale
     zsh
@@ -57,7 +57,7 @@
   ];
 
   networking.nameservers = [
-    "192.168.1.107"
+    secrets.dns.data.nodes.kubic.at_home
   ];
 
   # virtualisation.podman.enable = true;

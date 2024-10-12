@@ -1,4 +1,11 @@
-{ inputs, mode, config, secrets, ... }:
+{
+  inputs,
+  mode,
+  config,
+  secrets,
+  lib,
+  ...
+}:
 {
   imports = [
     inputs.home-manager."${if mode == "Darwin" then "darwinModules" else "nixosModules"}".home-manager
@@ -13,15 +20,17 @@
       mode = "${mode}-HM";
     };
 
-    users.rubikoid = { inputs, ... }: {
-      imports = [
-        {
-          user = "rubikoid";
-        }
-        ./../base-user.nix # ok ugly and what you can do with it... 
-        inputs.self.users.rubikoid
-        inputs.self.defaultModules.options
-      ];
-    };
+    users.rubikoid =
+      { inputs, ... }:
+      {
+        imports = [
+          {
+            user = "rubikoid";
+          }
+          ./../base-user.nix # ok ugly and what you can do with it...
+          inputs.self.users.rubikoid
+          lib.r.modules.default.options
+        ];
+      };
   };
 }

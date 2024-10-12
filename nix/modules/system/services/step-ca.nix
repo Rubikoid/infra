@@ -1,7 +1,14 @@
-{ inputs, config, secrets, pkgs, lib, ... }:
+{
+  inputs,
+  config,
+  secrets,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
-  mkBinarySecrets = pkgs.my-lib.mkBinarySecrets;
+  mkBinarySecrets = lib.r.mkBinarySecrets;
   secretsPermData = {
     mode = "400";
     owner = config.users.users.step-ca.name;
@@ -19,10 +26,8 @@ in
         sopsFile = secrets.deviceSecrets + "/secrets.yaml";
       };
     }
-    //
-    mkBinarySecrets (secrets.deviceSecrets + "/step/") secretsPermData [ "step.hjson" ]
-    //
-    mkBinarySecrets (secrets.deviceSecrets + "/step/") secretsPermData [
+    // mkBinarySecrets (secrets.deviceSecrets + "/step/") secretsPermData [ "step.hjson" ]
+    // mkBinarySecrets (secrets.deviceSecrets + "/step/") secretsPermData [
       # certs
       "certs/intermediate_ca.crt"
       "certs/root_ca.crt"
@@ -35,7 +40,6 @@ in
       "keys/ssh_user_ca.key"
     ]
   );
-
 
   services.step-ca = {
     enable = true;
@@ -70,7 +74,7 @@ in
     serviceConfig = {
       ExecStart = lib.mkForce [
         "" # override upstream ;(((
-        (pkgs.my-lib.makeJobScript
+        (lib.r.makeJobScript pkgs # fmt
           "step-ca-start"
           ''
             set -euo pipefail
@@ -79,7 +83,9 @@ in
             echo \
               '${builtins.toJSON config.services.step-ca.settings}' \
               $(cat '${config.sops.secrets."step.hjson".path}') \
-              '{ "address": "${config.services.step-ca.address + ":" + toString config.services.step-ca.port}" }' \
+              '{ "address": "${
+                config.services.step-ca.address + ":" + toString config.services.step-ca.port
+              }" }' \
             | ${pkgs.jq}/bin/jq -s add > /var/lib/step-ca/step-ca.json
 
             ${config.services.step-ca.package}/bin/step-ca /var/lib/step-ca/step-ca.json --password-file $CREDENTIALS_DIRECTORY/intermediate_password

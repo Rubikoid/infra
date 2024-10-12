@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, config, secretsModule, my-lib, ... }:
+{ inputs, lib, pkgs, config, secretsModule, ... }:
 let
   cfg = config.rubikoid;
 in
@@ -16,7 +16,7 @@ in
     ];
 
     networking = {
-      hostName = my-lib.strace config.device;
+      hostName = lib.r.strace config.device;
     };
 
     # system.replaceRuntimeDependencies = [

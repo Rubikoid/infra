@@ -1,4 +1,4 @@
-{ lib, config, secrets, pkgs, inputs, my-lib, ... }:
+{ lib, config, secrets, pkgs, inputs, ... }:
 
 let
   types = lib.types;
@@ -37,7 +37,7 @@ in
           isWSL = false;
         };
         specialArgs = {
-          inherit inputs my-lib;
+          inherit inputs;
 
           secretsModule = inputs.self.secrets.nixosModules.default;
           secrets = inputs.self.secrets.secretsBuilder hostname;

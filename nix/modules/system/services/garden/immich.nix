@@ -27,7 +27,7 @@
       env = { };
     in
     {
-      systemd.services.docker-network-immich = pkgs.my-lib.mkDockerNet config "immich";
+      systemd.services.docker-network-immich = lib.r.mkDockerNet config "immich";
 
       virtualisation.oci-containers.containers = {
         immich = {

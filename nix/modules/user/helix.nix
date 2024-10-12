@@ -63,6 +63,7 @@
           (genCS "log" "Log" { })
           (genCS "toml" "TOML" { })
           (genCS "bash" "Shell Script" { })
+          (genCS "yaml" "YAML" {})
         ];
     };
 

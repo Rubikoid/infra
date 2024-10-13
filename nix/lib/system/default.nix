@@ -35,6 +35,9 @@ in
   # simple predicate for WSL ;)
   isWSLFilter = source: hostname: lib.hasSuffix "-wsl" hostname;
 
+  # strange heuristic for detection vms, since i have only hostname ;(
+  isVMFilter = source: hostname: (lib.hasSuffix "/vms" (builtins.toString source));
+
   getHostOptions =
     source: hostname:
     lib.evalModules {
@@ -65,7 +68,7 @@ in
           in
           {
             inherit info passingInputs;
-            pkgs = r.pkgsFor info.system;
+            pkgs = r.rawPkgsFor passingInputs.nixpkgs info.system;
           }
         )
       );
@@ -148,6 +151,7 @@ in
           else
             (import (root + /modules/base-system-linux.nix))
         )
+        (if info.isVM then (import (root + /modules/base-system-vm.nix)) else { })
         (if info.isWSL then inputs.nix-wsl.nixosModules.default else { })
       ];
       specialArgs = {
@@ -156,6 +160,14 @@ in
       };
     };
 
+  mkSystemOnlyConfig =
+    { info, ... }@args:
+    extra:
+    (r.recursiveMerge [
+      (r.nixosConfigGenerator args)
+      extra
+    ]);
+
   rawMkSystem =
     nixpkgs:
     { info, ... }@args:
@@ -163,12 +175,7 @@ in
     let
       builder = if info.isDarwin then inputs.nix-darwin.lib.darwinSystem else nixpkgs.lib.nixosSystem;
     in
-    (builder (
-      r.recursiveMerge [
-        (r.nixosConfigGenerator args)
-        extra
-      ]
-    ));
+    (builder (r.mkSystemOnlyConfig args extra));
 
   nixInit = nixpkgs: {
     pkgsFor = r.rawPkgsFor nixpkgs;

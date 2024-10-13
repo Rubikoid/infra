@@ -103,7 +103,8 @@
       forEachHost = lib.r.forEachHost ./hosts inputs;
 
       forEachNixOSHost = forEachHost (_: true);
-      forEachVMHost = lib.r.forEachHost ./vms inputs (_: true);
+      forEachVMHostUnfiltred = lib.r.forEachHost ./vms inputs;
+      forEachVMHost = forEachVMHostUnfiltred (_: true);
       forEachDarwinHost = forEachHost lib.r.isDarwinFilter;
 
       extraSpecialArgsGenerator =
@@ -120,6 +121,8 @@
     {
       inherit lib secrets;
       inherit dnsConfig;
+      inherit extraSpecialArgsGenerator;
+      inherit forEachVMHostUnfiltred; # needed for microvm.nix
 
       users = builtins.listToAttrs (lib.r.findModules ./users);
 
@@ -134,10 +137,7 @@
         // (forEachVMHost (
           { info, ... }@args:
           lib.r.mkSystem args {
-            modules = [
-              microvm.nixosModules.microvm
-              (import ./modules/base-system-vm.nix)
-            ];
+            modules = [ ];
             specialArgs = extraSpecialArgsGenerator info;
           }
         ));

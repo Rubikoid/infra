@@ -148,20 +148,30 @@ let
           inherit (self.debug) strace straceSeq straceSeqN;
           inherit (self.merge) recursiveMerge mkMergeTopLevel;
           inherit (self.system)
+            # some simple system related things
             supportedSystems
             rawReadSystem
             readSystem
+            # filters per type
             isDarwinFilter
             isWSLFilter
+            isVMFilter
+            # things for dealing with host parsing
             getHostOptions
             findAllHosts
             forEachHost
+            # preparing nixpkgs...
             rawPkgsFor
             rawForEachSystem
+            # idk modules.
             modules
+            # more system preparing
             nixosConfigGenerator
+            mkSystemOnlyConfig
             rawMkSystem
+            # to call with nixpkgs, if you want to use another nixpkgs
             nixInit
+            # exported from nixInit
             pkgsFor
             forEachSystem
             mkSystem

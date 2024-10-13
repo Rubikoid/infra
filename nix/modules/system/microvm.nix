@@ -1,4 +1,11 @@
-{ lib, config, secrets, pkgs, inputs, ... }:
+{
+  lib,
+  config,
+  secrets,
+  pkgs,
+  inputs,
+  ...
+}:
 
 let
   types = lib.types;
@@ -19,30 +26,41 @@ in
   config = {
     microvm.vms =
       let
-        enabledVMFilter = hostname: builtins.elem hostname cfg.vms;
+        inherit (inputs.self) extraSpecialArgsGenerator forEachVMHostUnfiltred;
+        forEachEnabledVMHost = forEachVMHostUnfiltred (hostname: builtins.elem hostname cfg.vms);
       in
-      lib.genAttrs (builtins.filter enabledVMFilter inputs.self.raw_vms) (hostname: {
-        # TODO: proper pkgs... i think...
-        inherit pkgs;
-        config = {
-          imports = builtins.attrValues inputs.self.defaultModules ++ [
-            ../base-system.nix
-            ../base-system-vm.nix
-            ../base-system-linux.nix
-            (../../vms + "/${hostname}")
-          ];
+      forEachEnabledVMHost (
+        (
+          { info, ... }@args:
+          lib.r.mkSystemOnlyConfig args {
+            modules = [ ];
+            specialArgs = extraSpecialArgsGenerator info;
+          }
+        )
 
-          system-arch-name = "x86_64-linux";
-          device = hostname;
-          isWSL = false;
-        };
-        specialArgs = {
-          inherit inputs;
+      );
+    # (hostname: {
+    #   # TODO: proper pkgs... i think...
+    #   inherit pkgs;
+    #   config = {
+    #     imports = builtins.attrValues lib.r.modules.default ++ [
+    #       ../base-system.nix
+    #       ../base-system-vm.nix
+    #       ../base-system-linux.nix
+    #       (../../vms + "/${hostname}")
+    #     ];
 
-          secretsModule = inputs.self.secrets.nixosModules.default;
-          secrets = inputs.self.secrets.secretsBuilder hostname;
-          mode = "NixOS";
-        };
-      });
+    #     system-arch-name = "x86_64-linux";
+    #     device = hostname;
+    #     isWSL = false;
+    #   };
+    #   specialArgs = {
+    #     inherit inputs;
+
+    #     secretsModule = inputs.self.secrets.nixosModules.default;
+    #     secrets = inputs.self.secrets.secretsBuilder hostname;
+    #     mode = "NixOS";
+    #   };
+    # });
   };
 }

@@ -1,7 +1,14 @@
-{ pkgs, config, secrets, inputs, lib, ... }:
+{
+  pkgs,
+  config,
+  secrets,
+  inputs,
+  lib,
+  ...
+}:
 
 {
-  imports = with inputs.self.systemModules; [
+  imports = with lib.r.modules.system; [
     ./hardware-configuration.nix
 
     locale
@@ -179,7 +186,10 @@
     dataDir = "/backup-drive/data/psql//${config.services.postgresql.package.psqlSchema}";
   };
 
-  networking.firewall.interfaces.home.allowedTCPPorts = [ 9008 9009 ];
+  networking.firewall.interfaces.home.allowedTCPPorts = [
+    9008
+    9009
+  ];
 
   networking.hosts = {
     "${secrets.dns.vpn_ip}" = [ "vpn.rubikoid.ru" ];

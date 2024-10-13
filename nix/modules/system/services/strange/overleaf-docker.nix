@@ -46,7 +46,7 @@ in
     #   };
     # };
 
-    systemd.services.docker-network-overleaf = pkgs.my-lib.mkDockerNet config "overleaf";
+    systemd.services.docker-network-overleaf = lib.r.mkDockerNet config "overleaf";
 
     virtualisation.oci-containers.containers = {
       overleaf-redis = {

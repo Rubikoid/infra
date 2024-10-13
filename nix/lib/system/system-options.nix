@@ -33,6 +33,11 @@ in
     isDarwin = mkOption {
       type = types.bool;
     };
+
+    isVM = mkOption {
+      type = types.bool;
+      default = false;
+    };
   };
 
   config =
@@ -41,7 +46,7 @@ in
 
     in
     {
-      system = 
+      system =
         if config.systemOverride != null then
           config.systemOverride # if system is defined, thinking that it's getting overriten and don't check anything
         else
@@ -52,7 +57,9 @@ in
             else
               r.readSystem config.source config.hostname # no fmt
           );
+
       isWSL = r.isWSLFilter config.source config.hostname;
       isDarwin = r.isDarwinFilter config.source config.hostname;
+      isVM = r.isVMFilter config.source config.hostname;
     };
 }

@@ -68,7 +68,7 @@ rec {
         hash = "sha256-7MXdgp053kjuFPjgRClj0NIjiRl4HXnzMqAaqh3x2hU=";
       };
     in
-    prev.syncthing.override rec {
+    nixpkgs-old-stable.syncthing.override rec {
       buildGoModule =
         args:
         nix-old.buildGo119Module (
@@ -128,7 +128,7 @@ rec {
       version = "24.03";
       codestats_patch = final.fetchpatch2 {
         url = "https://github.com/Rubikoid/helix/pull/1.patch";
-        sha256 = "sha256-hmFUNKxOt75roCBhidCaHULuR9TSJopGfpardP6vZ00=";
+        sha256 = "sha256-BfZtHzpb+B84HFJAD8UWdXHGryxix/RAyk9JX8Buqf4=";
       };
       src = final.fetchzip {
         url = "https://github.com/helix-editor/helix/releases/download/${version}/helix-${version}-source.tar.xz";
@@ -143,7 +143,7 @@ rec {
           args
           // {
             inherit version src;
-            cargoHash = "sha256-HprItlie4lq1hz1A5JjU1r9F0ncGP/feyL3CYfLPZzs=";
+            cargoHash = "sha256-KHQrOEqknJgPjQlYiQurIBId4dUN6Hu+KqkYrFqv6+w=";
             cargoPatches = [ codestats_patch ];
           }
         );

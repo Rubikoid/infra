@@ -33,7 +33,6 @@
           (genCS "markdown" "Markdown" {
             soft-wrap.enable = true;
           })
-          (genCS "gleam" "Gleam" { })
           (genCS "python" "Python" {
             auto-format = true;
             rulers = [ 120 ];
@@ -60,10 +59,6 @@
               }
             ];
           })
-          (genCS "log" "Log" { })
-          (genCS "toml" "TOML" { })
-          (genCS "bash" "Shell Script" { })
-          (genCS "yaml" "YAML" {})
         ];
     };
 

@@ -71,6 +71,10 @@ home cmd=default_cmd *args=default_args:
 build pkg *args=default_args:
     nix build "{{FLAKE_PATH}}#{{pkg}}" -v {{args}}
 
+pkg pkg *args=default_args:
+	echo "[+] Building package: {{pkg}} at {{HOST}}"
+	nix build "{{FLAKE_PATH}}#nixosConfigurations.{{HOST}}.pkgs.{{pkg}}" -v {{args}}
+
 eval attr *args=default_args:
     nix eval "{{FLAKE_PATH}}#{{attr}}" {{args}}
 
@@ -79,10 +83,6 @@ run-vm name *args=default_args:
 
 get-age-key:
     nix shell "{{nix}}#ssh-to-age" --command sh -c 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
-
-# pkg:
-# 	echo "[+] Building package: $(pkg)"
-# 	nix build $(FLAKE_PATH)#nixosConfigurations.$(HOST).pkgs.$(pkg) -v $(args)
 
 develop shell="default" *args=default_args: 
     nix develop "{{FLAKE_PATH}}#{{shell}}" {{args}} -c "$SHELL"
@@ -131,3 +131,6 @@ clean:
     sudo nix-store --gc
     sudo rm /nix/var/nix/gcroots/auto/*
     sudo nix-collect-garbage -d
+
+nds deriv:
+    nix derivation show "{{deriv}}" | jq -C | less -R

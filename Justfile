@@ -44,6 +44,13 @@ system-build-diff *args=default_args:
     nix run "{{nix}}#nvd" diff "{{diff-current-system}}" "./result"
     rm ./result
 
+system-build-nix-diff *args=default_args:
+    @echo "[+] Building system: '{{HOST}}' at '{{FLAKE_PATH}}'"
+    {{rebuild_cmd}} build --flake "{{FLAKE_PATH}}#{{HOST}}" {{args}} {{nom}}
+    nix run "{{nix}}#nix-diff" "{{diff-current-system}}" "./result"
+    rm ./result
+
+
 system-inspect:
     nix run "{{nix}}#nix-tree" -- '/var/run/current-system'
 

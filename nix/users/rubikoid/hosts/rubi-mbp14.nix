@@ -1,6 +1,6 @@
-{ inputs, pkgs, ... }:
+{ inputs, pkgs, lib, ... }:
 {
-  imports = with inputs.self.userModules; [
+  imports = with lib.r.modules.user; [
     sops
     helix
     python

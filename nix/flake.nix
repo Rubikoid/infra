@@ -102,9 +102,9 @@
 
       forEachHost = lib.r.forEachHost ./hosts inputs;
 
-      forEachNixOSHost = forEachHost (_: true);
+      forEachNixOSHost = forEachHost (_: _: true);
       forEachVMHostUnfiltred = lib.r.forEachHost ./vms inputs;
-      forEachVMHost = forEachVMHostUnfiltred (_: true);
+      forEachVMHost = forEachVMHostUnfiltred (_: _: true);
       forEachDarwinHost = forEachHost lib.r.isDarwinFilter;
 
       extraSpecialArgsGenerator =

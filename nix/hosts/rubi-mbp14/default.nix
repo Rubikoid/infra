@@ -1,7 +1,7 @@
 { pkgs, config, secrets, inputs, lib, ... }:
 
 {
-  imports = with inputs.self.systemModules; [
+  imports = with lib.r.modules.system; [
     hm
     yggdrasil
 
@@ -13,7 +13,7 @@
 
     # users
     rubikoid
-  ] ++ (with inputs.self.darwinModules; [
+  ] ++ (with lib.r.modules.darwin; [
     tiling
     yggdrasil
   ]);

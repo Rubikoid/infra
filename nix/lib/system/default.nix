@@ -57,7 +57,7 @@ in
     source: passingInputs: filter: f:
     lib.genAttrs
       (builtins.filter # fmt
-        filter
+        (filter source)
         (r.findAllHosts source)
       )
       (

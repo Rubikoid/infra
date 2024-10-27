@@ -141,6 +141,15 @@ let
                 '';
             };
 
+          #
+          extender =
+            _lib: cb:
+            _lib.extend (
+              lib: prev: {
+                r = prev.r.extend (r: prevr: (cb { inherit lib prev r prevr; }));
+              }
+            );
+
           debug = loadFile ./debug.nix;
           merge = loadFile ./merge.nix;
           system = loadFile ./system;
@@ -150,6 +159,8 @@ let
           inherit (self.system)
             # some simple system related things
             supportedSystems
+            defaultSystem
+            overlays
             rawReadSystem
             readSystem
             # filters per type
@@ -157,11 +168,14 @@ let
             isWSLFilter
             isVMFilter
             # things for dealing with host parsing
+            sanitizeHostname
             getHostOptions
-            findAllHosts
-            forEachHost
             # preparing nixpkgs...
             rawPkgsFor
+            # more hosts thingns
+            findAllHosts
+            forEachHost
+            # more every system things
             rawForEachSystem
             # idk modules.
             modules
@@ -171,6 +185,8 @@ let
             rawMkSystem
             # to call with nixpkgs, if you want to use another nixpkgs
             nixInit
+            # test
+            getTest
             # exported from nixInit
             pkgsFor
             forEachSystem

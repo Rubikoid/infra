@@ -38,28 +38,29 @@ in
       type = types.bool;
       default = false;
     };
+
+    isSystemANixFile = mkOption {
+      type = types.bool;
+      default = false;
+    };
   };
 
-  config =
-    let
-      isSystemANixFile = builtins.pathExists (config.source + "/${config.hostname}.nix");
+  config = {
+    system =
+      if config.systemOverride != null then
+        config.systemOverride # if system is defined, thinking that it's getting overriten and don't check anything
+      else
+        (
+          if config.isSystemANixFile then # if we have only simple ${hostname}.nix file
+            r.system.defaultSystem # no fmt
+          # if we have normal directory like ${hostname}/{default.nix,system}
+          else
+            r.readSystem config.source config.hostname # no fmt
+        );
 
-    in
-    {
-      system =
-        if config.systemOverride != null then
-          config.systemOverride # if system is defined, thinking that it's getting overriten and don't check anything
-        else
-          (
-            if isSystemANixFile then # if we have only simple ${hostname}.nix file
-              r.system.defaultSystem # no fmt
-            # if we have normal directory like ${hostname}/{default.nix,system}
-            else
-              r.readSystem config.source config.hostname # no fmt
-          );
-
-      isWSL = r.isWSLFilter config.source config.hostname;
-      isDarwin = r.isDarwinFilter config.source config.hostname;
-      isVM = r.isVMFilter config.source config.hostname;
-    };
+    isWSL = r.isWSLFilter config.source config.hostname;
+    isDarwin = r.isDarwinFilter config.source config.hostname;
+    isVM = r.isVMFilter config.source config.hostname;
+    isSystemANixFile = builtins.pathExists (config.source + "/${config.hostname}.nix");
+  };
 }

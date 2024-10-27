@@ -8,13 +8,14 @@
     zsh-config
     yggdrasil
 
+    # dev
+    direnv
+
     # ca
     ca_rubikoid
 
     # users
     rubikoid
-
-    # containers
 
     remote-build
 
@@ -30,10 +31,6 @@
       (builtins.readFile (./. + "/vscode-server-env-setup.sh"))
     )
   ];
-
-  programs = {
-    direnv.enable = true;
-  };
 
   wsl = {
     enable = true;

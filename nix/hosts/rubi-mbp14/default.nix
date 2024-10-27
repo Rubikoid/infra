@@ -13,6 +13,9 @@
 
     # users
     rubikoid
+
+    # dev
+    direnv
   ] ++ (with lib.r.modules.darwin; [
     tiling
     yggdrasil
@@ -25,7 +28,6 @@
   services.nix-daemon.enable = true;
 
   programs = {
-    direnv.enable = true;
     zsh.enable = true;
   };
 

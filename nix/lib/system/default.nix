@@ -18,6 +18,9 @@ in
   # magic default system?
   defaultSystem = "x86_64-linux";
 
+  # extra overlays
+  overlays = [ ];
+
   # read system for hostname from source folder, or is not exits set default
   rawReadSystem =
     default: source: hostname:
@@ -27,7 +30,7 @@ in
       default;
 
   # final read system
-  readSystem = r.rawReadSystem r.system.defaultSystem;
+  readSystem = r.rawReadSystem r.defaultSystem;
 
   # simple predicate for darwin
   isDarwinFilter = source: hostname: lib.hasSuffix "-darwin" (r.readSystem source hostname);
@@ -37,6 +40,17 @@ in
 
   # strange heuristic for detection vms, since i have only hostname ;(
   isVMFilter = source: hostname: (lib.hasSuffix "/vms" (builtins.toString source));
+
+  # fix hostname if it has .nix
+  sanitizeHostname =
+    hostname:
+    let
+      nixMatch = builtins.match "(.*)\\.nix" hostname;
+    in
+    if nixMatch != null then # fmt
+      (builtins.elemAt (nixMatch) 0) # fmt
+    else
+      hostname;
 
   getHostOptions =
     source: hostname:
@@ -52,30 +66,13 @@ in
       };
     };
 
-  findAllHosts = source: builtins.attrNames (builtins.readDir source);
-  forEachHost =
-    source: passingInputs: filter: f:
-    lib.genAttrs
-      (builtins.filter # fmt
-        (filter source)
-        (r.findAllHosts source)
-      )
-      (
-        hostname:
-        f (
-          let
-            info = (r.getHostOptions source hostname).config;
-          in
-          {
-            inherit info passingInputs;
-            pkgs = r.rawPkgsFor passingInputs.nixpkgs info.system;
-          }
-        )
-      );
-
   # nixpkgs instance builder for nixpkgs input and target system
   rawPkgsFor =
-    nixpkgs: system:
+    {
+      nixpkgs,
+      system,
+      overlays ? [ ],
+    }:
     let
       defaultOverlay = import (root + /overlay.nix) inputs;
       pkgsOverlay = import (root + /pkgs.nix) inputs;
@@ -84,7 +81,7 @@ in
       overlays = [
         defaultOverlay
         pkgsOverlay
-      ];
+      ] ++ r.overlays ++ overlays;
       localSystem = {
         inherit system;
       };
@@ -108,13 +105,38 @@ in
       };
     });
 
+  findAllHosts = source: builtins.attrNames (builtins.readDir source);
+  forEachHost =
+    source: passingInputs: filter: f:
+    lib.genAttrs
+      (builtins.map r.sanitizeHostname (
+        builtins.filter # fmt
+          (filter source)
+          (r.findAllHosts source)
+      ))
+      (
+        hostname:
+        f (
+          let
+            info = r.straceSeqN 1 (r.getHostOptions source hostname).config;
+          in
+          {
+            inherit info passingInputs;
+            pkgs = r.rawPkgsFor {
+              inherit (passingInputs) nixpkgs;
+              inherit (info) system;
+            };
+          }
+        )
+      );
+
   rawForEachSystem =
     nixpkgs: f:
     lib.genAttrs r.supportedSystems (
       system:
       f {
         inherit system;
-        pkgs = r.rawPkgsFor nixpkgs system;
+        pkgs = r.rawPkgsFor { inherit nixpkgs system; };
       }
     );
 
@@ -138,7 +160,12 @@ in
 
       modules = builtins.attrValues r.modules.default ++ [
         (import (root + /modules/base-system.nix))
-        (import (info.source + "/${info.hostname}"))
+        (
+          if info.isSystemANixFile then
+            (import (info.source + "/${info.hostname}.nix"))
+          else
+            (import (info.source + "/${info.hostname}"))
+        )
         { nixpkgs.pkgs = pkgs; }
         {
           inherit (info) isWSL isDarwin;
@@ -178,7 +205,7 @@ in
     (builder (r.mkSystemOnlyConfig args extra));
 
   nixInit = nixpkgs: {
-    pkgsFor = r.rawPkgsFor nixpkgs;
+    pkgsFor = system: r.rawPkgsFor { inherit nixpkgs system; };
     forEachSystem = r.rawForEachSystem nixpkgs;
     mkSystem = r.rawMkSystem nixpkgs;
   };

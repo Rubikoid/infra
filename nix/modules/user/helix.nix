@@ -5,7 +5,7 @@
     defaultEditor = true;
 
     extraPackages = with pkgs; [
-      # 
+      #
     ];
 
     languages = {
@@ -19,21 +19,33 @@
 
       language-server.ruff = {
         command = "ruff";
-        args = [ "server" "--preview" ];
+        args = [
+          "server"
+          "--preview"
+        ];
       };
 
       language =
         let
-          genCS = lang: cs: extra: { name = lang; codestats = cs; } // extra;
+          gen = lang: extra: { name = lang; } // extra;
+
+          genCS =
+            lang: cs: extra:
+            gen lang ({ codestats = cs; } // extra);
+
+          genC = lang: cs: genCS lang cs { };
         in
         [
-          (genCS "nix" "Nix" {
-            formatter = { command = "nixpkgs-fmt"; args = [ ]; };
+          (gen "nix" {
+            formatter = {
+              command = "nixpkgs-fmt";
+              args = [ ];
+            };
           })
-          (genCS "markdown" "Markdown" {
+          (gen "markdown" {
             soft-wrap.enable = true;
           })
-          (genCS "python" "Python" {
+          (gen "python" {
             auto-format = true;
             rulers = [ 120 ];
             language-servers = [
@@ -59,6 +71,7 @@
               }
             ];
           })
+          (genC "haskell" "Haskell")
         ];
     };
 
@@ -98,7 +111,12 @@
         };
       };
 
-      keys.normal."C-g" = [ ":new" ":insert-output ${pkgs.lazygit}/bin/lazygit" ":buffer-close!" ":redraw" ];
+      keys.normal."C-g" = [
+        ":new"
+        ":insert-output ${pkgs.lazygit}/bin/lazygit"
+        ":buffer-close!"
+        ":redraw"
+      ];
 
       # Make use of g+{left, right} in normal mode
       # in vim this was ^$, but... here no, and this is better

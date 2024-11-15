@@ -2,7 +2,7 @@
 {
   home.packages = with pkgs; [
     nil
-    nixpkgs-fmt
+    nixfmt-rubi-style
 
     ripgrep
 

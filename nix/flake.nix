@@ -158,7 +158,7 @@
               nil
               # nixpkgs-fmt
               sops
-              nixfmt-rfc-style
+              nixfmt-rubi-style
             ];
           };
 
@@ -214,28 +214,37 @@
 
       packages = lib.r.forEachSystem (
         { system, pkgs }:
-        {
-          kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
-          lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
+        (
+          {
+            kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
+            lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
 
-          glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
-          glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
-          dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
-          octodns-selectel = pkgs.python312Packages.callPackage ./pkgs/octodns-selectel.nix { };
+            glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
+            glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
+            dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
+            octodns-selectel = pkgs.python312Packages.callPackage ./pkgs/octodns-selectel.nix { };
 
-          dns =
+            dns =
+              let
+                generate = nixos-dns.utils.generate pkgs;
+              in
+              {
+                zoneFiles = generate.zoneFiles (
+                  dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
+                );
+              };
+
+            cloud-image-selectel-test =
+              self.nixosConfigurations.selectel-test.config.system.build.selectelCloudImage;
+          }
+          // (
             let
-              generate = nixos-dns.utils.generate pkgs;
+              packageList = builtins.attrNames (import ./pkgs.nix inputs pkgs pkgs); # WTF: hack
+              source = pkgs;
             in
-            {
-              zoneFiles = generate.zoneFiles (
-                dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
-              );
-            };
-
-          cloud-image-selectel-test =
-            self.nixosConfigurations.selectel-test.config.system.build.selectelCloudImage;
-        }
+            lib.genAttrs packageList (pkgName: pkgs.${pkgName})
+          )
+        )
       );
 
       dnsDebugConfig = nixos-dns.utils.debug.config (

@@ -17,8 +17,9 @@ Now it contains only nix things...
   - [ ] budget-git
   - [ ] vaultwarden
   - [ ] monitoring:
-    - [ ] grafana-agent-simple
-    - [ ] grafana-agent
+    - [x] grafana-agent-ng (successor to both grafana-agent-simple and grafana-agent)
+    - [ ] ~~grafana-agent-simple~~
+    - [ ] ~~grafana-agent~~
     - [ ] grafana
   - [ ] ss (syncthing)
 

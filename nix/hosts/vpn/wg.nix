@@ -15,7 +15,7 @@ in
       #!${pkgs.bash}/bin/bash
 
       IPT="${ipt}"
-      OUT=ens1 # TODO: fix it sometimes...
+      OUT=ens3 # TODO: fix it sometimes...
 
       A=$1 # action: -A/-D
       I=$2 # wg interface

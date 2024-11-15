@@ -24,7 +24,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
-
+    wget
   ] ++ [
     (pkgs.writeShellScriptBin
       "vscode-server-env-setup.sh"

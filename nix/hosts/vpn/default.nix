@@ -1,7 +1,14 @@
-{ pkgs, config, inputs, secrets, lib, ... }:
+{
+  pkgs,
+  config,
+  inputs,
+  secrets,
+  lib,
+  ...
+}:
 
 {
-  imports = with inputs.self.systemModules; [
+  imports = with lib.r.modules.system; [
     ./hardware-configuration.nix
 
     compact
@@ -22,7 +29,7 @@
 
     # services
     ## monitoring
-    grafana-agent-simple
+    grafana-agent-ng
   ];
 
   boot = {

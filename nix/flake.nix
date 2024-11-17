@@ -216,7 +216,7 @@
         { system, pkgs }:
         (
           {
-            kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
+            # kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
             lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
 
             glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
@@ -224,18 +224,9 @@
             dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
             octodns-selectel = pkgs.python312Packages.callPackage ./pkgs/octodns-selectel.nix { };
 
-            dns =
-              let
-                generate = nixos-dns.utils.generate pkgs;
-              in
-              {
-                zoneFiles = generate.zoneFiles (
-                  dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
-                );
-              };
-
-            cloud-image-selectel-test =
-              self.nixosConfigurations.selectel-test.config.system.build.selectelCloudImage;
+            dnsZoneFiles = (nixos-dns.utils.generate pkgs).zoneFiles (
+              dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
+            );
           }
           // (
             let
@@ -250,5 +241,12 @@
       dnsDebugConfig = nixos-dns.utils.debug.config (
         dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
       );
+
+      templates = {
+        trivial = {
+          path = ./templates/trivial;
+          description = "A very basic flake";
+        };
+      };
     };
 }

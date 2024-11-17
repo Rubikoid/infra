@@ -41,6 +41,7 @@
           httpx-ws
           debugpy
           websockets
+          pyjwt
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

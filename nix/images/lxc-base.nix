@@ -6,12 +6,12 @@
 }:
 let
   hostname = "lxc-generic";
-  system = lib.readSystem hostname;
+  system = lib.r.readSystem hostname;
 in
 inputs.nixos-generators.nixosGenerate {
   inherit pkgs system;
   modules =
-    (with inputs.self.systemModules; [
+    (with lib.r.modules.system; [
       compact
 
       ca_rubikoid

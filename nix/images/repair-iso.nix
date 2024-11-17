@@ -1,11 +1,11 @@
 { inputs, lib, pkgs, ... }:
 let
   hostname = "kubic";
-  system = lib.readSystem hostname;
+  system = lib.r.readSystem hostname;
 in
 inputs.nixos-generators.nixosGenerate {
   inherit pkgs system;
-  modules = (with inputs.self.systemModules; [
+  modules = (with lib.r.modules.system; [
     ca_rubikoid
 
     ntfs

@@ -1,4 +1,11 @@
-{ pkgs, lib, config, inputs, secrets, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  inputs,
+  secrets,
+  ...
+}:
 
 {
   options.rubikoid.nix = { };
@@ -6,15 +13,32 @@
     nix = {
       package = pkgs.nix;
 
-      registry = {
-        nixpkgs.flake = inputs.nixpkgs;
-        n.flake = inputs.nixpkgs;
-
-        # {
-        #   to = { type = "github"; owner = "NixOS"; repo = "nixpkgs"; rev = inputs.nixpkgs.rev; };
-        #   exact = false;
-        # };
-      };
+      registry =
+        let
+          nixpkgs = inputs.nixpkgs;
+          rubikoid =
+            let
+              flake = inputs.self;
+            in
+            {
+              type = "path";
+              path = flake.outPath;
+              dir = "nix";
+            }
+            // lib.filterAttrs (
+              n: _: n == "lastModified" || n == "rev" || n == "revCount" || n == "narHash"
+            ) flake;
+        in
+        {
+          n.flake = nixpkgs;
+          nixpkgs.flake = nixpkgs;
+          r.to = rubikoid;
+          rubikoid.to = rubikoid;
+          # {
+          #   to = { type = "github"; owner = "NixOS"; repo = "nixpkgs"; rev = inputs.nixpkgs.rev; };
+          #   exact = false;
+          # };
+        };
 
       # linking hardlinks inside store
       # good thing
@@ -33,6 +57,8 @@
           "flakes"
           "repl-flake"
         ];
+
+        flake-registry = lib.mkForce ""; # бе-бе-бе, я сам себе registry
 
         # чтобы работало, надо либо чтобы юзер в trusted-users, либо репа в trusted-substituters
         # я добавляю и то и туда, чтобы работало гарантированно. 

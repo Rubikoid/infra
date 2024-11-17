@@ -27,7 +27,7 @@ in
     microvm.vms =
       let
         inherit (inputs.self) extraSpecialArgsGenerator forEachVMHostUnfiltred;
-        forEachEnabledVMHost = forEachVMHostUnfiltred (hostname: builtins.elem hostname cfg.vms);
+        forEachEnabledVMHost = forEachVMHostUnfiltred (source: hostname: builtins.elem hostname cfg.vms);
       in
       forEachEnabledVMHost (
         (

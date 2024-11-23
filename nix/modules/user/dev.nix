@@ -23,6 +23,8 @@
     ldns
 
     far2l
+
+    openssl
   ];
 
   programs.lazygit = {

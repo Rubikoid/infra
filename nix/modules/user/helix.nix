@@ -38,7 +38,7 @@
         [
           (gen "nix" {
             formatter = {
-              command = "nixpkgs-fmt";
+              command = "${pkgs.nixfmt-rubi-style}/bin/nixfmt";
               args = [ ];
             };
           })

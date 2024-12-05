@@ -23,6 +23,10 @@ in
   };
 
   config = {
+    rubikoid.ns.betula = {
+      idx = 0;
+    };
+
     systemd.services.betula = {
       enable = true;
 
@@ -41,7 +45,7 @@ in
 
     rubikoid.http.services.betula = {
       name = cfg.caddyName;
-      hostOnHost = cfg.host;
+      hostOnHost = config.rubikoid.ns.betula.ipNS; # cfg.host;
       inherit (cfg) port;
     };
   };

@@ -23,7 +23,7 @@ in
   };
 
   config = {
-    rubikoid.ns.betula = {
+    rubikoid.ns.ns.betula = {
       idx = 0;
       allowedOutputs = [ "1.1.1.1" ];
       logExternalRequests = true;
@@ -47,7 +47,7 @@ in
 
     rubikoid.http.services.betula = {
       name = cfg.caddyName;
-      hostOnHost = config.rubikoid.ns.betula.ipNS; # cfg.host;
+      hostOnHost = config.rubikoid.ns.ns.betula.ipNS; # cfg.host;
       inherit (cfg) port;
     };
   };

@@ -25,6 +25,8 @@ in
   config = {
     rubikoid.ns.betula = {
       idx = 0;
+      allowedOutputs = [ "1.1.1.1" ];
+      logExternalRequests = true;
     };
 
     systemd.services.betula = {

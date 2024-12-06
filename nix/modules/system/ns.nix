@@ -19,24 +19,33 @@ let
     # setup (action: ${action}) nat filtering for '${cfg.name}'
 
     ${lib.concatMapStrings (ip: ''
-      ip46tables -w -t filter ${action} FORWARD -i ${cfg.veth.host} -d ${ip} -j ACCEPT ${ipTrue action}
+      iptables -w -t filter ${action} FORWARD -i ${cfg.veth.host} -d ${ip} -j ACCEPT ${ipTrue action}
     '') cfg.allowedOutputs}
 
-    ${lib.optionalString cfg.logExternalRequests ''ip46tables -w -t filter ${action} FORWARD -i ${cfg.veth.host} -j LOG --log-level info --log-prefix "refused out connection: " ${ipTrue action} ''}
+    ${lib.optionalString cfg.logExternalRequests ''iptables -w -t filter ${action} FORWARD -i ${cfg.veth.host} -j ${nCfg.logAction} ${
+      lib.optionalString (
+        nCfg.logAction == "LOG"
+      ) ''--log-level info --log-prefix "refused out connection: "''
+    } ${ipTrue action} ''}
 
-    ip46tables -w -t filter ${action} FORWARD -i ${cfg.veth.host} -j DROP ${ipTrue action}
+    iptables -w -t filter ${action} FORWARD -i ${cfg.veth.host} -j DROP ${ipTrue action}
 
     set +x 
   '';
 in
 {
-  options.rubikoid = with lib; {
+  options.rubikoid.ns = with lib; {
+    logAction = mkOption {
+      type = types.str;
+      default = "LOG";
+    };
+
     ns = lib.mkOption {
       type = types.attrsOf (
         types.submodule (
           { name, ... }:
           let
-            cfg = nCfg.${name};
+            cfg = nCfg.ns.${name};
           in
           {
             options = {
@@ -118,14 +127,13 @@ in
   };
 
   config = {
-    networking.nat.enable = true;
     networking.nat.internalInterfaces = [ "v-h-+" ];
 
     networking.nat.extraCommands = builtins.concatStringsSep "\n" (
-      lib.mapAttrsToList (_: cfg: iptablesGen cfg "-A") nCfg
+      lib.mapAttrsToList (_: cfg: iptablesGen cfg "-A") nCfg.ns
     );
     networking.nat.extraStopCommands = builtins.concatStringsSep "\n" (
-      lib.mapAttrsToList (_: cfg: iptablesGen cfg "-D") nCfg
+      lib.mapAttrsToList (_: cfg: iptablesGen cfg "-D") nCfg.ns
     );
 
     systemd.services = lib.mkMerge (
@@ -225,7 +233,7 @@ in
           unitConfig.JoinsNamespaceOf = "${cfg.nsServiceName}.service";
           serviceConfig.PrivateNetwork = true;
         };
-      }) nCfg
+      }) nCfg.ns
     );
   };
 }

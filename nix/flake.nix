@@ -9,6 +9,8 @@
     nixpkgs-old-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
     nixpkgs-old-tmux.url = "github:NixOS/nixpkgs/7a339d87931bba829f68e94621536cad9132971a";
 
+    nixpkgs-master.url = "github:NixOS/nixpkgs/master";
+
     # home-manager upstream
     home-manager = {
       # url = github:nix-community/home-manager/release-23.05;
@@ -45,11 +47,11 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
 
-    ygg-map = {
-      url = "github:rubikoid/yggdrasil-map-ng/e3e0203eb4c2715668d620e0778761a605e66178";
-      # url = "git+file:///root/ygg-map";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # ygg-map = {
+    #   url = "github:rubikoid/yggdrasil-map-ng/e3e0203eb4c2715668d620e0778761a605e66178";
+    #   # url = "git+file:///root/ygg-map";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nixos-dns = {
       url = "github:Janik-Haag/nixos-dns/c4f734d771038db15700a61a8703d0da5f993b3a";
@@ -77,6 +79,12 @@
       url = "github:astro/microvm.nix/a808af7775f508a2afedd1e4940a382fe1194f21"; # master as of 15-07-2024
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+      inputs.nixpkgs-unstable.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -88,6 +96,7 @@
       nix-wsl,
       microvm,
       nixos-dns,
+      nixpkgs-master,
       ...
     }@inputs:
     let
@@ -175,7 +184,12 @@
 
           yt-dlp = pkgs.mkShell {
             packages = with pkgs; [
-              yt-dlp
+              ((import inputs.nixpkgs-master ({
+                localSystem = {
+                  inherit system;
+                };
+              })).yt-dlp
+              )
               ffmpeg
 
               (pkgs.writeShellScriptBin "download-music" ''
@@ -184,10 +198,14 @@
                 url="$1"
                 echo "URL: $url"
 
+                YT_DLP_EXTRA=''${YT_DLP_EXTRA:-""}
+                echo "YT EXTRA: $YT_DLP_EXTRA"
+
                 yt-dlp \
                   --sponsorblock-remove sponsor,music_offtopic \
+                  $YT_DLP_EXTRA \
                   "$url"
-                fname=$(yt-dlp --print filename "$url")
+                fname=$(yt-dlp $YT_DLP_EXTRA --print filename "$url")
                 fname1="''${fname%.*}"
                 echo "File name: $fname, $fname1"
 
@@ -246,6 +264,11 @@
         trivial = {
           path = ./templates/trivial;
           description = "A very basic flake";
+        };
+
+        py-uv = {
+          path = ./templates/py-uv;
+          description = "Python flake, powered by uv";
         };
       };
     };

@@ -1,0 +1,27 @@
+[project]
+name = "example"
+version = "0.0.1"
+description = "my description"
+authors = [{ name = "Rubikoid", email = "rubikoid@rubikoid.ru" }]
+requires-python = ">= 3.12"
+
+dependencies = []
+
+[project.optional-dependencies]
+
+
+[dependency-groups]
+dev = ["ruff", "black"]
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+fix = false
+
+[tool.black]
+line-length = 120
+target-version = ['py312']

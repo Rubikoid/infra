@@ -10,3 +10,5 @@ nix/*.tar.gz
 
 test/
 result
+
+**/~syncthing~*.tmp

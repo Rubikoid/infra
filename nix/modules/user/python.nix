@@ -42,6 +42,9 @@
           debugpy
           websockets
           pyjwt
+          flask
+          requests
+          tomli-w
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

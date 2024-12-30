@@ -55,7 +55,7 @@
         experimental-features = [
           "nix-command"
           "flakes"
-          "repl-flake"
+          # "repl-flake"
         ];
 
         flake-registry = lib.mkForce ""; # бе-бе-бе, я сам себе registry

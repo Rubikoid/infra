@@ -10,7 +10,7 @@
 
     k9s
     kubectl
-    
+
     bat
 
     whois
@@ -19,13 +19,23 @@
     glab
     jq
 
-    inetutils
+    # inetutils
+    # i fucking hate gnu
     ldns
 
     far2l
 
     openssl
+
+    cargo
+    rustc
+    rust-analyzer
+    clippy
   ];
+
+  home.sessionVariables = {
+    RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+  };
 
   programs.lazygit = {
     enable = true;

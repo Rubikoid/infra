@@ -1,7 +1,14 @@
-{ pkgs, config, inputs, lib, ... }:
+{
+  pkgs,
+  config,
+  inputs,
+  secrets,
+  lib,
+  ...
+}:
 
 {
-  imports = with inputs.self.systemModules; [
+  imports = with lib.r.modules.system; [
     ./hardware-configuration.nix
 
     compact

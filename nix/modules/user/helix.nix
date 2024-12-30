@@ -72,6 +72,7 @@
             ];
           })
           (genC "haskell" "Haskell")
+          (genC "c" "C")
         ];
     };
 

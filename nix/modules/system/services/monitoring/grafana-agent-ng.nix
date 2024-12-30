@@ -84,7 +84,7 @@ in
                   })
                   (
                     lib.filterAttrs (
-                      name: value: (!lib.lists.elem name [ "minio" ]) && (lib.isAttrs value) && (value.enable)
+                      name: value: (!lib.lists.elem name [ "minio" "tor" ]) && (lib.isAttrs value) && (value.enable)
                     ) config.services.prometheus.exporters
                   )
                 );

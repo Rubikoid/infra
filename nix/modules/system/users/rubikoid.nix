@@ -1,4 +1,11 @@
-{ config, secrets, pkgs, lib, mode, ... }:
+{
+  config,
+  secrets,
+  pkgs,
+  lib,
+  mode,
+  ...
+}:
 
 {
   # Setup users
@@ -10,7 +17,11 @@
       isNormalUser = true;
       useDefaultShell = true;
 
-      extraGroups = [ "wheel" "docker" "tss" ];
+      extraGroups = [
+        "wheel"
+        "docker"
+        "tss"
+      ];
     })
     (lib.mkIf (mode == "Darwin") {
       # https://github.com/nix-community/home-manager/issues/4026

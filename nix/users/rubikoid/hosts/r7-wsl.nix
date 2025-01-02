@@ -5,6 +5,7 @@
     helix
     python
     dev
+    ghostty
   ];
 
   home.packages = with pkgs; [
@@ -24,4 +25,3 @@
     # defaultCacheTtl = 1800;
   };
 }
-

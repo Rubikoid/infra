@@ -5,6 +5,7 @@
     helix
     python
     dev
+    shell
   ];
 
   home.packages = with pkgs; [
@@ -30,4 +31,3 @@
     # )
   ];
 }
-

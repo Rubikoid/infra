@@ -3,13 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    nixpkgs-old.url = "github:NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
-    nixpkgs-old-basedpyright.url = "github:NixOS/nixpkgs/48596fb13bc91bdc1b44bcdd6b0f87f0467d34c0";
-    nixpkgs-old-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
-    nixpkgs-old-tmux.url = "github:NixOS/nixpkgs/7a339d87931bba829f68e94621536cad9132971a";
-
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
+
+    base = {
+      url = "path:./base";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # home-manager upstream
     home-manager = {
@@ -22,30 +22,15 @@
     sops-nix = {
       url = "github:Mic92/sops-nix/0dc50257c00ee3c65fef3a255f6564cfbfe6eb7f";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs-old-stable";
+      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
 
     # sops but for darwin
     sops-nix-darwin = {
       url = "github:Kloenk/sops-nix/darwin";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs-old-stable";
+      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
-
-    # GUI things. WM, plugins
-    # hyprland = {
-    #   url = "github:hyprwm/Hyprland";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # hyprland-plugins = {
-    #   url = "github:hyprwm/hyprland-plugins";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
-    # and launcher
-    # anyrun = {
-    #   url = "github:Kirottu/anyrun";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
 
     # ygg-map = {
     #   url = "github:rubikoid/yggdrasil-map-ng/e3e0203eb4c2715668d620e0778761a605e66178";
@@ -91,6 +76,7 @@
     {
       self,
       nixpkgs,
+      base,
       home-manager,
       nix-darwin,
       nix-wsl,
@@ -100,7 +86,18 @@
       ...
     }@inputs:
     let
-      lib = import ./lib inputs nixpkgs.lib;
+      lib = base.lib.r.extender base.lib (
+        { lib, prev, r, prevr, ... }:
+        {
+          modules = r.recursiveMerge [
+            prevr.modules
+            (r.findModulesV2 ./modules)
+          ];
+
+          inherit (r.nixInit nixpkgs) pkgsFor forEachSystem mkSystem;
+        }
+      );
+
       secrets = import ../secrets inputs;
 
       dnsConfig = {

@@ -1,36 +1,48 @@
-{ pkgs, config, secrets, inputs, lib, utils, ... }:
+{
+  pkgs,
+  config,
+  secrets,
+  inputs,
+  lib,
+  utils,
+  ...
+}:
 
 {
-  imports = with lib.r.modules.system; [
-    hm
-    locale
-    zsh
-    zsh-config
-    yggdrasil
+  imports = lib.lists.flatten (
+    with lib.r.modules.system;
+    [
+      hm
+      locale
+      zsh
+      yggdrasil
 
-    # dev
-    direnv
+      dev.direnv
+      ca.rubikoid
+      users.rubikoid
 
-    # ca
-    ca_rubikoid
+      (with other; [
+        remote-build
+        zsh-config
+      ])
 
-    # users
-    rubikoid
+      (with security; [
+        openssh
+        openssh-root-key
+      ])
+    ]
+  );
 
-    remote-build
-
-    openssh
-    openssh-root-key
-  ];
-
-  environment.systemPackages = with pkgs; [
-    wget
-  ] ++ [
-    (pkgs.writeShellScriptBin
-      "vscode-server-env-setup.sh"
-      (builtins.readFile (./. + "/vscode-server-env-setup.sh"))
-    )
-  ];
+  environment.systemPackages =
+    with pkgs;
+    [
+      wget
+    ]
+    ++ [
+      (pkgs.writeShellScriptBin "vscode-server-env-setup.sh" (
+        builtins.readFile (./. + "/vscode-server-env-setup.sh")
+      ))
+    ];
 
   wsl = {
     enable = true;
@@ -73,7 +85,7 @@
 
     docker = {
       enable = true;
-      
+
       # storageDriver = "zfs";
       # daemon.settings = {
       #   data-root = "/backup-drive/docker-data";

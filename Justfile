@@ -73,6 +73,10 @@ system-inspect-nb hostname:
 repl:
     nix repl --file '{{canonicalize(source_directory()) / "nix" / "test.nix"}}' --show-trace
 
+# run repl with test.nix loaded
+repl-base:
+    nix repl --file '{{canonicalize(source_directory()) / "nix" / "base" / "test.nix"}}' --show-trace
+
 # run repl with HOST config prepared
 sys-repl *args=default_args:
     @echo "[+] Opening REPL for '{{HOST}}' at '{{FLAKE_PATH}}'"
@@ -154,6 +158,11 @@ vm-run hostname *args=default_args:
 # alias for `nix derivation show`` with fancy output
 nds deriv:
     nix derivation show "{{deriv}}" | jq -C | less -R
+
+# update one input
+update-input input="base" *args=default_args:
+    # nix flake lock --update-input "{{input}}" "{{FLAKE_PATH}}"
+    nix flake update --flake "{{FLAKE_PATH}}" "{{input}}"
 
 # simple clean
 short-clean:

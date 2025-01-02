@@ -27,7 +27,7 @@
           {
             user = "rubikoid";
           }
-          ./../base-user.nix # ok ugly and what you can do with it...
+          lib.r.modules.base.user # not ugly anymore!
           inputs.self.users.rubikoid
           lib.r.modules.default.options
         ];

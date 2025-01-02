@@ -1,3 +1,6 @@
 [submodule "secrets"]
 	path = secrets
 	url = ./secrets
+[submodule "nix/base"]
+	path = nix/base
+	url = git@github.com:Rubikoid/nix-base.git

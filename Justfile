@@ -136,6 +136,7 @@ deploy target *args=default_args:
         --exclude=".direnv" \
         --exclude=".stfolder" \
         --exclude=".venv" \
+        --exclude="*.sync-conflict-*" \
         --checksum --ignore-times \
         {{args}} \
         "{{canonicalize(source_directory())}}/" \

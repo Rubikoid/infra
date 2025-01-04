@@ -1,6 +1,6 @@
 { device, ... }:
 {
-  # import per-device config
+  # magically import per-device config
   imports = [
     (./. + "/${device}.nix")
   ];

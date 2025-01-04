@@ -12,3 +12,4 @@ test/
 result
 
 **/~syncthing~*.tmp
+**/.syncthing.*.tmp

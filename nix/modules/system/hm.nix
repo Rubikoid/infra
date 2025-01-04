@@ -15,7 +15,7 @@
     useGlobalPkgs = true;
     extraSpecialArgs = {
       inherit inputs secrets;
-      inherit (config) device;
+      inherit (config) device isDarwin isWSL;
 
       mode = "${mode}-HM";
     };
@@ -28,8 +28,8 @@
             user = "rubikoid";
           }
           lib.r.modules.base.user # not ugly anymore!
-          inputs.self.users.rubikoid
           lib.r.modules.default.options
+          inputs.self.users.rubikoid
         ];
       };
   };

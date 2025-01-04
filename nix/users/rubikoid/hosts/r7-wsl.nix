@@ -5,7 +5,8 @@
     helix
     python
     dev
-    ghostty
+    shell
+    atuin
   ];
 
   home.packages = with pkgs; [

@@ -1,25 +1,34 @@
-{ pkgs, config, secrets, inputs, lib, ... }:
+{
+  pkgs,
+  config,
+  secrets,
+  inputs,
+  lib,
+  ...
+}:
 
 {
-  imports = with lib.r.modules.system; [
-    hm
-    yggdrasil
+  imports = lib.lists.flatten (
+    with lib.r.modules;
+    [
+      (with system; [
+        hm
+        yggdrasil
 
-    # ca
-    ca_rubikoid
+        dev.direnv
+        ca.rubikoid
+        users.rubikoid
 
-    # other
-    remote-build
-
-    # users
-    rubikoid
-
-    # dev
-    direnv
-  ] ++ (with lib.r.modules.darwin; [
-    tiling
-    yggdrasil
-  ]);
+        (with other; [
+          remote-build
+        ])
+      ])
+      (with darwin; [
+        tiling
+        yggdrasil
+      ])
+    ]
+  );
 
   environment.systemPackages = with pkgs; [
     nvd
@@ -53,6 +62,7 @@
       "keepassxc"
       "stats"
       "jordanbaird-ice"
+      "ghostty"
     ];
   };
 

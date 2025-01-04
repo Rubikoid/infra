@@ -6,6 +6,7 @@
     python
     dev
     shell
+    atuin
   ];
 
   home.packages = with pkgs; [

@@ -23,7 +23,6 @@
 
       (with other; [
         remote-build
-        zsh-config
       ])
 
       (with security; [
@@ -71,6 +70,9 @@
 
   # virtualisation.podman.enable = true;
   # users.users.rubikoid.extraGroups = [ "docker" ];
+
+  # need to enable this, so user-part of systemd will start automatically
+  users.users.rubikoid.linger = true;
 
   services.ferretdb = {
     enable = true;

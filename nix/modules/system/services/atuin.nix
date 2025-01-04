@@ -21,8 +21,10 @@ in
   config = {
     services.atuin = {
       enable = true;
-      maxHistoryLength = 16 * 1024; # 16kB
       port = cfg.port;
+
+      maxHistoryLength = 16 * 1024; # 16kB
+      openRegistration = false;
     };
 
     rubikoid.http.services.atuin = {

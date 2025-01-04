@@ -6,6 +6,8 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
+    nixpkgs-syncthing.url = "github:NixOS/nixpkgs/78e43c3df1efe30d7d2a5d6479587574ce774bd3";
+
     base = {
       url = "path:./base";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -51,7 +53,7 @@
     };
 
     nix-wsl = {
-      url = "github:nix-community/NixOS-WSL/2405.5.4";
+      url = "github:nix-community/NixOS-WSL/dee4425dcee3149475ead0cb6a616b8a028c5888"; # master as of 04.01.2025
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -92,6 +94,11 @@
           modules = r.recursiveMerge [
             prevr.modules
             (r.findModulesV2 ./modules)
+          ];
+
+          overlays = [
+            (import ./overlay.nix inputs)
+            (import ./pkgs.nix inputs)
           ];
 
           inherit (r.nixInit nixpkgs) pkgsFor forEachSystem mkSystem;

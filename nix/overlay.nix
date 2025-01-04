@@ -1,24 +1,27 @@
 inputs: final: prev:
 let
-  nix-old = import inputs.nixpkgs-old ({ localSystem = { inherit (final) system; }; });
-  nixpkgs-old-basedpyright = import inputs.nixpkgs-old-basedpyright ({
-    localSystem = { inherit (final) system; };
+  nixpkgs-stable = import inputs.nixpkgs-stable ({
+    localSystem = {
+      inherit (final) system;
+    };
   });
-  nixpkgs-old-stable = import inputs.nixpkgs-old-stable ({
-    localSystem = { inherit (final) system; };
-  });
-  nixpkgs-old-tmux = import inputs.nixpkgs-old-tmux ({ localSystem = { inherit (final) system; }; });
 
-  overleaf-src = import inputs.nixpkgs-overleaf ({ localSystem = { inherit (final) system; }; });
+  nixpkgs-syncthing = import inputs.nixpkgs-syncthing ({
+    localSystem = {
+      inherit (final) system;
+    };
+  });
+
+  overleaf-src = import inputs.nixpkgs-overleaf ({
+    localSystem = {
+      inherit (final) system;
+    };
+  });
   fixed-yarn-deps = (import ./fixes/fetch-yarn-deps inputs final prev);
 
   inherit (final) system lib stdenv;
 in
 rec {
-  tmux = nixpkgs-old-tmux.tmux;
-  fzf = nixpkgs-old-tmux.fzf;
-  basedpyright = nixpkgs-old-basedpyright.basedpyright;
-
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
 
   # k3s = nixpkgs-old-stable.k3s;
@@ -68,10 +71,10 @@ rec {
         hash = "sha256-7MXdgp053kjuFPjgRClj0NIjiRl4HXnzMqAaqh3x2hU=";
       };
     in
-    nixpkgs-old-stable.syncthing.override rec {
+    nixpkgs-syncthing.syncthing.override rec {
       buildGoModule =
         args:
-        nix-old.buildGo119Module (
+        nixpkgs-syncthing.buildGo119Module (
           args
           // {
             inherit src version;
@@ -149,30 +152,4 @@ rec {
         );
     };
 
-  # samba4Full = prev.samba4Full.override {
-  #   enableCephFS = false;
-  # };
-
-  powerdns-admin = nixpkgs-old-stable.powerdns-admin;
-
-  # step-ca =
-  #   let
-  #   in prev.step-ca.overrideAttrs (_: rec {
-  #     options.services.step-ca.settingsFile = lib.mkOption {
-  #       type = lib.types.?;
-  #       description = lib.mdDoc ''
-  #       path to config file
-  #       '';
-  #     };
-  #   });
-
-  # ohMyZsh =
-  #   final.ohMyZsh.override {
-  #     config = {
-  #       programs.zsh.interactiveShellInit = ''
-  #         # overlayed omz..?
-  #         export ZSH=${cfg.package}/share/oh-my-zsh
-  #       '';
-  #     };
-  #   };
 }

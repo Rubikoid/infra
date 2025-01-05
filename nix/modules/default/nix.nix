@@ -32,8 +32,11 @@
         {
           n.flake = nixpkgs;
           nixpkgs.flake = nixpkgs;
+          #
           r.to = rubikoid;
           rubikoid.to = rubikoid;
+          #
+          base.flake = inputs.base;
           # {
           #   to = { type = "github"; owner = "NixOS"; repo = "nixpkgs"; rev = inputs.nixpkgs.rev; };
           #   exact = false;

@@ -1,4 +1,11 @@
-{ lib, config, secrets, pkgs, inputs, ... }:
+{
+  lib,
+  config,
+  secrets,
+  pkgs,
+  inputs,
+  ...
+}:
 
 let
   types = lib.types;
@@ -13,29 +20,34 @@ in
     };
 
     nodes = lib.mkOption {
-      type = types.attrsOf (types.submodule ({ name, ... }: {
-        options = {
-          name = lib.mkOption {
-            type = types.str;
-            default = name;
-          };
+      type = types.attrsOf (
+        types.submodule (
+          { name, ... }:
+          {
+            options = {
+              name = lib.mkOption {
+                type = types.str;
+                default = name;
+              };
 
-          v4 = lib.mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-          };
+              v4 = lib.mkOption {
+                type = types.listOf types.str;
+                default = [ ];
+              };
 
-          v6 = lib.mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-          };
+              v6 = lib.mkOption {
+                type = types.listOf types.str;
+                default = [ ];
+              };
 
-          cname = lib.mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-          };
-        };
-      }));
+              cname = lib.mkOption {
+                type = types.listOf types.str;
+                default = [ ];
+              };
+            };
+          }
+        )
+      );
       default = { };
     };
 
@@ -54,24 +66,26 @@ in
       rubikoid.dns = secrets.dns.data;
 
       # NixOS-DNS
-      networking.domains = lib.mkMerge ([
-        {
-          enable = true;
-          defaultTTL = 86400; # 24h
-          baseDomains."${cfg.rootZone}" = { };
-          baseDomains."nodes.${cfg.rootZone}" = { };
-        }
-      ] ++ (builtins.map
-        (node:
+      networking.domains = lib.mkMerge (
+        [
+          {
+            enable = true;
+            defaultTTL = 86400; # 24h
+            baseDomains."${cfg.rootZone}" = { };
+            baseDomains."nodes.${cfg.rootZone}" = { };
+          }
+        ]
+        ++ (builtins.map (
+          node:
           let
             name = node.name;
             fqdn = nodeFQDN name;
-            cnameRecords = builtins.map
-              (cn: {
-                name = nodeFQDN cn;
-                value = { cname.data = "${fqdn}."; };
-              })
-              node.cname;
+            cnameRecords = builtins.map (cn: {
+              name = nodeFQDN cn;
+              value = {
+                cname.data = "${fqdn}.";
+              };
+            }) node.cname;
           in
           {
             subDomains = {
@@ -80,19 +94,21 @@ in
                 aaaa.data = node.v6;
               };
             } // (builtins.listToAttrs cnameRecords);
-          })
-        (builtins.attrValues cfg.nodes)
-      )
-      ++ (lib.mapAttrsToList
-        (service: nodeName:
+          }
+        ) (builtins.attrValues cfg.nodes))
+        ++ (lib.mapAttrsToList (
+          service: nodeName:
           let
             fqdn = serviceFQDN service;
             node = nodeFQDN nodeName;
           in
           {
-            subDomains.${fqdn}.cname = { data = "${node}."; ttl = 60; };
-          })
-        cfg.services
-      ));
+            subDomains.${fqdn}.cname = {
+              data = "${node}.";
+              ttl = 60;
+            };
+          }
+        ) cfg.services)
+      );
     };
 }

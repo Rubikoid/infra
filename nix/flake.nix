@@ -263,17 +263,5 @@
       dnsDebugConfig = nixos-dns.utils.debug.config (
         dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
       );
-
-      templates = {
-        trivial = {
-          path = ./templates/trivial;
-          description = "A very basic flake";
-        };
-
-        py-uv = {
-          path = ./templates/py-uv;
-          description = "Python flake, powered by uv";
-        };
-      };
     };
 }

@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "base": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-1Xnxswn03KR96Cn4RvY6iVI2OMLphMB8vLB5GQe0JIA=",
-        "path": "./base",
-        "type": "path"
-      },
-      "original": {
-        "path": "./base",
-        "type": "path"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -357,7 +340,6 @@
     },
     "root": {
       "inputs": {
-        "base": "base",
         "ghostty": "ghostty",
         "home-manager": "home-manager",
         "microvm": "microvm",

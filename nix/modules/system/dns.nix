@@ -22,7 +22,7 @@ in
     nodes = lib.mkOption {
       type = types.attrsOf (
         types.submodule (
-          { name, ... }:
+          { name, config, ... }:
           {
             options = {
               name = lib.mkOption {
@@ -44,7 +44,38 @@ in
                 type = types.listOf types.str;
                 default = [ ];
               };
+
+              at =
+                let
+                  opt = lib.mkOption {
+                    type = types.nullOr types.str;
+                    default = null;
+                  };
+                in
+                {
+                  home = opt;
+                  wg = opt;
+                  ygg = opt;
+                  external = opt;
+                };
             };
+
+            config =
+              let
+                filtered =
+                  source: filter: builtins.attrValues (lib.filterAttrs (k: v: builtins.elem k filter) source);
+                preparedFiltered = filtered config.at;
+              in
+              {
+                v4 = preparedFiltered [
+                  "home"
+                  "wg"
+                  "external"
+                ];
+                v6 = preparedFiltered [
+                  "ygg"
+                ];
+              };
           }
         )
       );

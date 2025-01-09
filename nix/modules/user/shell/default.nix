@@ -8,6 +8,7 @@
 }:
 {
   imports = [
+    ./soft/tmux.nix
     (if isDarwin then ./darwin.nix else { })
     (if isWSL then ./wsl.nix else { })
   ];

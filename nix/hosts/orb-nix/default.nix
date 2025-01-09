@@ -1,4 +1,11 @@
-{ pkgs, config, inputs, secrets, lib, ... }:
+{
+  pkgs,
+  config,
+  inputs,
+  secrets,
+  lib,
+  ...
+}:
 
 {
   imports = with inputs.self.systemModules; [
@@ -18,7 +25,7 @@
   ];
 
   networking.hosts = {
-    ${secrets.dns.data.nodes.kubic.at_home} = [ "kubic.nodes.${secrets.dns.private}" ];
+    ${secrets.dns.data.nodes.kubic.at.home} = [ "kubic.nodes.${secrets.dns.private}" ];
   };
 
   system.stateVersion = "24.05"; # Did you read the comment?

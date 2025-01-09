@@ -36,6 +36,8 @@
         fi
         echo "SSH_AUTH_SOCK: $SSH_AUTH_SOCK"
       }
+
+      redo_ssh_wsl2 || echo "smthing wrong with ssh_auth_sock";
     '';
 
     initExtraBeforeCompInit = "";

@@ -65,7 +65,7 @@
   ];
 
   networking.nameservers = [
-    secrets.dns.data.nodes.kubic.at_home
+    secrets.dns.data.nodes.kubic.at.home
   ];
 
   # virtualisation.podman.enable = true;

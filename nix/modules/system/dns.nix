@@ -63,7 +63,8 @@ in
             config =
               let
                 filtered =
-                  source: filter: builtins.attrValues (lib.filterAttrs (k: v: builtins.elem k filter) source);
+                  source: filter:
+                  builtins.attrValues (lib.filterAttrs (k: v: v != null && builtins.elem k filter) source);
                 preparedFiltered = filtered config.at;
               in
               {

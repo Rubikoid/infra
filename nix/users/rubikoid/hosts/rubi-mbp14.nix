@@ -1,12 +1,7 @@
 { inputs, pkgs, lib, ... }:
 {
   imports = with lib.r.modules.user; [
-    sops
-    helix
-    python
-    dev
-    shell
-    atuin
+    typical-env
   ];
 
   home.packages = with pkgs; [

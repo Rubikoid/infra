@@ -1,12 +1,7 @@
 { inputs, lib, pkgs, ... }:
 {
   imports = with lib.r.modules.user; [
-    sops
-    helix
-    python
-    dev
-    shell
-    atuin
+    typical-env
   ];
 
   home.packages = with pkgs; [
@@ -17,7 +12,6 @@
 
     htop
     fzf
-    tmux
   ];
 
   programs.gpg.enable = true;

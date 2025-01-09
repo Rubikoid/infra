@@ -10,6 +10,7 @@
       ruff # linter-checker
       # ruff-lsp # linter-checker, but as LSP
       basedpyright # pyright, but on steroids
+      pyright
       pylyzer # yes, it is another LSP
 
       # python itself with some default libs

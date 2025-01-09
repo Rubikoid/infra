@@ -9,7 +9,8 @@
     nixpkgs-syncthing.url = "github:NixOS/nixpkgs/78e43c3df1efe30d7d2a5d6479587574ce774bd3";
 
     base = {
-      url = "path:./base";
+      # url = "path:./base";
+      url = "github:rubikoid/nix-base";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

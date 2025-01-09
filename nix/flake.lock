@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "base": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1736100617,
+        "narHash": "sha256-kcc9gNQ5G43rFHU23WzveuGdQ3UMylyXKkhpq4qSKfA=",
+        "owner": "rubikoid",
+        "repo": "nix-base",
+        "rev": "b9527e578b72dd916850bb0c4eb7a1b670326955",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rubikoid",
+        "repo": "nix-base",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -340,6 +360,7 @@
     },
     "root": {
       "inputs": {
+        "base": "base",
         "ghostty": "ghostty",
         "home-manager": "home-manager",
         "microvm": "microvm",

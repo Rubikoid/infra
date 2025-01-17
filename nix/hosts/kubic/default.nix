@@ -8,79 +8,89 @@
 }:
 
 {
-  imports = with lib.r.modules.system; [
-    ./hardware-configuration.nix
+  imports = lib.lists.flatten (
+    with lib.r.modules.system;
+    [
+      ./hardware-configuration.nix
 
-    locale
-    yggdrasil
-    zsh
-    zsh-config
-    wg-client
-    dns
-    http
+      locale
+      yggdrasil
+      zsh
+      wg-client
+      dns
+      http
+      ns
+      macvtap
+      microvm
 
-    # ca
-    ca_rubikoid
+      ca.rubikoid
 
-    # security
-    openssh
-    openssh-root-key
+      (with other; [
+        zsh-config
+        remote-build-host
+      ])
 
-    # fs
-    ntfs
-    zfs
+      (with security; [
+        openssh
+        openssh-root-key
+      ])
 
-    # hardware
-    gigabyte-fans
+      (with fs; [
+        ntfs
+        zfs
+      ])
 
-    # services
-    caddy
-    memos
-    powerdns
-    minio
-    akkoma
-    mastodon
-    ygg-map
-    actual
-    harmonia
-    vaultwarden
-    vikunja
-    py-kms
-    # overleaf-docker
-    # overleaf
-    # cocalc
-    betula
-    # owntracks
-    clamav
-    dawarich
-    xandikos
-    # tubearchivist
-    ## garden
-    immich
-    paperless
-    garden
-    smb
-    ## media
-    arr
-    jellyfin
-    ## monitoring
-    grafana
-    grafana-agent
-    ## syncthing
-    ss
+      hardware.gigabyte-fans
 
-    # other
-    remote-build-host
+      (with services; [
+        caddy
+        memos
+        powerdns
+        minio
+        akkoma
+        mastodon
+        # ygg-map
+        actual
+        harmonia
+        vaultwarden
+        vikunja
+        py-kms
+        # overleaf-docker
+        # overleaf
+        # cocalc
+        betula
+        # owntracks
+        clamav
+        dawarich
+        xandikos
+        # tubearchivist
+        # glitchtip
+        atuin
+        gns3
 
-    # ./vm.nix
+        (with garden; [
+          immich
+          paperless
+          garden
+          smb
+        ])
 
-    # containers
-    # yatb-kube
+        (with media; [
+          arr
+          jellyfin
+        ])
 
-    # wtf
-    macvtap
-    microvm
-  ];
+        (with monitoring; [
+          grafana
+          grafana-agent-ng
+        ])
+
+        (with syncthing; [
+          ss
+        ])
+      ])
+    ]
+  );
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -146,6 +156,7 @@
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
+    nvidia-container-toolkit.enable = true;
   };
 
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -167,7 +178,7 @@
   };
 
   hardware.fancontrol = {
-    enable = true;
+    enable = false;
 
     config = ''
       INTERVAL=10
@@ -193,9 +204,18 @@
     9009
   ];
 
+  networking.firewall.interfaces.ygg.allowedTCPPorts = [
+    8080
+  ];
+
   networking.hosts = {
     "${secrets.dns.vpn_ip}" = [ "vpn.rubikoid.ru" ];
   };
+
+  networking.nat.enable = true;
+  networking.nat.externalInterface = "enp6s0";
+
+  users.users.rubikoid.extraGroups = [ "media" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

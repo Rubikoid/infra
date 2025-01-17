@@ -28,7 +28,7 @@ in
 
     services.harmonia = {
       enable = true;
-      signKeyPath = config.sops.secrets.harmonia-key.path;
+      signKeyPaths = [ config.sops.secrets.harmonia-key.path ];
       settings = {
         bind = "${cfg.host}:${toString cfg.port}";
       };

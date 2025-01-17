@@ -51,6 +51,25 @@
     openPublic = true;
   };
 
+  rubikoid.grafana-agent = {
+    enable = true;
+
+    mimir = {
+      url = "http://mimir.${secrets.dns.private}/api/v1/push";
+      tls_config = {
+        ca = secrets.ca.rubikoid;
+        insecure_skip_verify = true;
+      };
+    };
+    loki = {
+      url = "http://loki.${secrets.dns.private}/api/v1/push";
+      tls_config = {
+        ca = secrets.ca.rubikoid;
+        insecure_skip_verify = true;
+      };
+    };
+  };
+
   sops.secrets.rubi_pw = {
     sopsFile = secrets.deviceSecrets + "/secrets.yaml";
     neededForUsers = true;
@@ -66,22 +85,43 @@
     hashedPasswordFile = config.sops.secrets.rubi_pw.path;
   };
 
-  networking.firewall = {
-    interfaces = {
-      home.allowedTCPPorts = [ 1337 ];
-      ygg.allowedTCPPorts = [ 1337 ];
+  networking = {
+    # networking.nameservers = [
+    #   "1.1.1.1"
+    #   "8.8.8.8"
+    # ];
+
+    firewall = {
+      interfaces = {
+        home.allowedTCPPorts = [ 1337 ];
+        ygg.allowedTCPPorts = [ 1337 ];
+      };
+    };
+
+    useDHCP = false;
+    dhcpcd.IPv6rs = false;
+
+    defaultGateway = {
+      address = "10.0.0.1";
+      interface = "ens3";
     };
   };
 
+  services.udev.extraRules = ''
+    ATTR{address}=="52:54:00:e0:ad:b8", NAME="ens3"
+  '';
+
   services.dante = {
     enable = true;
+    # debug: 2
+    # log: connect disconnect ioop data tcpinfo
     config = ''
       internal: ygg port=1337
       internal: home port=1337
-      external: ens1
+      external: ens3
 
       socksmethod: username
-      
+
       client pass {
         from: 0/0 to: 0/0
         log: error

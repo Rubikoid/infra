@@ -8,31 +8,48 @@
 }:
 
 {
-  imports = with lib.r.modules.system; [
-    ./hardware-configuration.nix
+  imports = lib.lists.flatten (
+    with lib.r.modules.system;
+    [
+      ./hardware-configuration.nix
 
-    compact
-    locale
-    yggdrasil
-    zsh
-    zsh-config
+      # local
+      ./docker.nix
+      ./wg.nix
 
-    # ca
-    ca_rubikoid
+      compact
+      locale
+      yggdrasil
+      zsh
+      wg-client
 
-    # security
-    openssh
-    openssh-root-key
+      (with other; [
+        zsh-config
+        in-proxmox-lxc
+        split-dns
+      ])
 
-    # services
-    step-ca
+      ca.rubikoid
 
-    # other
-    in-proxmox-lxc
+      (with security; [
+        openssh
+        openssh-root-key
+      ])
 
-    # local
-    ./docker.nix
-  ];
+      (with services; [
+        step-ca
+        budget-git
+        caddy
+        tg-bot-api
+        # revolt
+        owncast
+
+        (with monitoring; [
+          grafana-agent-ng
+        ])
+      ])
+    ]
+  );
 
   proxmoxLXC = {
     manageNetwork = false;
@@ -40,17 +57,45 @@
     manageHostName = true;
   };
 
-  services.yggdrasil = {
-    openMulticastPort = false;
+  services.resolved.enable = false;
+  networking.useHostResolvConf = lib.mkForce true;
 
-    settings = {
-      MulticastInterfaces = lib.mkForce [ ];
+  rubikoid.services.yggdrasil = {
+    startMulticast = false;
+    openPublic = true;
+  };
+
+  rubikoid.grafana-agent = {
+    enable = true;
+
+    mimir = {
+      url = "http://mimir.${secrets.dns.private}/api/v1/push";
+      tls_config = {
+        ca = secrets.ca.rubikoid;
+        insecure_skip_verify = true;
+      };
     };
+    loki = {
+      url = "http://loki.${secrets.dns.private}/api/v1/push";
+      tls_config = {
+        ca = secrets.ca.rubikoid;
+        insecure_skip_verify = true;
+      };
+    };
+
+    promExporters = {
+      ping = true;
+    };
+
   };
 
   environment.systemPackages = with pkgs; [
     htop
+    dnsutils
+    tcpdump
+    nix-output-monitor
   ];
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

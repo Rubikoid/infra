@@ -15,7 +15,7 @@
 
     extraConfig = ''
       # kinda hot-reload
-      bind r source-file ~/.tmux.conf
+      bind r source-file ~/.config/tmux/tmux.conf
 
       # select panels by alt+arrow
       bind -n M-Left select-pane -L

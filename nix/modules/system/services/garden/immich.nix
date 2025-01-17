@@ -52,7 +52,11 @@
 
             IMMICH_BUILD_DATA = "/app/immich/server";
           };
-          extraOptions = [ "--network=immich-net" "--gpus=all" ];
+          extraOptions = [
+            "--network=immich-net"
+            "--device"
+            "nvidia.com/gpu=all"
+          ];
         };
 
         immich-redis = {

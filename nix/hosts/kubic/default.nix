@@ -162,6 +162,8 @@
       #   data-root = "/backup-drive/docker-data";
       # };
     };
+
+    libvirtd.enable = true;
   };
 
   hardware.fancontrol = {

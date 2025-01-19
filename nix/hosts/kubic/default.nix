@@ -22,6 +22,7 @@
       ns
       macvtap
       microvm
+      hm
 
       ca.rubikoid
 
@@ -67,6 +68,7 @@
         # glitchtip
         atuin
         gns3
+        netbox
 
         (with garden; [
           immich
@@ -134,6 +136,18 @@
     # "yatb-kube-master"
   ];
   microvm.autostart = lib.mkForce [ ];
+
+  systemd.services.grafana-agent.serviceConfig.SupplementaryGroups = [
+    config.services.caddy.group
+  ];
+
+  systemd.tmpfiles.settings."10-caddy-logs-access" = {
+    "/var/log/caddy".A.argument = lib.r.commaJoin [
+      "u:grafana-agent:r-x"
+      "default:u:grafana-agent:r-x"
+      "default:mask::r-x"
+    ];
+  };
 
   hardware = {
     # Enable OpenGL
@@ -216,6 +230,7 @@
   networking.nat.externalInterface = "enp6s0";
 
   users.users.rubikoid.extraGroups = [ "media" ];
+  users.users.caddy.extraGroups = [ "netbox" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -23,6 +23,7 @@
 
       (with other; [
         remote-build
+        remote-build-host
       ])
 
       (with security; [
@@ -52,6 +53,8 @@
     wslConf = {
       network.generateResolvConf = false;
     };
+
+    interop.register = true;
   };
 
   # programs.nix-ld.enable = true;

@@ -30,4 +30,6 @@
       home = "/Users/rubikoid";
     })
   ];
+
+  nix.settings.trusted-users = [ "rubikoid" ];
 }

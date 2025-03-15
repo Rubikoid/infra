@@ -8,9 +8,13 @@
 }:
 
 {
-  options.rubikoid.nix = { };
+  options.rubikoid.nix = {
+    enableHarmonia = lib.mkEnableOption "enable harmonia";
+  };
 
   config = {
+    rubikoid.nix.enableHarmonia = lib.mkDefault true;
+
     nix = {
       registry =
         let
@@ -33,7 +37,7 @@
           base.flake = inputs.base;
         };
 
-      settings = {
+      settings = lib.mkIf config.rubikoid.nix.enableHarmonia {
         # чтобы работало, надо либо чтобы юзер был в trusted-users, либо репа в trusted-substituters
         # я добавляю и то и туда, чтобы работало гарантированно.
         substituters = [

@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1737324849,
-        "narHash": "sha256-JHV/9mvdeTwUH2J6X8iCjwSR+37NEptvraqZeR0rFto=",
+        "lastModified": 1741344011,
+        "narHash": "sha256-MABCiXaPF+KA8Xz43cjxzbcjbRzAQsfOMRkrSYPLqho=",
         "owner": "rubikoid",
         "repo": "nix-base",
-        "rev": "1a15ddce80e586d7c08a7934d5df3727a49d0a18",
+        "rev": "e34e3eee3c5cd7c4cd741741c9527ed65c459991",
         "type": "github"
       },
       "original": {
@@ -154,11 +154,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1735979091,
-        "narHash": "sha256-WpFjt6+8UD81EP386c269ZTqpEmlGJgcPw+OB4b7EBs=",
+        "lastModified": 1738841109,
+        "narHash": "sha256-sEgE3nifaRU5gfAx33ds0tx/j+qM0/5/bHopv/w6c0c=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "11ab08541e61ac3bbf2ab27229f68622629401df",
+        "rev": "f99c704fe3a4cf8d72b2d568ec80bc38be1a9407",
         "type": "github"
       },
       "original": {
@@ -312,16 +312,32 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1733355219,
-        "narHash": "sha256-wJ2MACpdSQmCua9woKLSKQkxFD/P3wwnCiOyIQIMDsQ=",
+        "lastModified": 1740941735,
+        "narHash": "sha256-6OU5uVs6uO0F7a4dQzf8V6NXW4D1oyKMbqjmXMCj7xU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6541fe7311f3fb66f25aed548c19ad0bfad0a0e5",
+        "rev": "ca6948e78a15085f551b976f21b60c0af5bc799d",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
         "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-php": {
+      "locked": {
+        "lastModified": 1635350005,
+        "narHash": "sha256-tAMJnUwfaDEB2aa31jGcu7R7bzGELM9noc91L2PbVjg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "1c1f5649bb9c1b0d98637c8c365228f57126f361",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-20.09",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -370,6 +386,7 @@
         "nixos-generators": "nixos-generators",
         "nixpkgs": "nixpkgs",
         "nixpkgs-master": "nixpkgs-master",
+        "nixpkgs-php": "nixpkgs-php",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-syncthing": "nixpkgs-syncthing",
         "sops-nix": "sops-nix",

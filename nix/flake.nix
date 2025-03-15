@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs-php.url = "github:NixOS/nixpkgs/nixos-20.09";
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
     nixpkgs-syncthing.url = "github:NixOS/nixpkgs/78e43c3df1efe30d7d2a5d6479587574ce774bd3";
@@ -189,12 +190,7 @@
 
           yt-dlp = pkgs.mkShell {
             packages = with pkgs; [
-              ((import inputs.nixpkgs-master ({
-                localSystem = {
-                  inherit system;
-                };
-              })).yt-dlp
-              )
+              yt-dlp
               ffmpeg
 
               (pkgs.writeShellScriptBin "download-music" ''
@@ -239,8 +235,10 @@
         { system, pkgs }:
         (
           {
+            inherit (pkgs) volatility2-bin oldphp;
+
             # kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
-            lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
+            # lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
 
             glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
             glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
@@ -250,6 +248,7 @@
             dnsZoneFiles = (nixos-dns.utils.generate pkgs).zoneFiles (
               dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }
             );
+
           }
           // (
             let

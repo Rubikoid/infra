@@ -28,17 +28,18 @@ in
       let
         inherit (inputs.self) extraSpecialArgsGenerator forEachVMHostUnfiltred;
         forEachEnabledVMHost = forEachVMHostUnfiltred (source: hostname: builtins.elem hostname cfg.vms);
+        result = forEachEnabledVMHost (
+          (
+            { info, ... }@args:
+            lib.filterAttrs (n: v: n != "lib") (
+              lib.r.mkSystemOnlyConfig args {
+                specialArgs = extraSpecialArgsGenerator info;
+              }
+            )
+          )
+        );
       in
-      forEachEnabledVMHost (
-        (
-          { info, ... }@args:
-          lib.r.mkSystemOnlyConfig args {
-            modules = [ ];
-            specialArgs = extraSpecialArgsGenerator info;
-          }
-        )
-
-      );
+      result;
     # (hostname: {
     #   # TODO: proper pkgs... i think...
     #   inherit pkgs;

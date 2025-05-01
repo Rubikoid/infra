@@ -1,8 +1,14 @@
 { inputs, pkgs, lib, ... }:
 {
-  imports = with lib.r.modules.user; [
-    typical-env
-  ];
+  imports =
+    with lib.r.modules;
+    (with user; [
+      typical-env
+      ghostty
+    ])
+    ++ (with darwin; [ 
+      gc-debug
+    ]);
 
   home.packages = with pkgs; [
     ansible

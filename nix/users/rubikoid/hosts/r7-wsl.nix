@@ -1,8 +1,13 @@
 { inputs, lib, pkgs, ... }:
 {
-  imports = with lib.r.modules.user; [
-    typical-env
-  ];
+  imports =
+    with lib.r.modules;
+    (with user; [
+      typical-env
+    ])
+    ++ (with darwin; [
+
+    ]);
 
   home.packages = with pkgs; [
     bash

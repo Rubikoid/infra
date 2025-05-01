@@ -73,6 +73,10 @@
           })
           (genC "haskell" "Haskell")
           (genC "c" "C")
+          (genC "php" "PHP")
+          (genC "sql" "SQL")
+          (genC "dockerfile" "Docker")
+          # (genC "git-ignore" "")
         ];
     };
 

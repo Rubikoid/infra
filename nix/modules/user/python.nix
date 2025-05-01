@@ -46,6 +46,11 @@
           flask
           requests
           tomli-w
+          jupyter
+          pandas
+          beautifulsoup4
+          lxml
+          matplotlib
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

@@ -85,6 +85,31 @@
     };
   };
 
+  services.etcd = {
+    enable = true;
+    openFirewall = true;
+
+    initialClusterState = "new";
+    initialClusterToken = "yatb-testing";
+
+    listenClientUrls = [
+      "http://127.0.0.1:2379"
+    ];
+
+    listenPeerUrls = [
+      "http://[${secrets.yggdrasil.nodes.rubikoid.wsl-r7}]:2380"
+    ];
+
+    initialCluster = lib.mkForce [
+      "r7-wsl=http://[${secrets.yggdrasil.nodes.rubikoid.wsl-r7}]:2380"
+      "yatb-kube-master=http://[${secrets.yggdrasil.nodes.rubikoid.yatb-kube-master}]:2380"
+    ];
+
+    extraConf = {
+
+    };
+  };
+
   virtualisation = {
     oci-containers.backend = "docker";
 

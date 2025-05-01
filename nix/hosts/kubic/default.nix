@@ -27,7 +27,6 @@
       ca.rubikoid
 
       (with other; [
-        zsh-config
         remote-build-host
       ])
 

@@ -26,6 +26,7 @@
       (with darwin; [
         tiling
         yggdrasil
+        gc-debug
       ])
     ]
   );

@@ -15,7 +15,7 @@
 
       # local
       ./docker.nix
-      ./wg.nix
+      # ./wg.nix
 
       compact
       locale
@@ -24,10 +24,12 @@
       wg-client
 
       (with other; [
-        zsh-config
-        in-proxmox-lxc
+        # zsh
         split-dns
+        # l2tp-server
       ])
+
+      cloud.proxmox-lxc
 
       ca.rubikoid
 
@@ -38,11 +40,11 @@
 
       (with services; [
         step-ca
-        budget-git
+        # budget-git
         caddy
         tg-bot-api
         # revolt
-        owncast
+        # owncast
 
         (with monitoring; [
           grafana-agent-ng
@@ -59,6 +61,8 @@
 
   services.resolved.enable = false;
   networking.useHostResolvConf = lib.mkForce true;
+
+  rubikoid.zsh.omz = true;
 
   rubikoid.services.yggdrasil = {
     startMulticast = false;

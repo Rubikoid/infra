@@ -8,29 +8,37 @@
 }:
 
 {
-  imports = with lib.r.modules.system; [
-    ./hardware-configuration.nix
+  imports = lib.lists.flatten (
+    with lib.r.modules.system;
+    [
+      ./hardware-configuration.nix
 
-    compact
-    yggdrasil
+      # local
+      ./wg.nix
 
-    # ca
-    ca_rubikoid
+      compact
+      yggdrasil
+      zsh
 
-    # security
-    openssh
-    openssh-root-key
+      (with other; [
+        # zsh
+        split-dns
+      ])
 
-    # other
-    split-dns
+      ca.rubikoid
 
-    # local
-    ./wg.nix
+      (with security; [
+        openssh
+        openssh-root-key
+      ])
 
-    # services
-    ## monitoring
-    grafana-agent-ng
-  ];
+      (with services; [
+        (with monitoring; [
+          grafana-agent-ng
+        ])
+      ])
+    ]
+  );
 
   boot = {
     tmp.cleanOnBoot = true;
@@ -43,8 +51,8 @@
 
   environment.systemPackages = with pkgs; [
     tcpdump
-    nix-tree
   ];
+  rubikoid.zsh.omz = true;
 
   rubikoid.services.yggdrasil = {
     startMulticast = false;

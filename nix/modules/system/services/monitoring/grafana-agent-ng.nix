@@ -84,7 +84,16 @@ in
                   })
                   (
                     lib.filterAttrs (
-                      name: value: (!lib.lists.elem name [ "minio" "tor" ]) && (lib.isAttrs value) && (value.enable)
+                      name: value:
+                      (
+                        !lib.lists.elem name [
+                          "unifi-poller" # ugly lib.mkRenamedOptionModule
+                          "minio" # depricated
+                          "tor" # depricated
+                        ]
+                      )
+                      && (lib.isAttrs value)
+                      && (value.enable)
                     ) config.services.prometheus.exporters
                   )
                 );

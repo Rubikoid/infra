@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1741344011,
-        "narHash": "sha256-MABCiXaPF+KA8Xz43cjxzbcjbRzAQsfOMRkrSYPLqho=",
+        "lastModified": 1745052009,
+        "narHash": "sha256-Qd4A3SMwIxWgevkJrIx15bhepY+bgxhWRo5leTVzn2o=",
         "owner": "rubikoid",
         "repo": "nix-base",
-        "rev": "e34e3eee3c5cd7c4cd741741c9527ed65c459991",
+        "rev": "cd15a9c7276751ef74ac64f72e80eff3d6459574",
         "type": "github"
       },
       "original": {
@@ -176,17 +176,17 @@
         "spectrum": "spectrum"
       },
       "locked": {
-        "lastModified": 1720034501,
-        "narHash": "sha256-fzZpuVnhw5uOtA4OuXw3a+Otpy8C+QV0Uu5XfhGEPSg=",
+        "lastModified": 1743083165,
+        "narHash": "sha256-Fz7AiCJWtoWZ2guJwO3B1h3RuJxYWaCzFIqY0Kmkyrs=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "a808af7775f508a2afedd1e4940a382fe1194f21",
+        "rev": "773d5a04e2e10ca7b412270dea11276a496e1b61",
         "type": "github"
       },
       "original": {
         "owner": "astro",
+        "ref": "main",
         "repo": "microvm.nix",
-        "rev": "a808af7775f508a2afedd1e4940a382fe1194f21",
         "type": "github"
       }
     },

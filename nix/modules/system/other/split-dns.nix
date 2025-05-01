@@ -12,7 +12,7 @@ in
       server = {
         interface = [ "127.0.0.1" "::1" ];
         domain-insecure = [ ] ++ scr.domain-insecure;
-        verbosity = 3;
+        verbosity = 1;
 
         module-config = "iterator";
         # trust-anchor-file = "";

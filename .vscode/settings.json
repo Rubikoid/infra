@@ -11,5 +11,6 @@
     },
     "sops-edit.sopsPaths": [
         ".sops.yaml"
-    ]
+    ],
+    "sops-edit.onlyUseButtons": true,
 }

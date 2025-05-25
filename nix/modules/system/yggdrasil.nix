@@ -19,51 +19,59 @@ in
       };
     };
 
-  config = lib.recursiveUpdate
-    {
-      sops.secrets."yggdrasil.hjson" = {
-        sopsFile = secrets.deviceSecrets + "/yggdrasil.hjson";
-        format = "binary";
-      };
+  config =
+    lib.recursiveUpdate
+      {
+        sops.secrets."yggdrasil.hjson" = {
+          sopsFile = secrets.deviceSecrets + "/yggdrasil.hjson";
+          format = "binary";
+        };
 
-      services.yggdrasil = {
-        enable = true;
+        services.yggdrasil = {
+          enable = true;
 
-        configFile = config.sops.secrets."yggdrasil.hjson".path;
-        settings = lib.recursiveUpdate
-          {
+          configFile = config.sops.secrets."yggdrasil.hjson".path;
+          settings = lib.recursiveUpdate {
             Listen =
-              if cfg.openPublic
-              then [ "tls://0.0.0.0:${toString secrets.yggdrasil.publicPort}?password=${secrets.yggdrasil.mainPassword}" ]
-              else [ ];
+              if cfg.openPublic then
+                [
+                  "tls://0.0.0.0:${toString secrets.yggdrasil.publicPort}?password=${secrets.yggdrasil.mainPassword}"
+                ]
+              else
+                [ ];
 
             MulticastInterfaces =
-              if cfg.startMulticast
-              then
-                map
-                  (pw: {
-                    Regex = ".*";
-                    Beacon = true;
-                    Listen = true;
-                    Port = 0;
-                    Priority = 0;
-                    Password = pw;
-                  })
-                  secrets.yggdrasil.passwords
-              else [ ];
-          }
-          secrets.yggdrasil.settings;
-      };
-    }
-    (lib.optionalAttrs (mode == "NixOS")
-      {
-        networking.firewall.allowedTCPPorts = lib.mkIf cfg.openPublic [ secrets.yggdrasil.publicPort ];
-        services.yggdrasil = {
-          settings.IfName = "ygg";
-          openMulticastPort = cfg.startMulticast;
-          group = "wheel";
-          denyDhcpcdInterfaces = [ "ygg" ];
+              if cfg.startMulticast then
+                map (pw: {
+                  Regex = ".*";
+                  Beacon = true;
+                  Listen = true;
+                  Port = secrets.yggdrasil.multicastPort;
+                  Priority = 0;
+                  Password = pw;
+                }) secrets.yggdrasil.passwords
+              else
+                [ ];
+          } secrets.yggdrasil.settings;
         };
       }
-    );
+      (
+        lib.optionalAttrs (mode == "NixOS") {
+          networking.firewall.allowedTCPPorts = lib.mkMerge [
+            (lib.mkIf cfg.openPublic [ secrets.yggdrasil.publicPort ])
+            (lib.mkIf cfg.startMulticast [ secrets.yggdrasil.multicastPort ])
+          ];
+
+          networking.firewall.allowedUDPPorts = lib.mkIf cfg.startMulticast [
+            secrets.yggdrasil.multicastPort
+          ];
+
+          services.yggdrasil = {
+            settings.IfName = "ygg";
+            openMulticastPort = false; # this is done STRANGE in nix modules
+            group = "wheel";
+            denyDhcpcdInterfaces = [ "ygg" ];
+          };
+        }
+      );
 }

@@ -55,7 +55,7 @@
     brews = [
       "far2l"
       "fzf"
-      "python@3.10"
+      # "python@3.10"
       "lunchy"
     ];
 

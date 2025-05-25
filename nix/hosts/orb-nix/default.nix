@@ -8,16 +8,22 @@
 }:
 
 {
-  imports = with inputs.self.systemModules; [
-    compact
-    orbstack
+  imports = lib.lists.flatten (
+    with lib.r.modules.system;
+    [
+      compact
+      yggdrasil
+      orbstack
 
-    # ca
-    ca_rubikoid
+      ca.rubikoid
 
-    # other
-    remote-build
-  ];
+      (with other; [
+        remote-build
+      ])
+    ]
+  );
+
+  nix.optimise.automatic = true;
 
   environment.systemPackages = with pkgs; [
     rsync
@@ -25,7 +31,7 @@
   ];
 
   networking.hosts = {
-    ${secrets.dns.data.nodes.kubic.at.home} = [ "kubic.nodes.${secrets.dns.private}" ];
+    # ${secrets.dns.data.nodes.kubic.at.wg} = [ "kubic.nodes.${secrets.dns.private}" ];
   };
 
   system.stateVersion = "24.05"; # Did you read the comment?

@@ -6,7 +6,7 @@
       typical-env
       ghostty
     ])
-    ++ (with darwin; [ 
+    ++ (with darwin; [
       gc-debug
     ]);
 
@@ -21,8 +21,14 @@
     imagemagick
     qemu
 
+    (copier.overridePythonAttrs (prev: {
+      dependencies = prev.dependencies ++ (with pkgs.python3.pkgs; [
+        cookiecutter
+      ]);
+    }))
+
     # glib, gobject-introspection, harfbuzz, ldc, librsvg, lima, llvm, python-tk@3.12, qt@5 and yt-dlp
-    # 
+    #
 
     # ladybird
     # rustpython

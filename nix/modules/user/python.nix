@@ -11,7 +11,8 @@
       # ruff-lsp # linter-checker, but as LSP
       basedpyright # pyright, but on steroids
       pyright
-      pylyzer # yes, it is another LSP
+      # pylyzer # yes, it is another LSP
+      poetry-master
 
       # python itself with some default libs
       (python.withPackages (ps:

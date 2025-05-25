@@ -294,6 +294,22 @@
         "type": "github"
       }
     },
+    "nixos-hardware": {
+      "locked": {
+        "lastModified": 1746814339,
+        "narHash": "sha256-hf2lICJzwACWuzHCmZn5NI6LUAOgGdR1yh8ip+duyhk=",
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "rev": "3c5e12673265dfb0de3d9121420c0c2153bf21e0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "master",
+        "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1736701207,
@@ -312,11 +328,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1740941735,
-        "narHash": "sha256-6OU5uVs6uO0F7a4dQzf8V6NXW4D1oyKMbqjmXMCj7xU=",
+        "lastModified": 1747613781,
+        "narHash": "sha256-NZPBsC+vqPgy7Ffgnq8ddS70TuGXiC7o3Ruj1HY0R5s=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ca6948e78a15085f551b976f21b60c0af5bc799d",
+        "rev": "dc2d5f03912aebe6f495e61b5347f104a21bad1b",
         "type": "github"
       },
       "original": {
@@ -384,6 +400,7 @@
         "nix-wsl": "nix-wsl",
         "nixos-dns": "nixos-dns",
         "nixos-generators": "nixos-generators",
+        "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-php": "nixpkgs-php",

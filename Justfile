@@ -12,9 +12,16 @@ default_args := ""
 
 rebuild_cmd := if os() == "linux" { 
     "sudo nixos-rebuild" 
-} else if os() == "macos"{
+} else if os() == "macos" {
     "darwin-rebuild"
 } else { "echo unable to do it; " }
+
+remote_rebuild_cmd := if os() == "linux" { 
+    "nixos-rebuild" 
+} else if os() == "macos" {
+    "nix run nixpkgs#nixos-rebuild --"
+} else { "echo unable to do it; " }
+
 
 nix := "n"
 
@@ -57,6 +64,14 @@ system-build-nix-diff *args=default_args:
     nix run "{{nix}}#nix-diff" "{{diff-current-system}}" "./result"
     rm ./result
 
+system-build-sdcard *args=default_args:
+    @echo "[+] Building system sd card: '{{HOST}}' at '{{FLAKE_PATH}}'"
+    nix build "{{FLAKE_PATH}}#nixosConfigurations.{{HOST}}.config.system.build.sdImage" {{args}} {{nom}}
+
+system-build-qcow *args=default_args:
+    @echo "[+] Building system qcow2: '{{HOST}}' at '{{FLAKE_PATH}}'"
+    nix build "{{FLAKE_PATH}}#nixosConfigurations.{{HOST}}.config.system.build.qcow2" {{args}} {{nom}}
+
 # nix-tree on current system
 system-inspect:
     nix run "{{nix}}#nix-tree" -- '/var/run/current-system'
@@ -78,9 +93,9 @@ repl-base:
     nix repl --file '{{canonicalize(source_directory()) / "nix" / "base" / "test.nix"}}' --show-trace
 
 # run repl with HOST config prepared
-sys-repl *args=default_args:
-    @echo "[+] Opening REPL for '{{HOST}}' at '{{FLAKE_PATH}}'"
-    nix repl "{{FLAKE_PATH}}#nixosConfigurations.{{HOST}}" {{args}}
+sys-repl host=HOST *args=default_args:
+    @echo "[+] Opening REPL for '{{ host }}' at '{{FLAKE_PATH}}'"
+    nix repl "{{FLAKE_PATH}}#nixosConfigurations.{{ host }}" {{args}}
 
 # run flake thing
 flake action="show" *args=default_args:
@@ -150,7 +165,7 @@ deploy-rebuild target *args=default_args: (deploy target)
 remote-sw hostname target *args=default_args:
     @echo "DISABLE_BUILDERS: {{ DISABLE_BUILDERS }}"
     @echo "HOST: {{ HOST }}"
-    nixos-rebuild switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --verbose --show-trace {{args}} {{builders}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
+    {{ remote_rebuild_cmd }} switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --verbose --show-trace {{args}} {{builders}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
 
 # run not microvm i guess
 vm-run hostname *args=default_args:

@@ -84,7 +84,7 @@
 
         (with monitoring; [
           grafana
-          grafana-agent-ng
+          agent
         ])
 
         (with syncthing; [

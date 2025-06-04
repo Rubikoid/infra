@@ -34,7 +34,7 @@
 
       (with services; [
         (with monitoring; [
-          grafana-agent-ng
+          agent
         ])
       ])
     ]

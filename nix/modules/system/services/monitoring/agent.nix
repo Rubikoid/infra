@@ -101,44 +101,44 @@ in
           ];
         };
 
-        logs = {
-          configs = [
-            {
-              name = "default";
-              clients = [ cfg.loki ];
-              positions.filename = "\${STATE_DIRECTORY}/loki_positions.yaml";
-              scrape_configs = [
-                {
-                  job_name = "journal";
-                  journal = {
-                    max_age = "12h";
-                    labels.job = "systemd-journal";
-                  };
-                  relabel_configs = [
-                    {
-                      source_labels = [ "__journal__systemd_unit" ];
-                      target_label = "systemd_unit";
-                    }
-                    {
-                      source_labels = [ "__journal__hostname" ];
-                      target_label = "nodename";
-                    }
-                    {
-                      source_labels = [ "__journal_syslog_identifier" ];
-                      target_label = "syslog_identifier";
-                    }
-                  ];
-                }
-              ] ++ cfg.extraLogs;
-            }
-          ];
-        };
+        # logs = {
+        #   configs = [
+        #     {
+        #       name = "default";
+        #       clients = [ cfg.loki ];
+        #       positions.filename = "\${STATE_DIRECTORY}/loki_positions.yaml";
+        #       scrape_configs = [
+        #         {
+        #           job_name = "journal";
+        #           journal = {
+        #             max_age = "12h";
+        #             labels.job = "systemd-journal";
+        #           };
+        #           relabel_configs = [
+        #             {
+        #               source_labels = [ "__journal__systemd_unit" ];
+        #               target_label = "systemd_unit";
+        #             }
+        #             {
+        #               source_labels = [ "__journal__hostname" ];
+        #               target_label = "nodename";
+        #             }
+        #             {
+        #               source_labels = [ "__journal_syslog_identifier" ];
+        #               target_label = "syslog_identifier";
+        #             }
+        #           ];
+        #         }
+        #       ] ++ cfg.extraLogs;
+        #     }
+        #   ];
+        # };
 
         integrations = lib.mkForce {
           agent = { };
           cadvisor = { };
           node_exporter = {
-            textfile_directory = "\${STATE_DIRECTORY}/temp-prom-data";
+            # textfile_directory = "\${STATE_DIRECTORY}/temp-prom-data";
           };
         };
 

@@ -15,7 +15,7 @@
 
       # local
       ./docker.nix
-      # ./wg.nix
+      ./wg.nix
 
       compact
       locale

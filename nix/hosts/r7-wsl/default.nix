@@ -116,6 +116,9 @@
     docker = {
       enable = true;
 
+      daemon.settings.insecure-registries = [
+        "192.168.10.44:5000"
+      ];
       # storageDriver = "zfs";
       # daemon.settings = {
       #   data-root = "/backup-drive/docker-data";

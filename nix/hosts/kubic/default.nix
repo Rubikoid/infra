@@ -68,6 +68,7 @@
         atuin
         gns3
         netbox
+        budget-git-v2
 
         (with garden; [
           immich

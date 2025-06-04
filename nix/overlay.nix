@@ -52,7 +52,7 @@ rec {
 
   oldphp = nixpkgs-php.php;
 
-  inherit (nixpkgs-master) yt-dlp volatility2-bin poetry kubevirt;
+  inherit (nixpkgs-master) yt-dlp volatility2-bin poetry kubevirt migrate-to-uv;
   poetry-master = nixpkgs-master.poetry;
 
   ccacheWrapper = prev.ccacheWrapper.override {

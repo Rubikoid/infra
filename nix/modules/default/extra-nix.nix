@@ -35,6 +35,8 @@
           r.to = rubikoid;
           rubikoid.to = rubikoid;
           base.flake = inputs.base;
+
+          n-master.flake = inputs.nixpkgs-master;
         };
 
       settings = lib.mkIf config.rubikoid.nix.enableHarmonia {

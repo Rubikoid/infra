@@ -2,12 +2,12 @@
 
 let
   rCfg = config.rubikoid;
-  cfg = rCfg.grafana-agent;
+  cfg = rCfg.monitoring.agent;
 
   urlType = with lib.types; (attrsOf anything);
 in
 {
-  options.rubikoid.grafana-agent = with lib; {
+  options.rubikoid.monitoring.agent = with lib; {
     enable = mkEnableOption "grafana-agent";
 
     mimir = mkOption {
@@ -51,103 +51,153 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.grafana-agent = {
-      enable = true;
+    environment.etc."alloy/config.alloy" =
+      let
+        rawPrometheusExporters = lib.filterAttrs (
+          name: value:
+          (
+            !lib.lists.elem name [
+              "unifi-poller" # ugly lib.mkRenamedOptionModule
+              "minio" # depricated
+              "tor" # depricated
+            ]
+          )
+          && (lib.isAttrs value)
+          && (value.enable)
+        ) config.services.prometheus.exporters;
 
-      settings = {
-        server = {
-          log_level = "warn";
-        };
+        transformedMimirTargets = lib.attrsets.mapAttrsToList (name: value: ''
+          {
+            __address__ = "${value.listenAddress}:${toString value.port}";
+            job = "nix-prom-${name}";
+            instance = "${config.networking.hostName}";
+          }
+        '') rawPrometheusExporters;
 
-        metrics = {
-          global = {
-            scrape_interval = "20s";
-            scrape_timeout = "10s";
-            remote_write = [ cfg.mimir ];
-          };
-
-          configs = [
-            {
-              name = "default";
-              scrape_configs =
-                [
-                ]
-                ++ (lib.attrsets.mapAttrsToList
-                  (name: value: {
-                    job_name = "nix-prom-${name}";
-                    static_configs = [
-                      {
-                        targets = [ "${value.listenAddress}:${toString value.port}" ];
-                        labels.instance = config.networking.hostName;
-                      }
-                    ];
-                  })
-                  (
-                    lib.filterAttrs (
-                      name: value:
-                      (
-                        !lib.lists.elem name [
-                          "unifi-poller" # ugly lib.mkRenamedOptionModule
-                          "minio" # depricated
-                          "tor" # depricated
-                        ]
-                      )
-                      && (lib.isAttrs value)
-                      && (value.enable)
-                    ) config.services.prometheus.exporters
-                  )
-                );
-            }
+        mimirTargets = builtins.concatStringsSep ",\n" transformedMimirTargets;
+      in
+      pkgs.writeText "config.alloy" ''
+        prometheus.exporter.self "default" { }
+        prometheus.exporter.unix "default" {
+          // include_exporter_metrics = true
+          set_collectors = [
+            "arp",
+            // "bcache",
+            "bonding",
+            "boottime",
+            "conntrack",
+            "cpu",
+            "cpufreq",
+            "diskstats",
+            "dmi",
+            "drm",
+            "edac",
+            "entropy",
+            "filefd",
+            "filesystem",
+            "hwmon",
+            "ipvs",
+            "ksmd", // idk
+            "loadavg",
+            "mdadm",
+            "meminfo",
+            // "mountstats",
+            "netclass",
+            "netdev",
+            "netstat",
+            "nfs",
+            "nfsd",
+            "nvme",
+            "os",
+            "powersupplyclass",
+            "pressure",
+            "rapl",
+            // "schedstat",
+            // "sockstat",
+            // "softnet",
+            "stat",
+            "systemd",
+            // "tapestats",
+            "textfile",
+            "thermal_zone",
+            "time",
+            "timex",
+            "udp_queues",
+            "uname",
+            "vmstat",
+            "zfs",
           ];
-        };
+          
+          textfile {
+            // directory = "{STATE_DIRECTORY}/temp-prom-data"
+          }
+        }
 
-        # logs = {
-        #   configs = [
-        #     {
-        #       name = "default";
-        #       clients = [ cfg.loki ];
-        #       positions.filename = "\${STATE_DIRECTORY}/loki_positions.yaml";
-        #       scrape_configs = [
-        #         {
-        #           job_name = "journal";
-        #           journal = {
-        #             max_age = "12h";
-        #             labels.job = "systemd-journal";
-        #           };
-        #           relabel_configs = [
-        #             {
-        #               source_labels = [ "__journal__systemd_unit" ];
-        #               target_label = "systemd_unit";
-        #             }
-        #             {
-        #               source_labels = [ "__journal__hostname" ];
-        #               target_label = "nodename";
-        #             }
-        #             {
-        #               source_labels = [ "__journal_syslog_identifier" ];
-        #               target_label = "syslog_identifier";
-        #             }
-        #           ];
-        #         }
-        #       ] ++ cfg.extraLogs;
-        #     }
-        #   ];
-        # };
+        prometheus.scrape "default" {
+          scrape_interval = "20s"
+          scrape_timeout = "10s"
 
-        integrations = lib.mkForce {
-          agent = { };
-          cadvisor = { };
-          node_exporter = {
-            # textfile_directory = "\${STATE_DIRECTORY}/temp-prom-data";
+          targets = array.concat(
+            prometheus.exporter.self.default.targets,
+            prometheus.exporter.unix.default.targets,
+            // manual...
+            [ 
+              ${mimirTargets}
+            ]
+          )
+
+          forward_to = [prometheus.remote_write.default.receiver]
+        }
+
+        prometheus.remote_write "default" {
+          endpoint {
+            url = "${cfg.mimir}"
+          }
+        }
+
+        loki.source.journal "default" {
+          max_age = "12h"
+          
+          labels = {
+            job = "systemd-journal"
           };
-        };
 
-        # traces = { };
-      };
+          relabel_rules = loki.relabel.journal.rules
 
+          forward_to = [loki.write.default.receiver]
+        }
+
+        loki.relabel "journal" {
+          forward_to = []
+
+          rule {
+            source_labels = ["__journal__systemd_unit"]
+            target_label  = "systemd_unit"
+          }
+
+          rule {
+            source_labels = ["__journal__hostname"]
+            target_label  = "nodename"
+          }
+
+          rule {
+            source_labels = ["__journal_syslog_identifier"]
+            target_label  = "syslog_identifier"
+          }
+        }
+
+        loki.write "default" {
+          endpoint {
+            url = "${cfg.loki}"
+          }
+        }
+      '';
+
+    services.alloy = {
+      enable = true;
       extraFlags = [
-        "-enable-features=integrations-next"
-        "-disable-reporting"
+        "--server.http.enable-pprof=false"
+        "--disable-reporting=true"
       ];
     };
 

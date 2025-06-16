@@ -8,7 +8,6 @@
 }:
 {
   imports = [
-    ./soft/tmux.nix
     (if isDarwin then ./darwin.nix else { })
     (if isWSL then ./wsl.nix else { })
   ];
@@ -30,7 +29,7 @@
 
     # zprof.enable = true;
 
-    initExtra = ''
+    initContent = ''
       get_path_from_old_shell() {
           # chpwd() {
           #     export SHORT_PWD=
@@ -59,8 +58,6 @@
           }
       }
     '';
-
-    initExtraBeforeCompInit = "";
 
     oh-my-zsh = {
       enable = true;

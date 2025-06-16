@@ -1,13 +1,21 @@
 { inputs, pkgs, lib, ... }:
 {
-  imports = with lib.r.modules.user; [
-    sops
-    helix
-    python
-    dev
-    atuin
-    shell
-  ];
+  imports = lib.lists.flatten (
+    with lib.r.modules.user;
+    [
+      sops
+      helix
+      python
+      dev
+
+      shell.shell
+      (with shell.soft; [
+        tmux
+        atuin
+        zoxide
+      ])
+    ]
+  );
 
   home.packages = with pkgs; [
 

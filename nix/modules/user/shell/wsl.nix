@@ -20,7 +20,7 @@
   };
 
   programs.zsh = {
-    initExtra = ''
+    initContent = ''
       SSH_AUTH_TMPDIR="/home/rubikoid/.ssh"
       export REAL_WSL_ADDR=`netsh.exe interface ip show ipaddresses "vEthernet (WSL)" | head -n 2 - | tail -n 1 | awk '{ print $2; }'`
       export INTR_WSL_ADDR=`ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'`
@@ -39,8 +39,6 @@
 
       redo_ssh_wsl2 || echo "smthing wrong with ssh_auth_sock";
     '';
-
-    initExtraBeforeCompInit = "";
 
     oh-my-zsh = {
       plugins = [ ];

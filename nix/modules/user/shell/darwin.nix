@@ -18,9 +18,7 @@
   };
 
   programs.zsh = {
-    initExtra = "";
-
-    initExtraBeforeCompInit = ''
+    initContent = lib.mkOrder 550 ''
       # zsh autocomplit from homebrew
       fpath+=/opt/homebrew/share/zsh/site-functions
     '';

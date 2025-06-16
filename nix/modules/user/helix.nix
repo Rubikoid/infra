@@ -5,7 +5,7 @@
     defaultEditor = true;
 
     extraPackages = with pkgs; [
-      #
+      gopls
     ];
 
     languages = {
@@ -76,6 +76,16 @@
           (genC "php" "PHP")
           (genC "sql" "SQL")
           (genC "dockerfile" "Docker")
+          (genC "env" "Properties")
+          (genC "git-commit" "Git Commit Message")
+          (genC "git-config" "Git Config")
+          (genC "git-ignore" "Ignore")
+          (genC "git-rebase" "Git Rebase Message")
+          (genC "jinja" "jinja")
+          (genC "json" "JSON")
+          (genC "sshclientconfig" "ssh_config")
+          (genC "hosts" "Plain Text")
+          (genCS "go" "Go" { })
           # (genC "git-ignore" "")
         ];
     };

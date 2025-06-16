@@ -36,14 +36,15 @@ in
 rec {
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
 
+  inherit (nixpkgs-master) yt-dlp volatility2-bin poetry kubevirt migrate-to-uv;
+  poetry-master = nixpkgs-master.poetry;
+
   sqlite-interactive = prev.sqlite.override (old: {
     interactive = true;
   });
 
   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-    (python-final: python-prev: {
-      # cyclopts = final.callPackage ./pkgs/cyclopts.nix;
-    })
+    (python-final: python-prev: { })
   ];
 
   overleaf = final.callPackage (inputs.nixpkgs-overleaf + "/pkgs/servers/overleaf") {
@@ -51,9 +52,6 @@ rec {
   }; # overleaf-src.overleaf;
 
   oldphp = nixpkgs-php.php;
-
-  inherit (nixpkgs-master) yt-dlp volatility2-bin poetry kubevirt migrate-to-uv;
-  poetry-master = nixpkgs-master.poetry;
 
   ccacheWrapper = prev.ccacheWrapper.override {
     extraConfig = ''

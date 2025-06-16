@@ -51,7 +51,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.etc."alloy/config.alloy" =
+    services.dbus.implementation = "broker";
+
+    environment.etc."alloy/config.alloy".text =
       let
         rawPrometheusExporters = lib.filterAttrs (
           name: value:
@@ -66,17 +68,14 @@ in
           && (value.enable)
         ) config.services.prometheus.exporters;
 
-        transformedMimirTargets = lib.attrsets.mapAttrsToList (name: value: ''
-          {
-            __address__ = "${value.listenAddress}:${toString value.port}";
-            job = "nix-prom-${name}";
-            instance = "${config.networking.hostName}";
-          }
-        '') rawPrometheusExporters;
+        transformedMimirTargets = lib.attrsets.mapAttrsToList (
+          name: value:
+          ''{ __address__ = "${value.listenAddress}:${toString value.port}", job = "nix-prom-${name}", instance = "${config.networking.hostName}", }''
+        ) rawPrometheusExporters;
 
-        mimirTargets = builtins.concatStringsSep ",\n" transformedMimirTargets;
+        mimirTargets = builtins.concatStringsSep ",\n       " transformedMimirTargets;
       in
-      pkgs.writeText "config.alloy" ''
+      ''
         prometheus.exporter.self "default" { }
         prometheus.exporter.unix "default" {
           // include_exporter_metrics = true
@@ -116,7 +115,7 @@ in
             // "sockstat",
             // "softnet",
             "stat",
-            "systemd",
+            // "systemd",
             // "tapestats",
             "textfile",
             "thermal_zone",
@@ -126,7 +125,7 @@ in
             "uname",
             "vmstat",
             "zfs",
-          ];
+          ]
           
           textfile {
             // directory = "{STATE_DIRECTORY}/temp-prom-data"
@@ -142,8 +141,8 @@ in
             prometheus.exporter.unix.default.targets,
             // manual...
             [ 
-              ${mimirTargets}
-            ]
+              ${mimirTargets},
+            ],
           )
 
           forward_to = [prometheus.remote_write.default.receiver]
@@ -151,7 +150,7 @@ in
 
         prometheus.remote_write "default" {
           endpoint {
-            url = "${cfg.mimir}"
+            url = "${cfg.mimir.url}"
           }
         }
 
@@ -159,8 +158,8 @@ in
           max_age = "12h"
           
           labels = {
-            job = "systemd-journal"
-          };
+            job = "systemd-journal",
+          }
 
           relabel_rules = loki.relabel.journal.rules
 
@@ -188,7 +187,7 @@ in
 
         loki.write "default" {
           endpoint {
-            url = "${cfg.loki}"
+            url = "${cfg.loki.url}"
           }
         }
       '';

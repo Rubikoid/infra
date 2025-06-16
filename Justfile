@@ -13,7 +13,7 @@ default_args := ""
 rebuild_cmd := if os() == "linux" { 
     "sudo nixos-rebuild" 
 } else if os() == "macos" {
-    "darwin-rebuild"
+    "sudo darwin-rebuild"
 } else { "echo unable to do it; " }
 
 remote_rebuild_cmd := if os() == "linux" { 

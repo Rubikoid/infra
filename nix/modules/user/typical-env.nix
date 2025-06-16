@@ -13,6 +13,7 @@
         tmux
         atuin
         zoxide
+        pay-respects
       ])
     ]
   );

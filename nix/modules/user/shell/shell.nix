@@ -59,6 +59,21 @@
       }
     '';
 
+    plugins = [
+      {
+        name = "fast-syntax-highlighting";
+        src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
+      }
+      {
+        name = "zsh-autosuggestions";
+        src = "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh";
+      }
+      {
+        name = "you-should-use";
+        inherit (pkgs.zsh-you-should-use) src;
+      }
+    ];
+
     oh-my-zsh = {
       enable = true;
       theme = lib.mkDefault "candy";
@@ -66,6 +81,7 @@
         [
           "git"
           # "docker"
+          # "cmdtime"
         ]
         (lib.mkIf (!isDarwin) [
           "systemd"

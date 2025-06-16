@@ -35,8 +35,6 @@
     nvd
   ];
 
-  services.nix-daemon.enable = true;
-
   programs = {
     zsh.enable = true;
   };
@@ -44,6 +42,8 @@
   networking = {
     computerName = config.device;
   };
+
+  system.primaryUser = "rubikoid";
 
   homebrew = {
     enable = true;
@@ -69,7 +69,7 @@
 
   services.tailscale.enable = false;
 
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog

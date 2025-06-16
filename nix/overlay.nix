@@ -162,7 +162,7 @@ rec {
           args
           // {
             inherit version src;
-            cargoHash = "sha256-KHQrOEqknJgPjQlYiQurIBId4dUN6Hu+KqkYrFqv6+w=";
+            cargoHash = "sha256-vLawcFqpOPakCOsA867HqKn7uErLACItriX8V2o9XFE="; # "sha256-KHQrOEqknJgPjQlYiQurIBId4dUN6Hu+KqkYrFqv6+w=";
             cargoPatches = [ codestats_patch ];
           }
         );

@@ -47,7 +47,7 @@
         # owncast
 
         (with monitoring; [
-          grafana-agent-ng
+          agent
         ])
       ])
     ]
@@ -69,7 +69,7 @@
     openPublic = true;
   };
 
-  rubikoid.grafana-agent = {
+  rubikoid.monitoring.agent = {
     enable = true;
 
     mimir = {

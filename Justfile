@@ -88,7 +88,7 @@ system-inspect-nb hostname:
 repl:
     nix repl --file '{{canonicalize(source_directory()) / "nix" / "test.nix"}}' --show-trace
 
-# run repl with test.nix loaded
+# run repl with test.nix loaded from base
 repl-base:
     nix repl --file '{{canonicalize(source_directory()) / "nix" / "base" / "test.nix"}}' --show-trace
 

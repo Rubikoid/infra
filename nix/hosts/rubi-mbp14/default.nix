@@ -62,6 +62,7 @@
       "stats"
       "jordanbaird-ice"
       "ghostty"
+      "dbeaver-community"
     ];
   };
 

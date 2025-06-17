@@ -81,7 +81,7 @@
     enable = true;
     settings = {
       FERRETDB_LISTEN_ADDR = ":27017";
-      FERRETDB_TELEMETRY = "disabled";
+      FERRETDB_TELEMETRY = "disable";
     };
   };
 

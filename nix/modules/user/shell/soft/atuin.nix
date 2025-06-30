@@ -7,7 +7,7 @@
 
   programs.atuin = {
     enable = true;
-    daemon.enable = true;
+    daemon.enable = if config.user != "root" then true else false;
 
     settings = {
       workspaces = true;

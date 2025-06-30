@@ -6,4 +6,10 @@
 
     options = [ ];
   };
+
+  xdg.configFile."pay-respects/config.toml".text = ''
+    [package_manager]
+    package_manager = "nix"
+    install_method = "Shell"
+  '';
 }

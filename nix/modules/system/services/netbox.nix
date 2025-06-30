@@ -29,7 +29,7 @@ in
     services.netbox = {
       enable = true;
 
-      package = pkgs.netbox_4_1;
+      package = pkgs.nixpkgs-collection.nixpkgs-stable.netbox_4_1; # TODO: wtf?
       port = cfg.port;
 
       secretKeyFile = config.sops.secrets."netbox-key".path;
@@ -66,7 +66,7 @@ in
             root * ${config.services.netbox.settings.STATIC_ROOT}
             file_server
           }
-          
+
           reverse_proxy http://${svcCfg.hostOnHost}:${toString svcCfg.port}
           import stepssl_acme
         '';

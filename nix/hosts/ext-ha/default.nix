@@ -21,8 +21,6 @@
       locale
       yggdrasil
 
-      # hm
-
       services.ha
 
       ca.rubikoid
@@ -58,6 +56,9 @@
     mmc-utils
 
     python312Packages.universal-silabs-flasher
+
+    raspberrypi-eeprom
+    lm_sensors
   ];
 
   hardware = {

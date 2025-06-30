@@ -35,6 +35,9 @@ let
 in
 rec {
   # fixedFetchYarnDeps = fixed-yarn-deps.fetchYarnDeps;
+  nixpkgs-collection = {
+    inherit nixpkgs-stable nixpkgs-master;
+  };
 
   inherit (nixpkgs-master) yt-dlp volatility2-bin poetry kubevirt migrate-to-uv;
   poetry-master = nixpkgs-master.poetry;

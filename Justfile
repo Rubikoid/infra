@@ -125,7 +125,8 @@ run-vm name *args=default_args:
 
 # get current host age key
 get-age-key:
-    nix shell "{{nix}}#ssh-to-age" --command sh -c 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
+    nix --extra-experimental-features nix-command --extra-experimental-features flakes \
+        shell "{{nix}}#ssh-to-age" --command sh -c 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
 
 # drop to shell with path changing
 develop shell="default" *args=default_args: 
@@ -165,7 +166,7 @@ deploy-rebuild target *args=default_args: (deploy target)
 remote-sw hostname target *args=default_args:
     @echo "DISABLE_BUILDERS: {{ DISABLE_BUILDERS }}"
     @echo "HOST: {{ HOST }}"
-    {{ remote_rebuild_cmd }} switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --verbose --show-trace {{args}} {{builders}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
+    {{ remote_rebuild_cmd }} switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --show-trace {{args}} {{builders}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
 
 # run not microvm i guess
 vm-run hostname *args=default_args:

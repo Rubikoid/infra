@@ -10,6 +10,7 @@ keys:
   - &mbp14 age1mutjl6uly4cgaj6qdge0me3e78z90hh35e55rjhw9vssspfttqqsjwq837
   - &yatb-kube-master age16xhh9cq9x8s6zy8ag9jjv4fw3tn8xj4xcr8u40pdmkzzesqe446qcrcj4j
   - &orb-nix age10mcqfg8tde8y6tc7zxz8d7sj2y2mq4d72hz3e079jyn7zln6vqgqfvem4u
+  - &netbird-test age1z3n05gjj0lq25hgknuma3ma96ufl4jy78xpz98qm2n4h43skt4yqkkhtxa
   - &ext-ha age1ympkeang73dftvx5s0slfrn35zpavjn53mhd6gn823h20nsncyzqrqfh0m
 
 creation_rules:
@@ -27,6 +28,7 @@ creation_rules:
           - *mbp14
           - *yatb-kube-master
           - *orb-nix
+          - *netbird-test
           - *ext-ha
 
   - path_regex: secrets/hosts/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -115,6 +117,14 @@ creation_rules:
           - *rubikoid_wsl
           - *rubikoid_mbp14
           - *orb-nix
+
+  - path_regex: secrets/hosts/netbird-test/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *rubikoid_mbp14
+          - *netbird-test
 
   - path_regex: secrets/hosts/ext-ha/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:

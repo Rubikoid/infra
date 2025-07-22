@@ -4,7 +4,7 @@
   programs.tmux = {
     enable = true;
 
-    terminal = "screen-256color";
+    # terminal = "screen-256color";
     keyMode = "vi";
     mouse = false;
 
@@ -41,6 +41,14 @@
 
       # https://stackoverflow.com/a/10553992/4371598
       bind -n C-k clear-history
+
+      # https://github.com/helix-editor/helix/issues/3099#issuecomment-1874190474
+      set -g default-terminal "tmux-256color"
+      set -ag terminal-overrides ",xterm-256color:RGB"
+
+      # https://github.com/nikolaiser/dungeon/blob/7636c5e6b5585c07e6e3ae6c2fbcc6224514508c/modules/shell/home/default.nix#L132
+      set -ga update-environment TERM
+      set -ga update-environment TERM_PROGRAM
     '';
   };
 }

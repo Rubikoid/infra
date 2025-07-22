@@ -33,6 +33,10 @@
     ]
   );
 
+  # https://github.com/NixOS/nix/issues/13204#issuecomment-2903445729
+  # WTF БЛЯДЬ ЭЭЛКО
+  nix.package = lib.mkForce pkgs.lix;
+
   environment.systemPackages =
     with pkgs;
     [
@@ -76,6 +80,7 @@
 
   # need to enable this, so user-part of systemd will start automatically
   users.users.rubikoid.linger = true;
+  users.users.rubikoid.extraGroups = [ "ferretdb" ];
 
   services.ferretdb = {
     enable = true;
@@ -86,7 +91,7 @@
   };
 
   services.etcd = {
-    enable = true;
+    enable = false;
     openFirewall = true;
 
     initialClusterState = "new";
@@ -125,6 +130,25 @@
       # };
     };
   };
+
+  # services.openvpn.servers.wtf.config = ''
+  #   dev tap0
+  #   proto udp
+  #   port 11337
+  #   secret ${../vms/yatb-kube/master/static.key}
+
+  #   ifconfig 10.10.1.1 255.255.255.240
+  #   route 10.20.0.0 255.255.0.0 10.10.1.14
+
+  #   cipher AES-256-CBC
+  #   auth-nocache
+
+  #   comp-lzo
+  #   keepalive 10 60
+  #   ping-timer-rem
+  #   persist-key
+  #   allow-compression yes
+  # '';
 
   system.activationScripts.gitbash =
     let

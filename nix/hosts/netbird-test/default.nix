@@ -13,8 +13,11 @@
     [
       compact
       orbstack
+      yggdrasil
+      hm
 
       ca.rubikoid
+      # users.rubikoid
 
       (with other; [
         remote-build
@@ -27,7 +30,8 @@
   environment.systemPackages = with pkgs; [
     rsync
     wireguard-tools
+    netbird
   ];
 
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 }

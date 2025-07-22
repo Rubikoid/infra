@@ -63,6 +63,7 @@
       "jordanbaird-ice"
       "ghostty"
       "dbeaver-community"
+      "mitmproxy"
     ];
   };
 

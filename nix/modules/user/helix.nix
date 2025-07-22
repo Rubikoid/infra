@@ -71,22 +71,6 @@
               }
             ];
           })
-          (genC "haskell" "Haskell")
-          (genC "c" "C")
-          (genC "php" "PHP")
-          (genC "sql" "SQL")
-          (genC "dockerfile" "Docker")
-          (genC "env" "Properties")
-          (genC "git-commit" "Git Commit Message")
-          (genC "git-config" "Git Config")
-          (genC "git-ignore" "Ignore")
-          (genC "git-rebase" "Git Rebase Message")
-          (genC "jinja" "jinja")
-          (genC "json" "JSON")
-          (genC "sshclientconfig" "ssh_config")
-          (genC "hosts" "Plain Text")
-          (genCS "go" "Go" { })
-          # (genC "git-ignore" "")
         ];
     };
 
@@ -104,7 +88,7 @@
 
         # i think... i need that?
         # this replaces with completion entire word, not only... part of it.
-        completion-replace = true;
+        # completion-replace = true;
 
         # always display kinda tabs at top
         bufferline = "always";

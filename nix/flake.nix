@@ -76,6 +76,11 @@
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -89,6 +94,7 @@
       microvm,
       nixos-dns,
       nixpkgs-master,
+      deploy-rs,
       ...
     }@inputs:
     let
@@ -167,15 +173,29 @@
         }
       );
 
+      deploy.nodes.kubic = {
+        hostname = "kubic";
+        profiles.system = {
+          user = "root";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kubic;
+        };
+
+        autoRollback = true;
+        magicRollback = true;
+        remoteBuild = true;
+      };
+
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+
       devShells = lib.r.forEachSystem (
         { system, pkgs }:
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
               nil
-              # nixpkgs-fmt
               sops
               nixfmt-rubi-style
+              deploy-rs.packages.${system}.default
             ];
           };
 
@@ -237,7 +257,7 @@
         { system, pkgs }:
         (
           {
-            inherit (pkgs) volatility2-bin oldphp;
+            inherit (pkgs) volatility2-bin oldphp helix;
 
             # kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
             # lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };

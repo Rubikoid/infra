@@ -47,6 +47,7 @@ in
 
       zigbee2mqtt = {
         enable = true;
+        package = pkgs.nixpkgs-collection.nixpkgs-master.zigbee2mqtt_2;
         settings = {
           permit_join = true;
 

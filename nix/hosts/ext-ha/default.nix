@@ -44,6 +44,9 @@
 
   rubikoid = {
     zsh.omz = true;
+    services.ha = {
+
+    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -59,6 +62,7 @@
 
     raspberrypi-eeprom
     lm_sensors
+    htop
   ];
 
   hardware = {

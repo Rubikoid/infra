@@ -147,14 +147,15 @@ rec {
 
   helix =
     let
-      version = "24.03";
+      version = "25.01.1";
       codestats_patch = final.fetchpatch2 {
-        url = "https://github.com/Rubikoid/helix/pull/1.patch";
-        sha256 = "sha256-BfZtHzpb+B84HFJAD8UWdXHGryxix/RAyk9JX8Buqf4=";
+        url = "https://github.com/Rubikoid/helix/pull/1.diff";
+        # "https://github.com/helix-editor/helix/compare/${version}...Rubikoid:helix:feature/codestats.patch?full_index=1";
+        sha256 = "sha256-0WgqSe8T/ITAfSzuh5WTFO0bOWJmqipFTI5Htu35HhU="; 
       };
       src = final.fetchzip {
         url = "https://github.com/helix-editor/helix/releases/download/${version}/helix-${version}-source.tar.xz";
-        hash = "sha256-1myVGFBwdLguZDPo1jrth/q2i5rn5R2+BVKIkCCUalc=";
+        hash = "sha256-rN2eK+AoyDH+tL3yxTRQQQYHf0PoYK84FgrRwm/Wfjk=";
         stripRoot = false;
       };
     in
@@ -165,7 +166,7 @@ rec {
           args
           // {
             inherit version src;
-            cargoHash = "sha256-vLawcFqpOPakCOsA867HqKn7uErLACItriX8V2o9XFE="; # "sha256-KHQrOEqknJgPjQlYiQurIBId4dUN6Hu+KqkYrFqv6+w=";
+            cargoHash = "sha256-aHQXVirUlJBO3Qc8QtosAovrAlfbg1YBc9PwAjbXheQ=";
             cargoPatches = [ codestats_patch ];
           }
         );

@@ -168,6 +168,9 @@ remote-sw hostname target *args=default_args:
     @echo "HOST: {{ HOST }}"
     {{ remote_rebuild_cmd }} switch --flake "{{FLAKE_PATH}}#{{hostname}}" --target-host "{{target}}" --show-trace {{args}} {{builders}} # --build-host "root@{{target}}.prod.tests.rubikoid.ru" 
 
+deploy2 hostname *args=default_args:
+    deploy "{{FLAKE_PATH}}#{{hostname}}" {{args}}
+
 # run not microvm i guess
 vm-run hostname *args=default_args:
     nix run "{{FLAKE_PATH}}#nixosConfigurations.{{hostname}}.config.system.build.vm" {{args}}

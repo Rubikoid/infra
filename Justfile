@@ -206,3 +206,35 @@ long-clean:
     sudo nix-store --gc
     sudo rm /nix/var/nix/gcroots/auto/*
     sudo nix-collect-garbage -d
+
+# magic to pull selectel api token
+@get-selectel-token:
+    curl -i -XPOST -s \
+    -H 'Content-Type: application/json' \
+    -d '{"auth":{"identity":{"methods":["password"],"password":{"user":{"name":"{{SELECTEL_USER}}","domain":{"name":"{{SELECTEL_ACCOUNT_ID}}"},"password":"{{SELECTEL_PASSWORD}}"}}},"scope":{"project":{"name":"{{SELECTEL_PROJECT}}","domain":{"name":"{{SELECTEL_ACCOUNT_ID}}"}}}}}' \
+    'https://cloud.api.selcloud.ru/identity/v3/auth/tokens' \
+    | grep 'x-subject-token' | awk '{ print $2; }'
+
+
+[private]
+_build_octodns *args="":
+    nix build "{{FLAKE_PATH}}#octodns" -v -o "./octodns.yaml"
+
+[private]
+_check_octodns *args="":
+    octodns-sync --config-file ./octodns.yaml {{args}}
+    
+[private, confirm]
+_exec_octodns *args="":
+    octodns-sync --config-file ./octodns.yaml --doit {{args}}
+    @echo "Done, cleaning..."
+    rm octodns.yaml
+    @echo "Done!"
+
+[private]
+_deploy-octodns *args="": _build_octodns (_check_octodns args) && (_exec_octodns args)
+    @echo "...?"
+
+# deploy octodns config to selectel with acient `just` magic
+deploy-octodns *args="":
+    just _shell octodns --command "bash" -c "\"octodns-versions --version && just _deploy-octodns {{args}} \""

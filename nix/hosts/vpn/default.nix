@@ -59,7 +59,7 @@
     openPublic = true;
   };
 
-  rubikoid.grafana-agent = {
+  rubikoid.monitoring.agent = {
     enable = true;
 
     mimir = {

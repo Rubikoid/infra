@@ -87,7 +87,16 @@ in
 
             # time_zone = "";
             temperature_unit = "C";
-            unit_system = "metric";
+          history = {};
+
+          recorder = {
+            db_url = "sqlite:////data/hm_log.sqlite3";
+            purge_keep_days = 365;
+          };
+
+          energy = {};
+          logbook = {};
+          mobile_app = {};
           };
         };
       };

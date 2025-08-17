@@ -21,7 +21,7 @@ pkgs.stdenv.mkDerivation {
     cd client/scripts
     mv linux dhclient-script
     sed -i s,/bin/bash,${pkgs.bash}/bin/bash,g dhclient-script
-    sed -i s,/sbin/ip,${pkgs.iproute}/bin/ip,g dhclient-script
+    sed -i s,/sbin/ip,${pkgs.iproute2}/bin/ip,g dhclient-script
     sed -i s,mv,${pkgs.coreutils}/bin/mv,g dhclient-script
     sed -i s,rm,${pkgs.coreutils}/bin/rm,g dhclient-script
     sed -i s,chown,${pkgs.coreutils}/bin/chown,g dhclient-script

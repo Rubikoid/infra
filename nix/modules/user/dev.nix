@@ -10,6 +10,8 @@
 
     k9s
     kubectl
+    kubecm
+    kustomize
 
     bat
 
@@ -31,6 +33,8 @@
     rustc
     rust-analyzer
     clippy
+
+    mergiraf
   ];
 
   home.sessionVariables = {

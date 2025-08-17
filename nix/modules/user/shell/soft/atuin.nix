@@ -18,6 +18,8 @@
       filter_mode = "global";
       filter_mode_shell_up_key_binding = "session";
 
+      secrets_filter = false;
+
       # WTF: atuin have cringe imperative shit
       # https://github.com/atuinsh/atuin/issues/2479#issuecomment-2528215934
       # key_path = config.sops.secrets."atuin".path;

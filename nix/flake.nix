@@ -173,17 +173,54 @@
         }
       );
 
-      deploy.nodes.kubic = {
-        hostname = "kubic";
-        profiles.system = {
-          user = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kubic;
-        };
+      # deploy.nodes.kubic = {
+      #   sshUser = "root";
+      #   hostname = "kubic";
 
-        autoRollback = true;
-        magicRollback = true;
-        remoteBuild = true;
-      };
+      #   profiles.system = {
+      #     user = "root";
+      #     path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kubic;
+      #   };
+
+      #   autoRollback = true;
+      #   magicRollback = true;
+      #   remoteBuild = true;
+      # };
+      deploy.nodes =
+        let
+          mkNode = hostname: {
+            inherit hostname;
+
+            sshUser = "root";
+
+            autoRollback = true;
+            magicRollback = true;
+
+            profiles.system = {
+              user = "root";
+              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.${hostname};
+            };
+          };
+        in
+        {
+          dedic = (mkNode "dedic") // {
+            hostname = "msite-new";
+
+            activationTimeout = 60 * 8;
+            confirmTimeout = 60;
+          };
+
+          vpn = (mkNode "vpn");
+
+          ext-ha = mkNode "ext-ha" // {
+            # sshOpts = ["-oControlMaster=no" "-oControlPath=/nowhere" ];
+
+            profiles.system = {
+              user = "root";
+              path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.ext-ha;
+            };
+          };
+        };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
 
@@ -228,9 +265,12 @@
                   --sponsorblock-remove sponsor,music_offtopic \
                   $YT_DLP_EXTRA \
                   "$url"
+
                 fname=$(yt-dlp $YT_DLP_EXTRA --print filename "$url")
                 fname1="''${fname%.*}"
+                
                 echo "File name: $fname, $fname1"
+                ls -la "$fname"
 
                 targetfname="$fname1.mp3"
                 echo "TFN: $targetfname"

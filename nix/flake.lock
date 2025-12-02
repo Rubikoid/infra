@@ -366,11 +366,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1753796173,
-        "narHash": "sha256-Jb1Dzw73qQId5y4QINA1Lx/cLO/+rQ2iYJC0/u/iK1E=",
+        "lastModified": 1761616912,
+        "narHash": "sha256-VojYeeY2xKiUVxmUikVbSRNsYfjdi66q8t1dz1hZ84A=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "33120bcec864fc8e5cdffd286bec2feb6702a10e",
+        "rev": "9e9b766bd2d50f6796cae84068cd91ef90f0e620",
         "type": "github"
       },
       "original": {
@@ -445,55 +445,27 @@
         "nixpkgs-php": "nixpkgs-php",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-syncthing": "nixpkgs-syncthing",
-        "sops-nix": "sops-nix",
-        "sops-nix-darwin": "sops-nix-darwin"
+        "sops-nix": "sops-nix"
       }
     },
     "sops-nix": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
-        ],
-        "nixpkgs-stable": [
-          "nixpkgs-stable"
         ]
       },
       "locked": {
-        "lastModified": 1715244550,
-        "narHash": "sha256-ffOZL3eaZz5Y1nQ9muC36wBCWwS1hSRLhUzlA9hV2oI=",
+        "lastModified": 1763069729,
+        "narHash": "sha256-A91a+K0Q9wfdPLwL06e/kbHeAWSzPYy2EGdTDsyfb+s=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "0dc50257c00ee3c65fef3a255f6564cfbfe6eb7f",
+        "rev": "a2bcd1c25c1d29e22756ccae094032ab4ada2268",
         "type": "github"
       },
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "0dc50257c00ee3c65fef3a255f6564cfbfe6eb7f",
-        "type": "github"
-      }
-    },
-    "sops-nix-darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "nixpkgs-stable": [
-          "nixpkgs-stable"
-        ]
-      },
-      "locked": {
-        "lastModified": 1692658736,
-        "narHash": "sha256-kucyW+sryHf2buyAFFWQHQMsqkYYHSvvYqr/DvwQukY=",
-        "owner": "Kloenk",
-        "repo": "sops-nix",
-        "rev": "c0864759e5d3f5899195fd9debaeda48e08d47d8",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Kloenk",
-        "ref": "darwin",
-        "repo": "sops-nix",
+        "rev": "a2bcd1c25c1d29e22756ccae094032ab4ada2268",
         "type": "github"
       }
     },

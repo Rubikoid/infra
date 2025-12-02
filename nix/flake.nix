@@ -24,16 +24,9 @@
 
     # sops
     sops-nix = {
-      url = "github:Mic92/sops-nix/0dc50257c00ee3c65fef3a255f6564cfbfe6eb7f";
+      url = "github:Mic92/sops-nix/a2bcd1c25c1d29e22756ccae094032ab4ada2268"; # as of 14.11.2025
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
-    };
-
-    # sops but for darwin
-    sops-nix-darwin = {
-      url = "github:Kloenk/sops-nix/darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs-stable";
+      # inputs.nixpkgs-stable.follows = "nixpkgs-stable";
     };
 
     # ygg-map = {
@@ -297,7 +290,7 @@
         { system, pkgs }:
         (
           {
-            inherit (pkgs) volatility2-bin oldphp helix;
+            inherit (pkgs) volatility2-bin oldphp helix octodns-selectel;
 
             # kubic-repair = import ./images/repair-iso.nix { inherit inputs lib system pkgs; };
             # lxc-base = import ./images/lxc-base.nix { inherit inputs lib system pkgs; };
@@ -305,7 +298,6 @@
             glitch-soc-source = pkgs.callPackage ./pkgs/mastodon/source.nix { };
             glitch-soc = pkgs.callPackage ./pkgs/mastodon/default.nix { };
             dhclient = pkgs.callPackage ./pkgs/dhclient.nix { };
-            octodns-selectel = pkgs.python312Packages.callPackage ./pkgs/octodns-selectel.nix { };
 
             dnsZoneFiles = (nixos-dns.utils.generate pkgs).zoneFiles (
               dnsConfig // { extraConfig = secrets.hostLessSecrets.dns.rawData; }

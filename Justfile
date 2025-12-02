@@ -22,6 +22,10 @@ remote_rebuild_cmd := if os() == "linux" {
     "nix run nixpkgs#nixos-rebuild --"
 } else { "echo unable to do it; " }
 
+SELECTEL_USER := ""
+SELECTEL_PASSWORD := ""
+SELECTEL_ACCOUNT_ID := ""
+SELECTEL_PROJECT := ""
 
 nix := "n"
 
@@ -115,7 +119,7 @@ pkg pkg *args=default_args:
 	echo "[+] Building package: {{pkg}} at {{HOST}}"
 	nix build "{{FLAKE_PATH}}#nixosConfigurations.{{HOST}}.pkgs.{{pkg}}" -v {{args}}
 
-# don't remember
+# dont remember
 eval attr *args=default_args:
     nix eval "{{FLAKE_PATH}}#{{attr}}" {{args}}
 
@@ -215,10 +219,11 @@ long-clean:
     'https://cloud.api.selcloud.ru/identity/v3/auth/tokens' \
     | grep 'x-subject-token' | awk '{ print $2; }'
 
+# TODO: IMPURE
 
 [private]
 _build_octodns *args="":
-    nix build "{{FLAKE_PATH}}#octodns" -v -o "./octodns.yaml"
+    nix build "{{FLAKE_PATH}}#octodns" -v -o "./octodns.yaml" --impure
 
 [private]
 _check_octodns *args="":

@@ -87,10 +87,15 @@ in
 
             # time_zone = "";
             temperature_unit = "C";
+            allowlist_external_dirs = [
+              "/data/hass"
+            ];
+          };
           history = {};
 
           recorder = {
-            db_url = "sqlite:////data/hm_log.sqlite3";
+            db_url = "sqlite:////data/hass/hm_log.sqlite3";
+            # db_url = "sqlite:////hm_log.sqlite3";
             purge_keep_days = 365;
           };
 

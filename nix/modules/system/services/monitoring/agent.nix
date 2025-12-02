@@ -141,7 +141,7 @@ in
             prometheus.exporter.unix.default.targets,
             // manual...
             [ 
-              ${mimirTargets},
+              ${mimirTargets}
             ],
           )
 

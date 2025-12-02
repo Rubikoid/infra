@@ -24,6 +24,7 @@
       (with other; [
         remote-build
         remote-build-host
+        wsl-vscode
       ])
 
       (with security; [
@@ -36,6 +37,8 @@
   # https://github.com/NixOS/nix/issues/13204#issuecomment-2903445729
   # WTF БЛЯДЬ ЭЭЛКО
   nix.package = lib.mkForce pkgs.lix;
+
+  rubikoid.vscode-remote-workaround.enable = true;
 
   environment.systemPackages =
     with pkgs;
@@ -75,8 +78,16 @@
     secrets.dns.data.nodes.kubic.at.home
   ];
 
+  networking.hosts = {
+  };
+
   # virtualisation.podman.enable = true;
   # users.users.rubikoid.extraGroups = [ "docker" ];
+
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    libz
+  ];
 
   # need to enable this, so user-part of systemd will start automatically
   users.users.rubikoid.linger = true;

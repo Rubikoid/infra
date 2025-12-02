@@ -30,6 +30,8 @@
     wireguard-tools
   ];
 
+  nix.package = lib.mkForce pkgs.lix;
+
   networking.hosts = {
     # ${secrets.dns.data.nodes.kubic.at.wg} = [ "kubic.nodes.${secrets.dns.private}" ];
   };

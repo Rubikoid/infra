@@ -71,6 +71,8 @@
 
   security.pam.services.sudo_local.touchIdAuth = true;
 
+  nix.package = lib.mkForce pkgs.lix;
+
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
   system.stateVersion = 4;

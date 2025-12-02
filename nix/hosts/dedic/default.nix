@@ -80,7 +80,7 @@
       };
     };
     loki = {
-      url = "http://loki.${secrets.dns.private}/api/v1/push";
+      url = "http://loki.${secrets.dns.private}/loki/api/v1/push";
       tls_config = {
         ca = secrets.ca.rubikoid;
         insecure_skip_verify = true;

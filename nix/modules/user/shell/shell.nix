@@ -29,35 +29,83 @@
 
     # zprof.enable = true;
 
-    initContent = ''
-      get_path_from_old_shell() {
-          # chpwd() {
-          #     export SHORT_PWD=
-          # }
+    initContent =
+      let
+        rg = "${pkgs.rg}/bin/rg";
+      in
+      ''
+        get_path_from_old_shell() {
+            # chpwd() {
+            #     export SHORT_PWD=
+            # }
 
-          SHORT_PWD_DUMP_PATH="/tmp/short_pwd_dump"
+            SHORT_PWD_DUMP_PATH="/tmp/short_pwd_dump"
+            
+            TRAPUSR1() {
+                # echo "$SHORT_PWD" > /tmp/short_pwd_dump
+                print -rD $PWD > $SHORT_PWD_DUMP_PATH
+            }
+
+            load_old_path() {
+                # kill -USR1 $(ps u | grep $(echo "$SOURCE_PANE_TTY" | awk -F/ '{print $3 "/" $4;}') | awk '/\-zsh$/{print $2; }')
+                if [[ -n "$SOURCE_PANE_PID" ]]; then
+                    kill -USR1 "$SOURCE_PANE_PID";sleep 0.1;
+                    KILL_STATUS=$?;
+                    if [[ -e "$SHORT_PWD_DUMP_PATH" ]]; then 
+                        echo "Source pid=$SOURCE_PANE_PID; path=$(cat "$SHORT_PWD_DUMP_PATH")"
+                        eval cd $(cat "$SHORT_PWD_DUMP_PATH") && \
+                        rm "$SHORT_PWD_DUMP_PATH"
+                    else
+                        echo "Source pid=$SOURCE_PANE_PID; no file at '$SHORT_PWD_DUMP_PATH' "
+                    fi;
+                fi;
+            }
+        }
+
+        # https://grok.com/share/c2hhcmQtNA_f0b60a6e-a29f-4936-9703-acf83c76a786
+        magic_replace() {
+          # Check arguments
+          if [[ $# -ne 2 ]]; then
+              echo "Usage: magic_replace <search> <replace>"
+              echo "Example: magic_replace XXX NEWVALUE"
+              return 1
+          fi
           
-          TRAPUSR1() {
-              # echo "$SHORT_PWD" > /tmp/short_pwd_dump
-              print -rD $PWD > $SHORT_PWD_DUMP_PATH
-          }
+          local search="$1"
+          local replace="$2"
 
-          load_old_path() {
-              # kill -USR1 $(ps u | grep $(echo "$SOURCE_PANE_TTY" | awk -F/ '{print $3 "/" $4;}') | awk '/\-zsh$/{print $2; }')
-              if [[ -n "$SOURCE_PANE_PID" ]]; then
-                  kill -USR1 "$SOURCE_PANE_PID";sleep 0.1;
-                  KILL_STATUS=$?;
-                  if [[ -e "$SHORT_PWD_DUMP_PATH" ]]; then 
-                      echo "Source pid=$SOURCE_PANE_PID; path=$(cat "$SHORT_PWD_DUMP_PATH")"
-                      eval cd $(cat "$SHORT_PWD_DUMP_PATH") && \
-                      rm "$SHORT_PWD_DUMP_PATH"
-                  else
-                      echo "Source pid=$SOURCE_PANE_PID; no file at '$SHORT_PWD_DUMP_PATH' "
-                  fi;
-              fi;
-          }
-      }
-    '';
+          # Find files containing the string (respecting .gitignore by default)
+          local files=()
+          while IFS= read -r file; do
+              files+=("$file")
+          done < <(rg -l --hidden "$search" 2>/dev/null)
+
+          local count=''${#files[@]};
+
+          if [[ $count -eq 0 ]]; then
+            echo "No files found containing '$search'"
+            return 0
+          fi
+
+          echo "Found '$search' in $count file(s):"
+          printf '  %s\n' "''${files[@]}"
+
+          # Confirmation prompt (y/n, default y)
+          read -p "Replace '$search' → '$replace' in the above files? [Y/n] " answer
+          answer=''${answer:-y}  # default to yes if empty
+          case "$answer" in
+              [Yy]*|"") ;;
+              [Nn]*) echo "Aborted."; return 0 ;;
+              *) echo "Please answer y or n"; return 1 ;;
+          esac
+
+          # Perform the replacement
+          echo "Replacing..."
+          printf '%s\0' "''${files[@]}" | xargs -0 sed -i \'\' -e "s/$search/$replace/g"
+
+          echo "Done! Replaced in $count file(s)."
+        }
+      '';
 
     plugins = [
       {

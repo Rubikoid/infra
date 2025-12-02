@@ -82,6 +82,16 @@
     };
   };
 
+  fileSystems."/data" = {
+    device = "/dev/disk/by-id/nvme-SAMSUNG_MZ9LQ128HBHQ-000H1_S5MJNF0R500898-part1";            
+    fsType = "ext4";
+    options = [
+      "defaults"
+      "nofail"
+      "x-systemd.device-timeout=0"
+    ];
+  };
+
   boot.supportedFilesystems = [
     "vfat"
   ];

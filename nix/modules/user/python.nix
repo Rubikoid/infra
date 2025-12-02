@@ -2,7 +2,9 @@
 {
   home.packages =
     let
-      python = pkgs.python312;
+      # python = pkgs.python312;
+      # python = pkgs.nixpkgs-collection.nixpkgs-master.python314;
+      python = pkgs.nixpkgs-collection.nixpkgs-master.python313;
     in
     with pkgs;
     [
@@ -55,6 +57,8 @@
           beautifulsoup4
           lxml
           matplotlib
+          z3-solver
+          python-gitlab
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

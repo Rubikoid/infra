@@ -5,6 +5,7 @@
     (with user; [
       typical-env
       ghostty
+      dotnet
     ])
     ++ (with darwin; [
       gc-debug

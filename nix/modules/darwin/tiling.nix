@@ -73,14 +73,15 @@
       # Make bsp
       ctrl + shift + alt - b  : yabai -m space --layout bsp
 
-      # Make ???
+      # Move window to display <>
       ctrl + alt - 1      : yabai -m window --display 1
       ctrl + alt - 2      : yabai -m window --display 2
       ctrl + alt - 3      : yabai -m window --display 3
 
       # new windows for most used apps
       ctrl + shift + alt - return   : /Users/rubikoid/dotfiles/mac_scripts/open_iterm.scpt # open -a iTerm /Users/rubikoid
-      ctrl + shift + alt - k        : /Users/rubikoid/dotfiles/mac_scripts/open_safari.scpt 
+      ctrl + shift + alt - k        : /Users/rubikoid/dotfiles/mac_scripts/open_safari.scpt
+      
     '';
   };
 }

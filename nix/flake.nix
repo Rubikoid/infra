@@ -213,6 +213,15 @@
               path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.ext-ha;
             };
           };
+
+          in-ha = mkNode "in-ha" // {
+            # sshOpts = ["-oControlMaster=no" "-oControlPath=/nowhere" ];
+
+            profiles.system = {
+              user = "root";
+              path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.in-ha;
+            };
+          };
         };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
@@ -261,7 +270,7 @@
 
                 fname=$(yt-dlp $YT_DLP_EXTRA --print filename "$url")
                 fname1="''${fname%.*}"
-                
+
                 echo "File name: $fname, $fname1"
                 ls -la "$fname"
 

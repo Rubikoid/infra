@@ -44,6 +44,7 @@
           })
           (gen "markdown" {
             soft-wrap.enable = true;
+            comment-tokens = ["-" "+" "*" "- [ ]" ">"]; # https://github.com/helix-editor/helix/wiki/Recipes#continue-markdown-lists--quotes
           })
           (gen "python" {
             auto-format = true;
@@ -110,11 +111,18 @@
         };
       };
 
+      # https://github.com/helix-editor/helix/discussions/12045
+      # https://github.com/helix-editor/helix/wiki/Recipes#git-integration-with-lazygit
+      # https://github.com/helix-editor/helix/discussions/12045#discussioncomment-11499809
       keys.normal."C-g" = [
+        ":write-all"
         ":new"
-        ":insert-output ${pkgs.lazygit}/bin/lazygit"
+        ":insert-output ${pkgs.lazygit}/bin/lazygit >/dev/tty"
+        ":set mouse false"
+        ":set mouse true"
         ":buffer-close!"
         ":redraw"
+        ":reload-all"
       ];
 
       # Make use of g+{left, right} in normal mode

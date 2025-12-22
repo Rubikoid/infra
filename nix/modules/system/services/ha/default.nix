@@ -7,10 +7,15 @@ let
 in
 {
   options.rubikoid.services.ha = {
+    enable = lib.mkEnableOption "Enable HA";
+
+    z2m_device = lib.mkOption {
+      type = types.str;
+    };
 
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     systemd.services.zigbee2mqtt.after = [ "mosquitto.service" ];
     systemd.services."home-assistant".after = [ "mosquitto.service" ];
 
@@ -52,7 +57,7 @@ in
           permit_join = true;
 
           serial = {
-            port = "/dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_ac4a56e4af14ef11817e6fb8bf9df066-if00-port0";
+            port = cfg.z2m_device;
             adapter = "ember";
           };
 
@@ -79,29 +84,23 @@ in
           "rpi_power"
           "mqtt"
           "homekit"
+          "homekit_controller"
         ];
 
         config = {
           homeassistant = {
-            name = "Ext-HA";
+            language = "ru";
 
-            # time_zone = "";
+            country = "RU";
+            currency = "RUB";
+
+            unit_system = "metric";
             temperature_unit = "C";
-            allowlist_external_dirs = [
-              "/data/hass"
-            ];
-          };
-          history = {};
-
-          recorder = {
-            db_url = "sqlite:////data/hass/hm_log.sqlite3";
-            # db_url = "sqlite:////hm_log.sqlite3";
-            purge_keep_days = 365;
           };
 
-          energy = {};
-          logbook = {};
-          mobile_app = {};
+          http = {
+            use_x_forwarded_for = true;
+            trusted_proxies = [ secrets.yggdrasil.nodes.rubikoid.msite-new ];
           };
         };
       };

@@ -31,7 +31,7 @@
 
     initContent =
       let
-        rg = "${pkgs.rg}/bin/rg";
+        rg = "${pkgs.ripgrep}/bin/rg";
       in
       ''
         get_path_from_old_shell() {
@@ -78,7 +78,7 @@
           local files=()
           while IFS= read -r file; do
               files+=("$file")
-          done < <(rg -l --hidden "$search" 2>/dev/null)
+          done < <(${rg} -l -F --hidden "$search" 2>/dev/null)
 
           local count=''${#files[@]};
 
@@ -91,7 +91,10 @@
           printf '  %s\n' "''${files[@]}"
 
           # Confirmation prompt (y/n, default y)
-          read -p "Replace '$search' → '$replace' in the above files? [Y/n] " answer
+          echo -n "Replace '$search' → '$replace' in the above files? [Y/n] "
+          read -q answer || { echo "\nAborted."; return 0 }
+          echo    # newline after the invisible keypress
+          
           answer=''${answer:-y}  # default to yes if empty
           case "$answer" in
               [Yy]*|"") ;;
@@ -101,9 +104,10 @@
 
           # Perform the replacement
           echo "Replacing..."
-          printf '%s\0' "''${files[@]}" | xargs -0 sed -i \'\' -e "s/$search/$replace/g"
 
-          echo "Done! Replaced in $count file(s)."
+          printf '%s\0' "''${files[@]}" | xargs -0 ${pkgs.perl}/bin/perl -i -pe "s/\Q$search\E/$replace/g" && \
+          echo "Done! Replaced in $count file(s)." || \
+          echo "Something went wrong!"
         }
       '';
 

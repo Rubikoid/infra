@@ -59,6 +59,10 @@
           matplotlib
           z3-solver
           python-gitlab
+          scapy
+          duckdb
+          polars
+          pyarrow
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

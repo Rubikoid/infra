@@ -20,6 +20,8 @@
 
     glab
     jq
+    yq
+    skopeo
 
     # inetutils
     # i fucking hate gnu

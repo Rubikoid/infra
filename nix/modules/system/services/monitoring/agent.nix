@@ -70,10 +70,10 @@ in
 
         transformedMimirTargets = lib.attrsets.mapAttrsToList (
           name: value:
-          ''{ __address__ = "${value.listenAddress}:${toString value.port}", job = "nix-prom-${name}", instance = "${config.networking.hostName}", }''
+          ''{ __address__ = "${value.listenAddress}:${toString value.port}", job = "nix-prom-${name}", instance = "${config.networking.hostName}", },''
         ) rawPrometheusExporters;
 
-        mimirTargets = builtins.concatStringsSep ",\n       " transformedMimirTargets;
+        mimirTargets = builtins.concatStringsSep "\n       " transformedMimirTargets;
       in
       ''
         prometheus.exporter.self "default" { }

@@ -6,6 +6,10 @@ let
   cfg = config.rubikoid.services.ha;
 in
 {
+  imports = [
+    ./otbr.nix
+  ];
+
   options.rubikoid.services.ha = {
     enable = lib.mkEnableOption "Enable HA";
 
@@ -13,13 +17,25 @@ in
       type = types.str;
     };
 
+    matter = {
+      enable = lib.mkEnableOption "Enable OTBR";
+      device = lib.mkOption {
+        type = types.nullOr types.str;
+        default = null;
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
     systemd.services.zigbee2mqtt.after = [ "mosquitto.service" ];
     systemd.services."home-assistant".after = [ "mosquitto.service" ];
 
-    networking.firewall.allowedTCPPorts = [ 8120 ];
+    networking.firewall.allowedTCPPorts = [
+      5580 # matter-server
+      8120 # z2m
+      8082 # otbr
+      # 8123 # hass
+    ];
 
     services = {
       mosquitto = {
@@ -72,6 +88,33 @@ in
         };
       };
 
+      openthread-border-router = lib.mkIf cfg.matter.enable {
+        enable = true;
+
+        backboneInterface = "end0"; # TODO: ...
+        logLevel = "warning"; # TODO: ...
+
+        web = {
+          enable = true;
+          listenAddress = "::";
+          listenPort = 8082;
+        };
+
+        radio = {
+          device = cfg.matter.device;
+          baudRate = 460800;
+          flowControl = false;
+        };
+      };
+
+      matter-server = {
+        enable = true;
+        extraArgs = [ ];
+        logLevel = "info";
+        port = 5580;
+        openFirewall = true;
+      };
+
       home-assistant = {
         enable = true;
 
@@ -85,9 +128,17 @@ in
           "mqtt"
           "homekit"
           "homekit_controller"
+          "matter"
+          "thread"
+          "otbr"
+          "apple_tv"
         ];
 
         config = {
+          "automation ui" = "!include automations.yaml";
+          "scene ui" = "!include scenes.yaml";
+          "script ui" = "!include scripts.yaml";
+
           homeassistant = {
             language = "ru";
 

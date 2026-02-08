@@ -64,8 +64,6 @@
     interop.register = true;
   };
 
-  # programs.nix-ld.enable = true;
-
   hardware.graphics.enable = lib.mkForce false;
   hardware.opengl.enable = lib.mkForce false;
 

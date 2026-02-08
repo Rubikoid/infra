@@ -26,6 +26,10 @@
 
       ca.rubikoid
 
+      (with users; [
+        rubikoid
+      ])
+
       (with other; [
         remote-build-host
       ])

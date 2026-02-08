@@ -29,6 +29,11 @@
       grub.enable = false;
       generic-extlinux-compatible.enable = lib.mkForce true;
     };
+
+    kernel.sysctl = {
+      "net.ipv4.conf.all.rp_filter" = 1;
+      "net.ipv4.conf.default.rp_filter" = 1;
+    };
   };
   hardware.enableRedistributableFirmware = true;
 
@@ -41,7 +46,36 @@
     '';
   };
 
+  systemd.network = {
+    enable = true;
+    networks = {
+      "10-ethernet" = {
+        matchConfig.Name = "end0";
+        networkConfig = {
+          DHCP = "ipv4";
+        };
+        dhcpV4Config = {
+          RouteMetric = 100;
+        };
+      };
+      "20-wifi" = {
+        matchConfig.Name = "wlan0";
+
+        networkConfig = {
+          DHCP = "ipv4";
+        };
+
+        dhcpV4Config = {
+          RouteMetric = 600;
+        };
+      };
+    };
+  };
+
   networking = {
+    useDHCP = false;
+    useNetworkd = true;
+
     wireless = {
       enable = true;
       userControlled.enable = true;
@@ -50,12 +84,11 @@
       };
     };
 
-    useDHCP = true;
   };
 
   rubikoid = {
     services.ha = {
-      z2m_device = "/dev/serial/by-id/usb-XXX";
+      z2m_device = "/dev/serial/by-id/usb-ITEAD_SONOFF_Zigbee_3.0_USB_Dongle_Plus_V2_20221031155527-if00";
     };
   };
 

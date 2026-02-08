@@ -100,6 +100,9 @@
     # ];
 
     firewall = {
+      allowedTCPPorts = [ 443 ];
+      allowedUDPPorts = [ 443 ];
+
       interfaces = {
         home.allowedTCPPorts = [ 1337 ];
         ygg.allowedTCPPorts = [ 1337 ];

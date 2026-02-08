@@ -74,6 +74,10 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    vscode-server = {
+      url = "github:nix-community/nixos-vscode-server";
+    };
   };
 
   outputs =
@@ -215,11 +219,17 @@
           };
 
           in-ha = mkNode "in-ha" // {
-            # sshOpts = ["-oControlMaster=no" "-oControlPath=/nowhere" ];
+            sshOpts = [
+              "-oControlMaster=no"
+              "-oControlPath=/nowhere"
+            ];
 
             profiles.system = {
               user = "root";
               path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.in-ha;
+
+              fastConnection = true;
+              # remoteBuild = false;
             };
           };
         };

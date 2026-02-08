@@ -1,13 +1,20 @@
 # stolen from https://github.com/K900/vscode-remote-workaround/blob/main/vscode.nix
 # and https://nix-community.github.io/NixOS-WSL/how-to/vscode.html
 {
+  inputs,
   config,
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.rubikoid.vscode-remote-workaround;
-in {
+in
+{
+  imports = [
+    inputs.vscode-server.nixosModules.default
+  ];
+
   options.rubikoid.vscode-remote-workaround = {
     enable = lib.mkEnableOption "automatic VSCode remote server patch";
     package = lib.mkOption {
@@ -19,18 +26,9 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.user = {
-      paths.vscode-remote-workaround = {
-        wantedBy = ["default.target"];
-        pathConfig.PathChanged = "%h/.vscode-server/bin";
-      };
-
-      services.vscode-remote-workaround.script = ''
-        for i in ~/.vscode-server/bin/*; do
-          echo "Fixing vscode-server in $i..."
-          ln -sf ${cfg.package}/bin/node $i/node
-        done
-      '';
+    services.vscode-server = {
+      enable = true;
+      
     };
   };
 }

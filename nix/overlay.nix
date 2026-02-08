@@ -180,7 +180,7 @@ rec {
       codestats_patch = final.fetchpatch2 {
         url = "https://github.com/Rubikoid/helix/pull/1.diff";
         # "https://github.com/helix-editor/helix/compare/${version}...Rubikoid:helix:feature/codestats.patch?full_index=1";
-        sha256 = "sha256-0WgqSe8T/ITAfSzuh5WTFO0bOWJmqipFTI5Htu35HhU="; 
+        sha256 = "sha256-0WgqSe8T/ITAfSzuh5WTFO0bOWJmqipFTI5Htu35HhU=";
       };
       src = final.fetchzip {
         url = "https://github.com/helix-editor/helix/releases/download/${version}/helix-${version}-source.tar.xz";

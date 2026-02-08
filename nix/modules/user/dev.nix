@@ -37,6 +37,9 @@
     clippy
 
     mergiraf
+
+    git
+    git-lfs
   ];
 
   home.sessionVariables = {

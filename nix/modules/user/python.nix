@@ -2,9 +2,9 @@
 {
   home.packages =
     let
-      # python = pkgs.python312;
+      python = pkgs.python313;
       # python = pkgs.nixpkgs-collection.nixpkgs-master.python314;
-      python = pkgs.nixpkgs-collection.nixpkgs-master.python313;
+      # python = pkgs.nixpkgs-collection.nixpkgs-master.python313;
     in
     with pkgs;
     [
@@ -63,6 +63,10 @@
           duckdb
           polars
           pyarrow
+          mutagen
+          passlib
+          bcrypt
+          msgspec
           # etc
           # python-lsp-server # yes, it is another lsp.
         ])

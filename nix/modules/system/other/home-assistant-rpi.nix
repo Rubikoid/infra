@@ -68,7 +68,7 @@
 
   networking.hosts = {
     # на случай проблем с DNS
-    secrets.dns.data.nodes.kubc.at.ygg = [ secrets.harmonia.addr ];
+    "${secrets.yggdrasil.nodes.rubikoid.kubic}" = [ secrets.harmonia.addr ];
   };
 
   hardware = {

@@ -238,27 +238,30 @@ in
             )
           );
 
+          User = "root";
           # Hardening options (not present in upstream service definitions)
-          DynamicUser = true;
-          ProtectSystem = "strict";
-          ProtectHome = true;
-          PrivateTmp = true;
-          PrivateDevices = true;
-          ProtectKernelLogs = true;
-          ProtectKernelTunables = true;
-          ProtectKernelModules = true;
-          ProtectControlGroups = true;
-          NoNewPrivileges = true;
-          LockPersonality = true;
-          RestrictRealtime = true;
-          RestrictSUIDSGID = true;
-          RestrictNamespaces = true;
-          SystemCallArchitectures = "native";
-          RestrictAddressFamilies = [
-            "AF_INET"
-            "AF_INET6"
-          ];
-          CapabilityBoundingSet = "";
+          # DynamicUser = true;
+          # ProtectSystem = "strict";
+          # ProtectHome = true;
+          # PrivateTmp = true;
+          # PrivateDevices = true;
+          # ProtectKernelLogs = true;
+          # ProtectKernelTunables = true;
+          # ProtectKernelModules = true;
+          # ProtectControlGroups = true;
+          # NoNewPrivileges = true;
+          # LockPersonality = true;
+          # RestrictRealtime = true;
+          # RestrictSUIDSGID = true;
+          # RestrictNamespaces = true;
+          # SystemCallArchitectures = "native";
+          # RestrictAddressFamilies = [
+          #   "AF_UNIX"
+          #   "AF_INET"
+          #   "AF_INET6"
+          # ];
+          # ReadWritePaths = [ "/run" ];
+          # CapabilityBoundingSet = "";
         };
       };
     };

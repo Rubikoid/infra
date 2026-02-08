@@ -12,7 +12,7 @@
     ]);
 
   home.packages = with pkgs; [
-    ansible
+    pkgs.nixpkgs-collection.nixpkgs-stable.ansible
     ffmpeg
     colima
     lima

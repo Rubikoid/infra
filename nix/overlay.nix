@@ -54,6 +54,35 @@ rec {
     nodejs_16 = final.nodejs_18;
   }; # overleaf-src.overleaf;
 
+  # curl = nixpkgs-stable.curl;
+  # curl = prev.curlMinimal;
+
+  # fetchurl = prev.fetchurl.override {
+  #   curl = nixpkgs-stable.curl.override {
+  #     http3Support = false;
+  #     c-aresSupport = false;
+  #   };
+  # };
+
+  # fetchurl =
+  #   { ... }@attrs:
+  #   (prev.fetchurl (
+  #     attrs
+  #     // {
+  #       curlOptsList = (attrs.curlOptsList or [ ]) ++ [ "--tls-max 1.2" ];
+  #     }
+  #   ));
+
+  # fetchurl =
+  #   args:
+  #   (nixpkgs-stable.fetchurl.override {
+  #     inherit (final) cacert; # required to avoid infrec
+  #   })
+  #     (args // { curlOptsList = (args.curlOptsList or [ ]) ++ [ "--tls-max 1.2" ]; });
+
+  # curl = nixpkgs-stable.curl;
+  # fetchurl = nixpkgs-stable.fetchurl;
+
   oldphp = nixpkgs-php.php;
 
   ccacheWrapper = prev.ccacheWrapper.override {

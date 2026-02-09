@@ -24,6 +24,8 @@ in
         default = null;
       };
     };
+
+    xiaomi = lib.mkEnableOption "Enable Xiaomi Miot";
   };
 
   config = lib.mkIf cfg.enable {
@@ -107,7 +109,7 @@ in
         };
       };
 
-      matter-server = {
+      matter-server = lib.mkIf cfg.matter.enable {
         enable = true;
         extraArgs = [ ];
         logLevel = "info";
@@ -115,46 +117,59 @@ in
         openFirewall = true;
       };
 
-      home-assistant = {
-        enable = true;
+      home-assistant = lib.mkMerge [
+        {
+          enable = true;
 
-        openFirewall = true; # TODO option
+          openFirewall = true; # TODO option
 
-        extraComponents = [
-          "default_config"
-          "met"
-          "esphome"
-          "rpi_power"
-          "mqtt"
-          "homekit"
-          "homekit_controller"
-          "matter"
-          "thread"
-          "otbr"
-          "apple_tv"
-        ];
+          extraComponents = [
+            "default_config"
+            "met"
+            "esphome"
+            "rpi_power"
+            "mqtt"
+            "homekit"
+            "homekit_controller"
+            "apple_tv"
+          ];
 
-        config = {
-          "automation ui" = "!include automations.yaml";
-          "scene ui" = "!include scenes.yaml";
-          "script ui" = "!include scripts.yaml";
+          config = {
+            "automation ui" = "!include automations.yaml";
+            "scene ui" = "!include scenes.yaml";
+            "script ui" = "!include scripts.yaml";
 
-          homeassistant = {
-            language = "ru";
+            homeassistant = {
+              language = "ru";
 
-            country = "RU";
-            currency = "RUB";
+              country = "RU";
+              currency = "RUB";
 
-            unit_system = "metric";
-            temperature_unit = "C";
+              unit_system = "metric";
+              temperature_unit = "C";
+            };
+
+            http = {
+              use_x_forwarded_for = true;
+              trusted_proxies = [ secrets.yggdrasil.nodes.rubikoid.msite-new ];
+            };
           };
-
-          http = {
-            use_x_forwarded_for = true;
-            trusted_proxies = [ secrets.yggdrasil.nodes.rubikoid.msite-new ];
-          };
-        };
-      };
+        }
+        (lib.mkIf cfg.xiaomi {
+          customComponents = [ pkgs.home-assistant-custom-components.xiaomi_miot ];
+          extraComponents = [
+            "ffmpeg"
+            "homekit"
+          ];
+        })
+        (lib.mkIf cfg.matter.enable {
+          extraComponents = [
+            "matter"
+            "thread"
+            "otbr"
+          ];
+        })
+      ];
     };
   };
 }

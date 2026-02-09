@@ -46,7 +46,6 @@
     zsh.omz = true;
     services.ha = {
       enable = true;
-
     };
   };
 
@@ -85,3 +84,4 @@
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 }
+ 

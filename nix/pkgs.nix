@@ -9,10 +9,16 @@ inputs: final: prev: rec {
   };
 
   nix = prev.nix.override {
-    nix-store = prev.nix.libs.nix-store.override {
-      curl = final.curlSuckless;
-      withAWS = false;
-    };
+    nix-store =
+      (prev.nix.libs.nix-store.override {
+        curl = final.curlSuckless;
+        withAWS = false;
+      }).overrideAttrs
+        (old: {
+          src = old.src.overrideAttrs (old': {
+            patches = (old'.patches or [ ]) ++ [ ./pkgs/nix/patch.diff ];
+          });
+        });
 
     nix-fetchers = prev.nix.libs.nix-fetchers.override {
       nix-store = final.nix.libs.nix-store;
@@ -49,5 +55,4 @@ inputs: final: prev: rec {
       nix-cmd = final.nix.libs.nix-cmd;
     };
   };
-
 }

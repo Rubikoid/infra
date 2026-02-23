@@ -36,7 +36,11 @@
 
   # https://github.com/NixOS/nix/issues/13204#issuecomment-2903445729
   # WTF БЛЯДЬ ЭЭЛКО
-  nix.package = lib.mkForce pkgs.lix;
+  # nix.package = lib.mkForce pkgs.lix;
+
+  nix.envVars = {
+    NIX_CURL_FLAGS = "--tls-max 1.2";
+  };
 
   rubikoid.vscode-remote-workaround.enable = true;
 

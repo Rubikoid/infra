@@ -37,6 +37,7 @@
           base.flake = inputs.base;
 
           n-master.flake = inputs.nixpkgs-master;
+          n-stable.flake = inputs.nixpkgs-stable;
         };
 
       settings = lib.mkIf config.rubikoid.nix.enableHarmonia {

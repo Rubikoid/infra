@@ -1,49 +1,61 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [
-    nil
-    nixfmt-rubi-style
+  home = {
+    packages = with pkgs; [
+      nil
+      nixfmt-rubi-style
 
-    ripgrep
+      ripgrep
 
-    # lazygit
+      # lazygit
 
-    k9s
-    kubectl
-    kubecm
-    kustomize
+      k9s
+      kubectl
+      krew
+      kubecm
+      kustomize
 
-    bat
+      bat
 
-    whois
-    ldns
+      whois
+      ldns
 
-    glab
-    jq
-    yq
-    skopeo
+      glab
+      jq
+      yq
+      skopeo
 
-    # inetutils
-    # i fucking hate gnu
-    ldns
+      # inetutils
+      # i fucking hate gnu
+      ldns
 
-    far2l
+      far2l
 
-    openssl
+      openssl
 
-    cargo
-    rustc
-    rust-analyzer
-    clippy
+      cargo
+      rustc
+      rust-analyzer
+      clippy
 
-    mergiraf
+      mergiraf
 
-    git
-    git-lfs
-  ];
+      git
+      git-lfs
 
-  home.sessionVariables = {
-    RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+      # (pkgs.writeScriptBin "wireshark" ''
+      #   #!/bin/sh
+      #   exec "/Applications/Wireshark.app/Contents/MacOS/Wireshark" "$@"
+      # '')
+    ];
+
+    sessionVariables = {
+      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+    };
+
+    sessionPath = [
+      "\${KREW_ROOT:-$HOME/.krew}/bin"
+    ];
   };
 
   programs.lazygit = {

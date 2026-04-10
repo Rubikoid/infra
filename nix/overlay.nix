@@ -54,6 +54,8 @@ rec {
     nodejs_16 = final.nodejs_18;
   }; # overleaf-src.overleaf;
 
+  xray = nixpkgs-stable.xray;
+
   # curl = nixpkgs-stable.curl;
   # curl = prev.curlMinimal;
 

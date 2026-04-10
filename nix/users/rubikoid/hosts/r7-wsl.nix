@@ -4,6 +4,7 @@
     with lib.r.modules;
     (with user; [
       typical-env
+      shell.soft.aichat
     ])
     ++ (with darwin; [
 

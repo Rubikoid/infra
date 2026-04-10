@@ -72,6 +72,8 @@ in
     # environment.STEPDEBUG = "1";
 
     serviceConfig = {
+      Type = lib.mkForce "simple";
+
       ExecStart = lib.mkForce [
         "" # override upstream ;(((
         (lib.r.makeJobScript pkgs # fmt
@@ -93,6 +95,8 @@ in
         )
       ];
     };
+
+    # startLimitIntervalSec = 60;
   };
 
   environment.etc."smallstep/ca.json".source = lib.mkForce "/dev/null";

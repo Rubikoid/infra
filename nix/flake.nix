@@ -264,6 +264,30 @@
               yt-dlp
               ffmpeg
 
+              (pkgs.writeShellScriptBin "convert-to-tg" ''
+                set -euo pipefail
+               
+                infile="$1"
+
+                if [ ! -f "$infile" ]; then
+                  echo "File not found: $infile"
+                  exit 2
+                fi
+
+                base="''${infile%.*}"
+                outfile="''${base}.mp4"
+
+                ffmpeg -i "$infile" -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k -movflags +faststart "$outfile"
+                rc=$?
+
+                if [ $rc -eq 0 ]; then
+                  echo "Converted: $outfile"
+                else
+                  echo "Conversion failed (ffmpeg exit code $rc)"
+                fi
+
+                exit $rc
+              '')
               (pkgs.writeShellScriptBin "download-music" ''
                 set -euo pipefail
 
@@ -288,7 +312,7 @@
                 echo "TFN: $targetfname"
 
                 ffmpeg -i "$fname" -acodec libmp3lame "$targetfname"
-              '')
+            '')
             ];
 
             shellHook = ''

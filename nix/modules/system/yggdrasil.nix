@@ -3,6 +3,14 @@ let
   cfg = config.rubikoid.services.yggdrasil;
 in
 {
+  imports =
+    if (mode == "NixOS") then
+      [ lib.r.modules.system.internal.yggdrasil ]
+    else if (mode == "Darwin") then
+      [ lib.r.modules.darwin.yggdrasil ]
+    else
+      [ ];
+
   options.rubikoid.services.yggdrasil =
     let
       types = lib.types;

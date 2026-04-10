@@ -40,7 +40,7 @@
 
       # general space settings
       layout = "stack";
-      top_padding = 2;
+      top_padding = 0;
       bottom_padding = 2;
       left_padding = 2;
       right_padding = 2;
@@ -81,7 +81,7 @@
       # new windows for most used apps
       ctrl + shift + alt - return   : /Users/rubikoid/dotfiles/mac_scripts/open_iterm.scpt # open -a iTerm /Users/rubikoid
       ctrl + shift + alt - k        : /Users/rubikoid/dotfiles/mac_scripts/open_safari.scpt
-      
+
     '';
   };
 }

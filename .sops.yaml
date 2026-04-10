@@ -2,6 +2,7 @@ keys:
   - &rubikoid_wsl age1mw00fzy3tkap89dfn6y2znfllunqj63cn6yxjzepn5a09yv0gqas4uj6vf
   - &rubikoid_ly370 age15009xgu7ecm7nqsyesaftwlk4k9ct0pt3ah42nh2p3q3drp8j5ksakz07l
   - &rubikoid_mbp14 age13exgcpuz3payg26n6hpn4etnaxg3eeht4maeggdppt6yu2lwxcys5rewgr
+  - &rubikoid_mbp16m4 age1tlp0arwh58rnqhe06vhh0emzllnjkaux3mqt8a5snqxkzxcenu8sh70r67
   - &wsl age1lvekna9v84cr0vtyrpnfluaf59mra656nr8kwmqragdzszr6ea2sszcn2t
   - &ly370 age1mdq3cljs95r77lxsm8kafup38cd40wvgvgjwpls25w8plynmyaaqdznv5m
   - &vpn age1tdjhn9qjpudqtkegxe7mrgnz4ca7ztt85th5q6kg73zw2mmzzczskm5n2s
@@ -13,6 +14,7 @@ keys:
   - &netbird-test age1z3n05gjj0lq25hgknuma3ma96ufl4jy78xpz98qm2n4h43skt4yqkkhtxa
   - &ext-ha age1emt7w5qvvtz9yagu98sfgmv3u9t68mzzymlvm087r2hf75f2cc0qxd8w4s
   - &in-ha age19hz0mnzpv59y2t44a0y7mhl7xeuajyd2psa3lh94gyrd67etscfsx3wrm4
+  - &mbp16m4 age1r0hxxez22hc0wgq20ctd5nv7ru6mmtkaf9x22klmfrqkae4qzgwsp4x739
 
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -21,6 +23,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *wsl
           - *ly370
           - *vpn
@@ -32,6 +35,7 @@ creation_rules:
           - *netbird-test
           - *ext-ha
           - *in-ha
+          - *mbp16m4
 
   - path_regex: secrets/hosts/vpn/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
@@ -39,6 +43,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *vpn
 
   - path_regex: secrets/hosts/ly370/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -47,6 +52,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *ly370
 
   - path_regex: secrets/hosts/rpi4/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -55,6 +61,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
 
   - path_regex: secrets/hosts/dedic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
     key_groups:
@@ -62,6 +69,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *dedic
 
   - path_regex: secrets/hosts/kubic/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -70,6 +78,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *kubic
 
   - path_regex: secrets/hosts/dedic/step/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -78,6 +87,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *dedic
 
   - path_regex: secrets/hosts/dedic/step/(certs|keys)/[^/]+\.(|crt|pub|key)$
@@ -86,6 +96,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *dedic
 
   - path_regex: secrets/hosts/rubi-mbp14/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -94,6 +105,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *mbp14
 
   - path_regex: secrets/hosts/r7-wsl/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -102,6 +114,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *wsl
 
   - path_regex: secrets/hosts/yatb-kube-master/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -110,6 +123,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *yatb-kube-master
 
   - path_regex: secrets/hosts/orb-nix/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -118,6 +132,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *orb-nix
 
   - path_regex: secrets/hosts/netbird-test/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -126,6 +141,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *netbird-test
 
   - path_regex: secrets/hosts/ext-ha/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -134,6 +150,7 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *ext-ha
 
   - path_regex: secrets/hosts/in-ha/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
@@ -142,4 +159,14 @@ creation_rules:
           - *rubikoid_ly370
           - *rubikoid_wsl
           - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
           - *in-ha
+
+  - path_regex: secrets/hosts/rubi-mbp16m4/[^/]+\.(yaml|json|env|ini|hjson|bin|conf|sh|crt|pub|key)$
+    key_groups:
+      - age:
+          - *rubikoid_ly370
+          - *rubikoid_wsl
+          - *rubikoid_mbp14
+          - *rubikoid_mbp16m4
+          - *mbp16m4

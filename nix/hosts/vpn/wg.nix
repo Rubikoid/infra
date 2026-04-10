@@ -7,6 +7,7 @@ in
   sops.secrets."firewall_setup.sh" = {
     sopsFile = secrets.deviceSecrets + "/firewall_setup.sh";
     format = "binary";
+    mode = "0555";
   };
 
   sops.templates."fw.sh" = {
@@ -24,7 +25,7 @@ in
         iptables -t nat $A PREROUTING -i $OUT -p tcp --dport $2 -j DNAT --to-destination $1:$2
         iptables -t nat $A PREROUTING -i $OUT -p udp --dport $2 -j DNAT --to-destination $1:$2
       }
-  
+
       ${config.sops.placeholder."firewall_setup.sh"}
     '';
   };
@@ -41,9 +42,9 @@ in
 
   sops.templates."wg.conf".content = ''
     ${config.sops.placeholder."wg_head.conf"}
-    PostUp   = ${config.sops.templates."fw.sh".path} '-A' "%i"
-    PostDown = ${config.sops.templates."fw.sh".path} '-D' "%i"
-    
+    PostUp   = ${pkgs.bash}/bin/bash ${config.sops.templates."fw.sh".path} '-A' "%i"
+    PostDown = ${pkgs.bash}/bin/bash ${config.sops.templates."fw.sh".path} '-D' "%i"
+
     ${config.sops.placeholder."wg_peers.conf"}
   '';
 

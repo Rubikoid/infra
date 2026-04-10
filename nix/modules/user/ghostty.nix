@@ -8,6 +8,8 @@
 
     settings = {
       window-inherit-working-directory = false;
+      tab-inherit-working-directory = false;
+      split-inherit-working-directory = true;
     };
 
     enableZshIntegration = true;

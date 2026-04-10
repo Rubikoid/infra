@@ -41,7 +41,10 @@
       mergiraf
 
       git
-      git-lfs
+
+      tanka
+      # jsonnet-bundler
+      jsonnet-language-server
 
       # (pkgs.writeScriptBin "wireshark" ''
       #   #!/bin/sh
